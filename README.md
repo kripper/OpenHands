@@ -69,7 +69,7 @@ docker run -it \
     -p 3000:3000 \
     --add-host host.docker.internal:host-gateway \
     --name opendevin-app-$(date +%Y%m%d%H%M%S) \
-    ghcr.io/opendevin/opendevin
+    ghcr.io/opendevin/opendevin:0.8
 ```
 
 > [!NOTE]
