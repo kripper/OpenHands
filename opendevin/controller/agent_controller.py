@@ -133,9 +133,8 @@ class AgentController:
         """
         if exception:
             message += f': {exception}'
-        self.state.error = message
+        self.state.last_error = message
         self.event_stream.add_event(ErrorObservation(message), EventSource.AGENT)
-
 
     async def _start_step_loop(self):
         logger.info(f'[Agent Controller {self.id}] Starting step loop...')
