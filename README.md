@@ -1,7 +1,10 @@
 ### Kevin Changelogs:
 
-  Added [Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
+  1) Added [Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
+  2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/OpenDevin/OpenDevin/pull/3178) 👍
 
+### Separate Feature Branches:
+  1) [Added Tutor Agent](https://github.com/SmartManoj/Kevin/tree/add-tutor-agent) 🧑‍🏫
 ---
 
 <a name="readme-top"></a>
