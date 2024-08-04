@@ -1,3 +1,9 @@
+### Kevin Changelogs:
+
+  Added [Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
+
+---
+
 <a name="readme-top"></a>
 
 <!--
