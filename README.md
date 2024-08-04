@@ -2,6 +2,7 @@
 
   1) Added [Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
   2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/OpenDevin/OpenDevin/pull/3178) 👍
+  3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
 
 ### Separate Feature Branches:
   1) [Added Tutor Agent](https://github.com/SmartManoj/Kevin/tree/add-tutor-agent) 🧑‍🏫
