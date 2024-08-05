@@ -4,6 +4,7 @@ import warnings
 from functools import partial
 
 from opendevin.core.config import LLMConfig
+from opendevin.core.message import Message
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -26,17 +27,20 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from opendevin.core.exceptions import UserCancelledError
+from opendevin.condenser.condenser import CondenserMixin
+from opendevin.core.exceptions import (
+    ContextWindowLimitExceededError,
+    TokenLimitExceededError,
+    UserCancelledError,
+)
 from opendevin.core.logger import llm_prompt_logger, llm_response_logger
 from opendevin.core.logger import opendevin_logger as logger
 from opendevin.core.metrics import Metrics
 
-__all__ = ['LLM']
-
 message_separator = '\n\n----------\n\n'
 
 
-class LLM:
+class LLM(CondenserMixin):
     """The LLM class represents a Language Model instance.
 
     Attributes:
@@ -72,11 +76,11 @@ class LLM:
                     self.config.model.split(':')[0]
                 )
         # noinspection PyBroadException
-        except Exception as e:
-            logger.warning(f'Could not get model info for {config.model}:\n{e}')
+        except Exception:
+            logger.warning(f'Could not get model info for {config.model}')
 
         # Set the max tokens in an LM-specific way if not set
-        if self.config.max_input_tokens is None:
+        if config.max_input_tokens is None:
             if (
                 self.model_info is not None
                 and 'max_input_tokens' in self.model_info
@@ -86,8 +90,7 @@ class LLM:
             else:
                 # Max input tokens for gpt3.5, so this is a safe fallback for any potentially viable model
                 self.config.max_input_tokens = 4096
-
-        if self.config.max_output_tokens is None:
+        if config.max_output_tokens is None:
             if (
                 self.model_info is not None
                 and 'max_output_tokens' in self.model_info
@@ -114,7 +117,7 @@ class LLM:
             top_p=self.config.top_p,
         )
 
-        completion_unwrapped = self._completion
+        self.completion_unwrapped = self._completion
 
         def attempt_on_error(retry_state):
             logger.error(
@@ -125,11 +128,11 @@ class LLM:
 
         @retry(
             reraise=True,
-            stop=stop_after_attempt(self.config.num_retries),
+            stop=stop_after_attempt(config.num_retries),
             wait=wait_random_exponential(
-                multiplier=self.config.retry_multiplier,
-                min=self.config.retry_min_wait,
-                max=self.config.retry_max_wait,
+                multiplier=config.retry_multiplier,
+                min=config.retry_min_wait,
+                max=config.retry_max_wait,
             ),
             retry=retry_if_exception_type(
                 (
@@ -149,6 +152,20 @@ class LLM:
                 messages = kwargs['messages']
             else:
                 messages = args[1]
+
+            try:
+                if self.is_over_token_limit(messages):
+                    raise TokenLimitExceededError()
+            except TokenLimitExceededError:
+                print('An error occurred: ')
+                # If we got a context alert, try trimming the messages length, then try again
+                if kwargs['condense'] and self.is_over_token_limit(messages):
+                    # A separate call to run a summarizer
+                    summary_action = self.condense(messages=messages)
+                    return summary_action
+                else:
+                    print('step() failed with an unrecognized exception:')
+                    raise ContextWindowLimitExceededError()
 
             # log the prompt
             debug_message = ''
@@ -179,7 +196,7 @@ class LLM:
 
             # skip if messages is empty (thus debug_message is empty)
             if debug_message:
-                resp = completion_unwrapped(*args, **kwargs)
+                resp = self.completion_unwrapped(*args, **kwargs)
             else:
                 resp = {'choices': [{'message': {'content': ''}}]}
 
@@ -189,7 +206,6 @@ class LLM:
 
             # post-process to log costs
             self._post_completion(resp)
-
             return resp
 
         self._completion = wrapper  # type: ignore
@@ -444,6 +460,8 @@ class LLM:
         Returns:
             int: The number of tokens.
         """
+        if isinstance(messages[0], Message):
+            messages = [m.model_dump() for m in messages]
         return litellm.token_counter(model=self.config.model, messages=messages)
 
     def is_local(self):
@@ -510,3 +528,27 @@ class LLM:
 
     def reset(self):
         self.metrics = Metrics()
+
+    def is_over_token_limit(self, messages: list[Message]) -> bool:
+        """
+        Estimates the token count of the given events using litellm tokenizer and returns True if over the max_input_tokens value.
+
+        Parameters:
+        - messages: List of messages to estimate the token count for.
+
+        Returns:
+        - Estimated token count.
+        """
+        # max_input_tokens will always be set in init to some sensible default
+        # 0 in config.llm disables the check
+        MAX_TOKEN_COUNT_PADDING = 512
+        if not self.config.max_input_tokens:
+            return False
+        token_count = self.get_token_count(messages=messages) + MAX_TOKEN_COUNT_PADDING
+        return token_count >= self.config.max_input_tokens
+
+    def get_text_messages(self, messages: list[Message]) -> list[dict]:
+        text_messages = []
+        for message in messages:
+            text_messages.append(message.message)
+        return text_messages

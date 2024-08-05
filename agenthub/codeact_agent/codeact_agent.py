@@ -8,11 +8,13 @@ from agenthub.codeact_agent.prompt import (
 )
 from opendevin.controller.agent import Agent
 from opendevin.controller.state.state import State
+from opendevin.core.exceptions import ContextWindowLimitExceededError
 from opendevin.core.message import ImageContent, Message, TextContent
 from opendevin.events.action import (
     Action,
     AgentDelegateAction,
     AgentFinishAction,
+    AgentSummarizeAction,
     CmdRunAction,
     IPythonRunCellAction,
     MessageAction,
@@ -122,6 +124,14 @@ class CodeActAgent(Agent):
             return f'{action.thought}\n<execute_browse>\n{action.inputs["task"]}\n</execute_browse>'
         elif isinstance(action, MessageAction):
             return action.content
+        elif isinstance(action, AgentSummarizeAction):
+            return (
+                'Summary of all Action and Observations till now. \n'
+                + 'Action: '
+                + action.summarized_actions
+                + '\nObservation: '
+                + action.summarized_observations
+            )
         elif isinstance(action, AgentFinishAction) and action.source == 'agent':
             return action.thought
         return ''
@@ -132,6 +142,7 @@ class CodeActAgent(Agent):
             or isinstance(action, CmdRunAction)
             or isinstance(action, IPythonRunCellAction)
             or isinstance(action, MessageAction)
+            or isinstance(action, AgentSummarizeAction)
             or (isinstance(action, AgentFinishAction) and action.source == 'agent')
         ):
             content = [TextContent(text=self.action_to_str(action))]
@@ -140,7 +151,9 @@ class CodeActAgent(Agent):
                 content.append(ImageContent(image_urls=action.images_urls))
 
             return Message(
-                role='user' if action.source == 'user' else 'assistant', content=content
+                role='user' if action.source == 'user' else 'assistant',
+                content=content,
+                event_id=action.id,
             )
         return None
 
@@ -151,7 +164,11 @@ class CodeActAgent(Agent):
             text += (
                 f'\n[Command {obs.command_id} finished with exit code {obs.exit_code}]'
             )
-            return Message(role='user', content=[TextContent(text=text)])
+            return Message(
+                role='user',
+                content=[TextContent(text=text)],
+                event_id=obs.id,
+            )
         elif isinstance(obs, IPythonRunCellObservation):
             text = 'OBSERVATION:\n' + obs.content
             # replace base64 images with a placeholder
@@ -163,12 +180,20 @@ class CodeActAgent(Agent):
                     )
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
-            return Message(role='user', content=[TextContent(text=text)])
+            return Message(
+                role='user',
+                content=[TextContent(text=text)],
+                event_id=obs.id,
+            )
         elif isinstance(obs, AgentDelegateObservation):
             text = 'OBSERVATION:\n' + truncate_content(
                 str(obs.outputs), max_message_chars
             )
-            return Message(role='user', content=[TextContent(text=text)])
+            return Message(
+                role='user',
+                content=[TextContent(text=text)],
+                event_id=obs.id,
+            )
         return None
 
     def reset(self) -> None:
@@ -194,55 +219,72 @@ class CodeActAgent(Agent):
         if latest_user_message and latest_user_message.strip() == '/exit':
             return AgentFinishAction()
 
-        # prepare what we want to send to the LLM
-        messages = self._get_messages(state)
+        response = None
+        # give it multiple chances to get a response
+        # if it fails, we'll try to condense memory
+        attempt = 0
+        while not response and attempt < self.llm.config.attempts_to_condense:
+            # prepare what we want to send to the LLM
+            messages: list[Message] = self._get_messages(state)
+            print('No of tokens, ' + str(self.llm.get_token_count(messages)) + '\n')
+            try:
+                response = self.llm.completion(
+                    messages=[message.model_dump() for message in messages],
+                    stop=[
+                        '</execute_ipython>',
+                        '</execute_bash>',
+                        '</execute_browse>',
+                    ],
+                    temperature=0.0,
+                    condense=True,
+                )
+            except ContextWindowLimitExceededError:
+                response = None
+            attempt += 1
 
-        response = self.llm.completion(
-            messages=[message.model_dump() for message in messages],
-            stop=[
-                '</execute_ipython>',
-                '</execute_bash>',
-                '</execute_browse>',
-            ],
-            temperature=0.0,
-        )
         return self.action_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
         messages: list[Message] = [
-            Message(role='system', content=[TextContent(text=self.system_message)]),
-            Message(role='user', content=[TextContent(text=self.in_context_example)]),
+            Message(
+                role='system',
+                content=[TextContent(text=self.system_message)],
+                condensable=False,
+            ),
+            Message(
+                role='user',
+                content=[TextContent(text=self.in_context_example)],
+                condensable=False,
+            ),
         ]
 
+        if state.history.summary:
+            summary_message = self.get_action_message(state.history.summary)
+            if summary_message:
+                messages.append(summary_message)
         for event in state.history.get_events():
-            # create a regular message from an event
-            if isinstance(event, Action):
-                message = self.get_action_message(event)
-            elif isinstance(event, Observation):
-                message = self.get_observation_message(event)
-            else:
-                raise ValueError(f'Unknown event type: {type(event)}')
-
-            # add regular message
-            if message:
-                # handle error if the message is the SAME role as the previous message
-                # litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - Error code: 400 - {'detail': 'Only supports u/a/u/a/u...'}
-                # there should not have two consecutive messages from the same role
-                if messages and messages[-1].role == message.role:
-                    messages[-1].content.extend(message.content)
+            if event.id > state.history.last_summarized_event_id:
+                # create a regular message from an event
+                if isinstance(event, Action):
+                    message = self.get_action_message(event)
+                elif isinstance(event, Observation):
+                    message = self.get_observation_message(event)
                 else:
-                    messages.append(message)
+                    raise ValueError(f'Unknown event type: {type(event)}')
+                # add regular message
+                if message:
+                    # handle error if the message is the SAME role as the previous message
+                    # litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - Error code: 400 - {'detail': 'Only supports u/a/u/a/u...'}
+                    # there should not have two consecutive messages from the same role
+                    if messages and messages[-1].role == message.role:
+                        messages[-1].content.extend(message.content)
+                    else:
+                        messages.append(message)
 
         # the latest user message is important:
         # we want to remind the agent of the environment constraints
         latest_user_message = next(
-            (
-                m
-                for m in reversed(messages)
-                if m.role == 'user'
-                and any(isinstance(c, TextContent) for c in m.content)
-            ),
-            None,
+            (m for m in reversed(messages) if m.role == 'user'), None
         )
 
         # Get the last user text inside content
