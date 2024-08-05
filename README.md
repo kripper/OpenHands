@@ -1,9 +1,10 @@
 ### Kevin Changelogs:
 
-  1) Added [Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
+  1) [Added Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
   2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/OpenDevin/OpenDevin/pull/3178) 👍
   3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
-  4) [Show relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657)
+  4) [Shown relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
+  5) [Added Event History Condenser](https://github.com/OpenDevin/OpenDevin/pull/2937) 📜
 
 ### Separate Feature Branches:
   1) [Added Tutor Agent](https://github.com/SmartManoj/Kevin/tree/add-tutor-agent) 🧑‍🏫
