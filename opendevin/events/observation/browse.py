@@ -11,7 +11,6 @@ class BrowserOutputObservation(Observation):
 
     url: str
     screenshot: str = field(repr=False)  # don't show in repr
-    status_code: int = 200
     error: bool = False
     observation: str = ObservationType.BROWSE
     # do not include in the memory
@@ -30,7 +29,6 @@ class BrowserOutputObservation(Observation):
         return (
             '**BrowserOutputObservation**\n'
             f'URL: {self.url}\n'
-            f'Status code: {self.status_code}\n'
             f'Error: {self.error}\n'
             f'Open pages: {self.open_pages_urls}\n'
             f'Active page index: {self.active_page_index}\n'
