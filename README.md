@@ -3,8 +3,11 @@
   1) [Added Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
   2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/OpenDevin/OpenDevin/pull/3178) 👍
   3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
-  4) [Shown relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
+  4) [Showed relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
   5) [Added Event History Condenser](https://github.com/OpenDevin/OpenDevin/pull/2937) 📜
+  6) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
+
+
 
 ### Separate Feature Branches:
   1) [Added Tutor Agent](https://github.com/SmartManoj/Kevin/tree/add-tutor-agent) 🧑‍🏫
