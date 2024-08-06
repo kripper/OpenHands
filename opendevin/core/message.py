@@ -3,6 +3,10 @@ from enum import Enum
 from pydantic import BaseModel, Field, model_serializer
 from typing_extensions import Literal
 
+from opendevin.core.config import load_app_config
+
+config = load_app_config()
+
 
 class ContentType(Enum):
     TEXT = 'text'
@@ -51,6 +55,10 @@ class Message(BaseModel):
     @model_serializer
     def serialize_model(self) -> dict:
         content: list[dict[str, str | dict[str, str]]] = []
+        # check model provider is groq
+        if 'groq/' in config.get_llm_config().model:
+            if self.role in ['system', 'assistant']:
+                return {'role': self.role, 'content': self.content[0].text}
 
         for item in self.content:
             if isinstance(item, TextContent):
