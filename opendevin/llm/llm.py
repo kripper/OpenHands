@@ -167,6 +167,8 @@ class LLM(CondenserMixin):
                     print('step() failed with an unrecognized exception:')
                     raise ContextWindowLimitExceededError()
 
+            kwargs.pop('condense', None)
+
             # log the prompt
             debug_message = ''
             for message in messages:
