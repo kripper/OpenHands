@@ -5,8 +5,13 @@
   3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
   4) [Showed relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
   5) [Added Event History Condenser](https://github.com/OpenDevin/OpenDevin/pull/2937) 📜
-  6) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
-  6) [Fixed GroqException - condense' is unsupported](https://github.com/SmartManoj/Kevin/commit/1ece04784beb657dccbf615b3085e72f23a73e77) 🛠️
+
+### Bug Fixes:
+  1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
+  2) [Fixed GroqException - condense' is unsupported](https://github.com/SmartManoj/Kevin/commit/1ece04784beb657dccbf615b3085e72f23a73e77) 🛠️
+
+### Minor Changes:
+  1) [Notify after task is finished](https://github.com/SmartManoj/Kevin/commit/cec8e7d9af109efc6abb099e2f9ac5b42b6650f6) 📢
 
 
 
