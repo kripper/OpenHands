@@ -125,17 +125,15 @@ function ChatInterface() {
         <IoMdChatbubbles />
         Chat
         <div className="ml-auto">
-          <Tooltip content="⚠️ Use with caution! The agent will automatically continue task execution without requesting user inputs.">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={autoMode}
-                onChange={() => setAutoMode(!autoMode)}
-                aria-label="Auto Mode"
-              />
-              <span>Auto Mode</span>
-            </label>
-          </Tooltip>
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={autoMode}
+              onChange={() => setAutoMode(!autoMode)}
+              aria-label="Auto Mode"
+            />
+            <span>Auto Mode</span>
+          </label>
         </div>
       </div>
       <div className="flex-1 flex flex-col relative min-h-0">
