@@ -189,6 +189,10 @@ class ServerRuntime(Runtime):
         return parsed_output
 
     async def run_ipython(self, action: IPythonRunCellAction) -> Observation:
+        if 'app.run' in action.code.strip().split('\n')[-1]:
+            return ErrorObservation(
+                "Don't run Flask app in Jupyter notebook. Save the code to a file and run it in the terminal."
+            )
         action.code = action.code.replace('!pip', '%pip')
         self._run_command(
             f"cat > /tmp/opendevin_jupyter_temp.py <<'EOL'\n{action.code}\nEOL"
@@ -232,6 +236,11 @@ class ServerRuntime(Runtime):
 
     def _run_command(self, command: str) -> Observation:
         try:
+            if 'python -m venv venv' in command:
+                return ErrorObservation(
+                    'No need to create a virtual environment in the sandbox. '
+                    'The sandbox is already isolated.'
+                )
             exit_code, output = self.sandbox.execute(command)
             if command.startswith('pip install'):
                 output = self.parse_pip_output(command, output)
