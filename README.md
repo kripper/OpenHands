@@ -5,6 +5,7 @@
   3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
   4) [Showed relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
   5) [Added Event History Condenser](https://github.com/OpenDevin/OpenDevin/pull/2937) 📜
+  6) [Feat: Persist sandbox for Event Runtime](https://github.com/SmartManoj/Kevin/commit/2200b21dd01ecf3618d7e676cf16f875c5fce154) 🥳🥳
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
@@ -107,7 +108,7 @@ OpenDevin will only have access to this workspace folder. The rest of your syste
 Upon opening OpenDevin, you must select the appropriate `Model` and enter the `API Key` within the settings that should pop up automatically. These can be set at any time by selecting
 the `Settings` button (gear icon) in the UI. If the required `Model` does not exist in the list, you can manually enter it in the text box.
 
-For the development workflow, see [Development.md](https://github.com/OpenDevin/OpenDevin/blob/main/Development.md).
+For the development workflow, see [Development.md](https://github.com/SmartManoj/Kevin/blob/main/Development.md).
 
 Are you having trouble? Check out our [Troubleshooting Guide](https://docs.all-hands.dev/modules/usage/troubleshooting).
 
