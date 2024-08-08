@@ -242,6 +242,8 @@ class RuntimeClient:
                     timeout=action.timeout,
                     keep_prompt=action.keep_prompt,
                 )
+                if command.startswith('pip install'):
+                    output = await self.parse_pip_output(command, output)
                 if all_output:
                     # previous output already exists with prompt "user@hostname:working_dir #""
                     # we need to add the command to the previous output,
@@ -251,6 +253,7 @@ class RuntimeClient:
                 all_output += str(output) + '\r\n'
                 if exit_code != 0:
                     break
+
             return CmdOutputObservation(
                 command_id=-1,
                 content=all_output.rstrip('\r\n'),
@@ -259,6 +262,53 @@ class RuntimeClient:
             )
         except UnicodeDecodeError:
             raise RuntimeError('Command output could not be decoded as utf-8')
+
+    async def restart_kernel(self) -> str:
+        if 'agent_skills' in self.plugins:
+            kernel_init_code = 'from agentskills import *'
+        else:
+            return ''
+
+        jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
+        restart_kernel_code = (
+            'import IPython\nIPython.Application.instance().kernel.do_shutdown(True)'
+        )
+        act = IPythonRunCellAction(code=restart_kernel_code)
+        obs = await jupyter_plugin.run(act)
+        output = obs.content
+        if "{'status': 'ok', 'restart': True}" != output.strip():
+            print(output)
+            output = '\n[Failed to restart the kernel]'
+        else:
+            output = '\n[Kernel restarted successfully]'
+
+        # re-init the kernel after restart
+        act = IPythonRunCellAction(code=kernel_init_code)
+        await jupyter_plugin.run(act)
+        return output
+
+    async def parse_pip_output(self, code, output) -> str:
+        print(output)
+        package_names = code.split(' ', 2)[-1]
+        is_single_package = ' ' not in package_names
+        parsed_output = output
+        if 'Successfully installed' in output:
+            parsed_output = '[Package installed successfully]'
+            if (
+                'Note: you may need to restart the kernel to use updated packages.'
+                in output
+            ):
+                parsed_output += await self.restart_kernel()
+            else:
+                # restart kernel if installed via bash too
+                await self.restart_kernel()
+        elif (
+            is_single_package
+            and f'Requirement already satisfied: {package_names}' in output
+        ):
+            parsed_output = '[Package already installed]'
+
+        return parsed_output
 
     async def run_ipython(self, action: IPythonRunCellAction) -> Observation:
         if 'jupyter' in self.plugins:
@@ -277,7 +327,14 @@ class RuntimeClient:
                 )
                 self._jupyter_pwd = self.pwd
 
+            if 'app.run' in action.code.strip().split('\n')[-1]:
+                return ErrorObservation(
+                    "Don't run Flask app in Jupyter notebook. Save the code to a file and run it in the terminal."
+                )
+            action.code = action.code.replace('!pip', '%pip')
             obs: IPythonRunCellObservation = await _jupyter_plugin.run(action)
+            if 'pip install' in action.code:
+                obs.content = await self.parse_pip_output(action.code, obs.content)
             return obs
         else:
             raise RuntimeError(
