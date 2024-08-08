@@ -137,12 +137,8 @@ class CondenserMixin:
 
         response = self.completion(  # type: ignore
             messages=message_sequence,
-            stop=[
-                '</execute_ipython>',
-                '</execute_bash>',
-                '</execute_browse>',
-            ],
             temperature=0.0,
+            condense=True,
         )
 
         print(f'summarize_messages gpt reply: {response.choices[0].message.content}')
