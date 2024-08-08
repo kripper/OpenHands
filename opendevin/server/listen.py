@@ -384,9 +384,7 @@ def list_files(request: Request, path: str = '/'):
 
     try:
         # Get the full path of the requested directory
-        full_path = (
-            request.state.session.agent_session.runtime.file_store.get_full_path(path)
-        )
+        full_path = request.state.session.agent_session.file_store.get_full_path(path)
 
         # Check if the directory exists
         if not os.path.exists(full_path) or not os.path.isdir(full_path):
@@ -425,7 +423,7 @@ def list_files(request: Request, path: str = '/'):
             ]
             spec = PathSpec.from_lines(GitWildMatchPattern, default_exclude)
 
-        entries = request.state.session.agent_session.runtime.file_store.list(path)
+        entries = request.state.session.agent_session.file_store.list(path)
 
         # Filter entries using PathSpec
         filtered_entries = [
@@ -483,7 +481,7 @@ def select_file(file: str, request: Request):
         HTTPException: If there's an error opening the file.
     """
     try:
-        content = request.state.session.agent_session.runtime.file_store.read(file)
+        content = request.state.session.agent_session.file_store.read(file)
     except Exception as e:
         logger.error(f'Error opening file {file}: {e}', exc_info=False)
         error_msg = f'Error opening file: {e}'
@@ -552,7 +550,7 @@ async def upload_file(request: Request, files: list[UploadFile]):
                 )
                 continue
 
-            request.state.session.agent_session.runtime.file_store.write(
+            request.state.session.agent_session.file_store.write(
                 safe_filename, file_contents
             )
             uploaded_files.append(safe_filename)
@@ -710,7 +708,7 @@ async def save_file(request: Request):
             raise HTTPException(status_code=400, detail='Missing filePath or content')
 
         # Save the file to the agent's runtime file store
-        request.state.session.agent_session.runtime.file_store.write(file_path, content)
+        request.state.session.agent_session.file_store.write(file_path, content)
 
         # Return a success response
         return JSONResponse(
