@@ -1,3 +1,5 @@
+The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/SmartManoj/Kevin) 🔥🔥🔥
+
 ### Kevin Changelogs:
 
   1) [Added Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
@@ -72,8 +74,6 @@ OpenDevin agents collaborate with human developers to write code, fix bugs, and 
 ![App screenshot](./docs/static/img/screenshot.png)
 
 ## ⚡ Getting Started
-
-The easiest way to run OpenDevin is to [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/SmartManoj/Kevin) 🔥🔥🔥
 
 OpenDevin works best with Docker version 26.0.0+ (Docker Desktop 4.31.0+).
 You must be using Linux, Mac OS, or WSL on Windows.
