@@ -105,6 +105,12 @@ class LLM(CondenserMixin):
         if self.config.drop_params:
             litellm.drop_params = self.config.drop_params
 
+        if self.config.model.startswith('ollama'):
+            max_input_tokens = self.config.max_input_tokens
+            max_output_tokens = self.config.max_output_tokens
+            if max_input_tokens and max_output_tokens:
+                litellm.OllamaConfig.num_ctx = max_input_tokens + max_output_tokens
+
         self._completion = partial(
             litellm_completion,
             model=self.config.model,
