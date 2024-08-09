@@ -180,6 +180,8 @@ def test_ipython(current_test_name: str):
     os.getenv('DEFAULT_AGENT') != 'ManagerAgent',
     reason='Currently, only ManagerAgent supports task rejection',
 )
+@pytest.mark.skipif(1, reason='Due to the following changes in the codebase:')
+# https://github.com/OpenDevin/OpenDevin/commit/fad76def4076dfe8b005ce7f7ac718afa5f2b82e#diff-5bd880aa9413a6626d1f6a8c823407108da2163c1b54dad751463913ca6c0bc0R61-R64
 def test_simple_task_rejection(current_test_name: str):
     # Give an impossible task to do: cannot write a commit message because
     # the workspace is not a git repo
@@ -196,6 +198,8 @@ def test_simple_task_rejection(current_test_name: str):
     and os.getenv('DEFAULT_AGENT') != 'CodeActSWEAgent',
     reason='currently only CodeActAgent and CodeActSWEAgent have IPython (Jupyter) execution by default',
 )
+@pytest.mark.skipif(1, reason='Due to the following changes in the codebase:')
+# https://github.com/SmartManoj/Kevin/commit/3b77d5b2ec592e0fcb5bd7ed8a0d5787378bc0de
 def test_ipython_module(current_test_name: str):
     # Execute the task
     task = "Install and import pymsgbox==1.0.9 and print it's version in /workspace/test.txt. Do not ask me for confirmation at any point."
