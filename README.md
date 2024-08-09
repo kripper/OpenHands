@@ -13,6 +13,7 @@
   2) [Fixed GroqException - condense' is unsupported](https://github.com/SmartManoj/Kevin/commit/1ece04784beb657dccbf615b3085e72f23a73e77) 🛠️
   3) [Clear history when starting a new task](https://github.com/SmartManoj/Kevin/commit/f874e13fdd4ea50dcd0d8484639de40a1d6f66f4) 🧹
   4) [Add miniforge path to synchronize bash and notebook](https://github.com/SmartManoj/Kevin/commit/6753d8b2b2b4e5a753cc4b3e26982d36464b6002) 🛣️
+  5) [Fixed frontend terminal prompt](https://github.com/SmartManoj/Kevin/commit/77950625b51a779b99533a9af616c97e640d5cd6) 🛠️
 
 ### Minor Changes:
   1) [Notify after task is finished](https://github.com/SmartManoj/Kevin/commit/cec8e7d9af109efc6abb099e2f9ac5b42b6650f6) 📢
