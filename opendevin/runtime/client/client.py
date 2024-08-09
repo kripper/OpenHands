@@ -62,6 +62,7 @@ INIT_COMMANDS = [
     'git config --global user.name "opendevin"',
     'git config --global user.email "opendevin@all-hands.dev"',
     "alias git='git --no-pager'",
+    'export PATH=/opendevin/miniforge3/bin:$PATH',
 ]
 
 
