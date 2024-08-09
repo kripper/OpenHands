@@ -343,7 +343,8 @@ class RuntimeClient:
         ):
             parsed_output = '[Package already installed]'
 
-        return parsed_output
+        prompt_output = self._get_bash_prompt_and_update_pwd()
+        return parsed_output + '\r\n' + prompt_output
 
     async def run_ipython(self, action: IPythonRunCellAction) -> Observation:
         if 'jupyter' in self.plugins:
