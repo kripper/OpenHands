@@ -1,5 +1,7 @@
 The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/SmartManoj/Kevin) 🔥🔥🔥
 
+The vision is to leverage SLMs effectively and work towards solving most of the issues on the SWE-Bench Lite evaluation.
+
 ### Kevin Changelogs:
 
   1) [Added Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
@@ -10,6 +12,7 @@ The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.
   6) [Feat: Persist sandbox for Event Runtime](https://github.com/SmartManoj/Kevin/commit/2200b21dd01ecf3618d7e676cf16f875c5fce154) 🥳🥳
   7) [Parsed pip output and restarted kernel automatically (for bash too)](https://github.com/SmartManoj/Kevin/commit/3b77d5b2ec592e0fcb5bd7ed8a0d5787378bc0de) 📦
   8) [Added editable address bar in browser tab](https://github.com/OpenDevin/OpenDevin/pull/3078) 🌐
+  9) [Include workspace contents if any at first step only.](https://github.com/OpenDevin/OpenDevin/pull/2865#issuecomment-2257487634) 📂
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
