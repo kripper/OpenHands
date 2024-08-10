@@ -176,6 +176,7 @@ class LLM(CondenserMixin):
             kwargs.pop('condense', None)
             if isinstance(messages[0], Message):
                 messages = [message.model_dump() for message in messages]
+                kwargs['messages'] = messages
 
             # log the prompt
             debug_message = ''
