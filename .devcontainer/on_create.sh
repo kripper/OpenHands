@@ -9,6 +9,11 @@ sudo cp /opt/conda/lib/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
 cat << EOF > config.toml
 [core]
 workspace_base = "./workspace"
+debug = 1
+
+[sandbox]
+use_host_network = 1
 persist_sandbox = 1
-ssh_password = "a"
+fast_boot = 1
+user_id = 1001
 EOF
