@@ -124,6 +124,11 @@ class RuntimeClient:
         if username == 'root':
             return
 
+        try:
+            subprocess.run(['id', username], stdout=subprocess.DEVNULL, check=True)
+            return
+        except subprocess.CalledProcessError:
+            pass
         # Add sudoer
         sudoer_line = r"echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
         output = subprocess.run(sudoer_line, shell=True, capture_output=True)
