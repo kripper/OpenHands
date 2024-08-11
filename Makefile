@@ -212,6 +212,7 @@ _run_check:
 
 # Run the app in standard mode for end-users
 run:
+	@$(MAKE) -s kill
 	@echo "$(YELLOW)Running the app...$(RESET)"
 	@$(MAKE) -s _run_check
 	@poetry run uvicorn opendevin.server.listen:app --port $(BACKEND_PORT) &
@@ -286,15 +287,13 @@ clean:
 	@rm -rf opendevin/.cache
 	@echo "$(GREEN)Caches cleaned up successfully.$(RESET)"
 
+processes:=$$(lsof -t -i:$(BACKEND_PORT) -i:$(FRONTEND_PORT))
 # Kill all processes on port BACKEND_PORT and FRONTEND_PORT
 kill:
-	@echo "$(YELLOW)Killing all processes on port $(BACKEND_PORT) and $(FRONTEND_PORT)...$(RESET)"
-	ports=$$(lsof -t -i:$(BACKEND_PORT) -i:$(FRONTEND_PORT)); \
-	if [ -n "$$ports" ]; then \
-		kill -9 $$ports; \
+	@if [ -n "$(processes)" ]; then \
+		echo "$(YELLOW)Killing all processes on port $(BACKEND_PORT) and $(FRONTEND_PORT)...$(RESET)"; \
+		kill -9 $(processes); \
 		echo "$(GREEN)Processes killed successfully.$(RESET)"; \
-	else \
-		echo "$(BLUE)No processes found on port $(BACKEND_PORT) and $(FRONTEND_PORT).$(RESET)"; \
 	fi
 # Help
 help:
