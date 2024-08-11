@@ -206,26 +206,30 @@ class EventStreamRuntime(Runtime):
             self.session = aiohttp.ClientSession()
         return self.session
 
+    def log_after_second_attempt(self, retry_state):
+        if retry_state.attempt_number > 2:
+            container = self.docker_client.containers.get(self.container_name)
+            # print logs
+            _logs = container.logs(tail=10).decode('utf-8').split('\n')
+            # add indent
+            _logs = '\n'.join([f'    |{log}' for log in _logs])
+            logger.info(
+                '\n'
+                + '-' * 30
+                + 'Container logs (last 10 lines):'
+                + '-' * 30
+                + f'\n{_logs}'
+                + '\n'
+                + '-' * 90
+            )
+
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
         wait=tenacity.wait_exponential(multiplier=2, min=4, max=60),
+        after=lambda retry_state: retry_state.fn.log_after_second_attempt(retry_state),
     )
     async def _wait_until_alive(self):
         logger.info('Reconnecting session')
-        container = self.docker_client.containers.get(self.container_name)
-        # print logs
-        _logs = container.logs(tail=10).decode('utf-8').split('\n')
-        # add indent
-        _logs = '\n'.join([f'    |{log}' for log in _logs])
-        logger.info(
-            '\n'
-            + '-' * 30
-            + 'Container logs (last 10 lines):'
-            + '-' * 30
-            + f'\n{_logs}'
-            + '\n'
-            + '-' * 90
-        )
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{self.api_url}/alive') as response:
                 if response.status == 200:
