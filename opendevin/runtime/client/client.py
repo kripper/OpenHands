@@ -139,7 +139,7 @@ class RuntimeClient:
         # Add user and change ownership of the initial working directory if it doesn't exist
         command = (
             f'useradd -rm -d /home/{username} -s /bin/bash '
-            f'-g root -G sudo -u {user_id} {username}'
+            f'-g root -G sudo -o -u {user_id} {username}'
         )
 
         if not os.path.exists(self.initial_pwd):
@@ -160,6 +160,10 @@ class RuntimeClient:
         logger.debug(
             f'Added user {username} successfully. Output: [{output.stdout.decode()}]'
         )
+
+        command = 'deluser pn'
+        output = subprocess.run(command, shell=True, capture_output=True)
+        logger.debug(f'Output: {output.stdout.decode()}')
 
     def _init_bash_shell(self, work_dir: str, username: str) -> None:
         self.shell = pexpect.spawn(
