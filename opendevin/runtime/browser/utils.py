@@ -18,7 +18,7 @@ async def browse(
 
     if isinstance(action, BrowseURLAction):
         # legacy BrowseURLAction
-        asked_url = action.url
+        asked_url = action.url.strip()
         if not asked_url.startswith('http'):
             asked_url = os.path.abspath(os.curdir) + action.url
         action_str = f'goto("{asked_url}")'
@@ -31,6 +31,8 @@ async def browse(
         raise ValueError(f'Invalid action type: {action.action}')
 
     try:
+        if 'summarize' in action_str:
+            raise ValueError('Summarize is an invalid action')
         # obs provided by BrowserGym:
         # https://github.com/ServiceNow/BrowserGym/blob/main/browsergym/core/src/browsergym/core/env.py#L521
         # https://github.com/ServiceNow/BrowserGym/blob/418421abdc5da4d77dc71d3b82a9e5e931be0c4f/browsergym/core/src/browsergym/core/env.py#L521

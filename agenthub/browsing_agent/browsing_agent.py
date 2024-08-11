@@ -59,7 +59,7 @@ CONCISE_INSTRUCTION = """\
 Here is another example with chain of thought of a valid action when providing a concise answer to user:
 "
 In order to accomplish my goal I need to send the information asked back to the user. This page list the information of HP Inkjet Fax Machine, which is the product identified in the objective. Its price is $279.49. I will send a message back to user with the answer.
-```send_msg_to_user("$279.49")```
+<execute_browse>send_msg_to_user("$279.49")</execute_browse>
 "
 """
 
@@ -77,7 +77,7 @@ def get_prompt(error_prefix: str, cur_axtree_txt: str, prev_action_str: str) -> 
 Here is an example with chain of thought of a valid action when clicking on a button:
 "
 In order to accomplish my goal I need to click on the button with bid 12
-```click("12")```
+<execute_browse>click("12")</execute_browse>
 "
 """.strip()
     if USE_CONCISE_ANSWER:
@@ -115,7 +115,7 @@ class BrowsingAgent(Agent):
             strict=False,  # less strict on the parsing of the actions
             multiaction=True,  # enable to agent to take multiple actions at once
         )
-
+        self.previous_axtree_txt = ''
         self.reset()
 
     def reset(self) -> None:
@@ -179,6 +179,9 @@ class BrowsingAgent(Agent):
                 if self.error_accumulator > 5:
                     return MessageAction('Too many errors encountered. Task failed.')
             cur_axtree_txt = last_obs.axtree_txt
+            if not cur_axtree_txt:
+                cur_axtree_txt = self.previous_axtree_txt
+            self.previous_axtree_txt = cur_axtree_txt
             if cur_axtree_txt.startswith('AX Error:'):
                 return MessageAction(
                     f'Error encountered when browsing. {cur_axtree_txt}'
@@ -202,6 +205,6 @@ class BrowsingAgent(Agent):
         response = self.llm.completion(
             messages=[message.model_dump() for message in messages],
             temperature=0.0,
-            stop=[')```', ')\n```'],
+            stop=['</execute_browse>'],
         )
         return self.response_parser.parse(response)
