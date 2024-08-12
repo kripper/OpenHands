@@ -172,7 +172,7 @@ function ChatInterface() {
           )}
         </div>
 
-        {feedbackShared !== messages.length && messages.length > 3 && (
+        {feedbackShared !== messages.length && messages.length > 2 && (
           <div className="flex justify-start gap-2 p-2">
             <ScrollButton
               onClick={() => shareFeedback("positive")}
