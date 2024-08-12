@@ -226,7 +226,7 @@ class EventStreamRuntime(Runtime):
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
         wait=tenacity.wait_exponential(multiplier=2, min=4, max=60),
-        after=lambda retry_state: retry_state.fn.log_after_second_attempt(retry_state),
+        # after=lambda retry_state: retry_state.fn.log_after_second_attempt(retry_state),
     )
     async def _wait_until_alive(self):
         logger.info('Reconnecting session')
