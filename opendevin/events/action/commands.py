@@ -3,7 +3,7 @@ from typing import ClassVar
 
 from opendevin.core.schema import ActionType
 
-from .action import Action, ActionConfirmationStatus
+from .action import Action, ActionConfirmationStatus, ActionSecurityRisk
 
 
 @dataclass
@@ -21,6 +21,7 @@ class CmdRunAction(Action):
     action: str = ActionType.RUN
     runnable: ClassVar[bool] = True
     is_confirmed: ActionConfirmationStatus = ActionConfirmationStatus.CONFIRMED
+    security_risk: ActionSecurityRisk | None = None
 
     @property
     def message(self) -> str:
@@ -41,6 +42,7 @@ class IPythonRunCellAction(Action):
     action: str = ActionType.RUN_IPYTHON
     runnable: ClassVar[bool] = True
     is_confirmed: ActionConfirmationStatus = ActionConfirmationStatus.CONFIRMED
+    security_risk: ActionSecurityRisk | None = None
 
     def __str__(self) -> str:
         ret = '**IPythonRunCellAction**\n'

@@ -83,15 +83,16 @@ function AgentControlBar() {
       return;
     }
 
+
+    setDesiredState(action);
+    changeAgentState(action);
+
     if (action === AgentState.STOPPED) {
       Session._history = [];
       store.dispatch(clearMessages());
     } else {
       setIsLoading(true);
     }
-
-    setDesiredState(action);
-    changeAgentState(action);
   };
 
   useEffect(() => {
