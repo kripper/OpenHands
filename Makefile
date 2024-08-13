@@ -192,15 +192,15 @@ start-backend:
 	@echo "$(YELLOW)Starting backend...$(RESET)"
 	@poetry run uvicorn opendevin.server.listen:app --port $(BACKEND_PORT) --reload --reload-exclude "workspace/*"
 
+ifeq ($(WSL_DISTRO_NAME),"")
+mode=start
+else
+mode=dev_wsl
+endif
 # Start frontend server
 start-frontend:
 	@echo "$(YELLOW)Starting frontend...$(RESET)"
-	@if [ -n "$$WSL_DISTRO_NAME" ]; then \
-		mode=dev_wsl; \
-	else \
-		mode=start; \
-	fi; \
-	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $$mode
+	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $(mode)
 
 # check for Windows (non-callable)
 _run_check:
