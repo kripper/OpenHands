@@ -16,6 +16,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
   10) [Add start and kill modes in Makefile](https://github.com/OpenDevin/OpenDevin/pull/2850) 📳
   11) [Process interactive commands and stream output in logs](https://github.com/OpenDevin/OpenDevin/pull/3042) 📜
   12) [Use execute tags for browsing agent too](https://github.com/SmartManoj/Kevin/commit/b2a02ce39295c33d00429937804cdd3e08d70969) 🏷️
+  13) [Feat: Regenerate message](https://github.com/SmartManoj/Kevin/commit/66b3a0d0d8904c402fb952ff17520607d8636e66) 🔄
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
