@@ -487,9 +487,6 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                             agent_config = AgentConfig(**nested_value)
                             cfg.set_agent_config(agent_config, nested_key)
                 if key is not None and key.lower() == 'llm':
-                    logger.opendevin_logger.info(
-                        'Attempt to load default LLM config from config toml'
-                    )
                     non_dict_fields = {
                         k: v for k, v in value.items() if not isinstance(v, dict)
                     }
