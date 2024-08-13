@@ -170,17 +170,17 @@
     "es": "Planificador"
   },
   "WORKSPACE$JUPYTER_TAB_LABEL": {
-    "en": "Jupyter IPython",
-    "zh-CN": "Jupyter IPython",
-    "de": "Jupyter IPython",
-    "ko-KR": "Jupyter IPython",
-    "no": "Jupyter IPython",
-    "zh-TW": "Jupyter IPython",
-    "ar": "Jupyter IPython",
-    "fr": "Jupyter IPython",
-    "it": "Jupyter IPython",
-    "pt": "Jupyter IPython",
-    "es": "Jupyter IPython"
+    "en": "Jupyter Notebook",
+    "zh-CN": "Jupyter Notebook",
+    "de": "Jupyter Notebook",
+    "ko-KR": "Jupyter Notebook",
+    "no": "Jupyter Notebook",
+    "zh-TW": "Jupyter Notebook",
+    "ar": "Jupyter Notebook",
+    "fr": "Jupyter Notebook",
+    "it": "Jupyter Notebook",
+    "pt": "Jupyter Notebook",
+    "es": "Jupyter Notebook"
   },
   "WORKSPACE$CODE_EDITOR_TAB_LABEL": {
     "en": "Code Editor",

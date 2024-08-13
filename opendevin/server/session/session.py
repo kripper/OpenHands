@@ -14,10 +14,11 @@ from opendevin.events.action import ChangeAgentStateAction, MessageAction, NullA
 from opendevin.events.event import Event, EventSource
 from opendevin.events.observation import (
     AgentStateChangedObservation,
+    BrowserOutputObservation,
     CmdOutputObservation,
+    IPythonRunCellObservation,
     NullObservation,
 )
-from opendevin.events.observation.browse import BrowserOutputObservation
 from opendevin.events.serialization import event_from_dict, event_to_dict
 from opendevin.events.stream import EventStreamSubscriber
 from opendevin.llm.llm import LLM
@@ -136,7 +137,8 @@ class Session:
         if event.source == EventSource.AGENT:
             await self.send(event_to_dict(event))
         elif event.source == EventSource.USER and isinstance(
-            event, (CmdOutputObservation, BrowserOutputObservation)
+            event,
+            (CmdOutputObservation, BrowserOutputObservation, IPythonRunCellObservation),
         ):
             await self.send(event_to_dict(event))
 

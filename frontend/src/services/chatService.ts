@@ -18,3 +18,12 @@ export function regenerateLastMessage(): void {
   const eventString = JSON.stringify(event);
   Session.send(eventString);
 }
+
+export function sendJupyterCode(code: string): void {
+  const event = {
+    action: ActionType.RUN_IPYTHON,
+    args: { code},
+  };
+  const eventString = JSON.stringify(event);
+  Session.send(eventString);
+}
