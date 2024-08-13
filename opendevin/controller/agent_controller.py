@@ -28,6 +28,7 @@ from opendevin.events.action import (
     MessageAction,
     ModifyTaskAction,
     NullAction,
+    RegenerateAction,
 )
 from opendevin.events.event import Event
 from opendevin.events.observation import (
@@ -160,14 +161,17 @@ class AgentController:
     async def on_event(self, event: Event):
         if isinstance(event, ChangeAgentStateAction):
             await self.set_agent_state_to(event.agent_state)  # type: ignore
+        elif isinstance(event, RegenerateAction):
+            logger.info(event, extra={'msg_type': 'ACTION'})
+            self.event_stream.remove_latest_event()
+            await self.set_agent_state_to(AgentState.RUNNING)
         elif isinstance(event, MessageAction):
             if event.source == EventSource.USER:
                 logger.info(
                     event,
                     extra={'msg_type': 'ACTION', 'event_source': EventSource.USER},
                 )
-                if self.get_agent_state() != AgentState.RUNNING:
-                    await self.set_agent_state_to(AgentState.RUNNING)
+                await self.set_agent_state_to(AgentState.RUNNING)
             elif event.source == EventSource.AGENT and event.wait_for_response:
                 await self.set_agent_state_to(AgentState.AWAITING_USER_INPUT)
         elif isinstance(event, AgentDelegateAction):

@@ -11,12 +11,13 @@ import Chat from "./Chat";
 import TypingIndicator from "./TypingIndicator";
 import { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
-import { sendChatMessage } from "#/services/chatService";
-import { addUserMessage, addAssistantMessage } from "#/state/chatSlice";
+import { sendChatMessage, regenerateLastMessage } from "#/services/chatService";
+import { addUserMessage, addAssistantMessage, removeLastAssistantMessage } from "#/state/chatSlice";
 import { I18nKey } from "#/i18n/declaration";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import FeedbackModal from "../modals/feedback/FeedbackModal";
 import beep from "#/utils/beep";
+import { FaSyncAlt } from "react-icons/fa";
 
 interface ScrollButtonProps {
   onClick: () => void;
@@ -89,6 +90,12 @@ function ChatInterface() {
       t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE),
       t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE),
     );
+  };
+
+
+  const handleRegenerateClick = () => {
+    dispatch(removeLastAssistantMessage());
+    regenerateLastMessage();
   };
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -182,6 +189,11 @@ function ChatInterface() {
             <ScrollButton
               onClick={() => shareFeedback("negative")}
               icon={<FaRegThumbsDown className="inline mr-2 w-3 h-3" />}
+              label=""
+            />
+            <ScrollButton
+              onClick={handleRegenerateClick}
+              icon={<FaSyncAlt className="inline mr-2 w-3 h-3" />}
               label=""
             />
           </div>

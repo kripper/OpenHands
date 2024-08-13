@@ -23,3 +23,10 @@ class MessageAction(Action):
             for url in self.images_urls:
                 ret += f'\nIMAGE_URL: {url}'
         return ret
+
+
+class RegenerateAction(Action):
+    action = ActionType.REGENERATE
+
+    def __str__(self) -> str:
+        return f'**RegenerateAction** (source={self.source})\n'

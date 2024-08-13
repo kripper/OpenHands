@@ -141,6 +141,15 @@ class EventStream:
             callback = stack[-1]
             asyncio.create_task(callback(event))
 
+    def remove_latest_event(self):
+        # Remove NullObservation, RegenerateAction, AgentStateChangedObservation, NullObservation and the previous Action
+        for _ in range(5):
+            logger.debug(f'Removing latest event id={self._cur_id - 1}')
+            logger.debug(f'Removing event: {self.get_latest_event()}')
+
+            self.file_store.delete(self._get_filename_for_id(self._cur_id - 1))
+            self._cur_id -= 1
+
     def filtered_events_by_source(self, source: EventSource):
         for event in self.get_events():
             if event.source == source:
