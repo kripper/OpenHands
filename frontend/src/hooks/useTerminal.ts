@@ -93,7 +93,7 @@ export const useTerminal = (commands: Command[] = []) => {
       // Start writing commands from the last command index
       for (let i = lastCommandIndex.current; i < commands.length; i += 1) {
         const command = commands[i];
-        const lines = command.content.split("\r\n");
+        const lines = command.content.split("\n");
 
         lines.forEach((line, index) => {
           if (index < lines.length - 1 || command.type === "input") {
