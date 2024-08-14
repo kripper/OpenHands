@@ -204,7 +204,8 @@ class RuntimeClient:
 
     def _get_bash_prompt_and_update_pwd(self):
         ps1 = self.shell.after
-
+        if isinstance(ps1, (EOF, TIMEOUT)):
+            return ''
         # begin at the last occurence of '[PEXPECT_BEGIN]'.
         # In multi-line bash commands, the prompt will be repeated
         # and the matched regex captures all of them
@@ -253,35 +254,40 @@ class RuntimeClient:
         self.shell.sendline(command)
 
         prompts = [
-            r'Do you want to continue\? \[Y/n\]',
             self.__bash_expect_regex,
             EOF,
             TIMEOUT,
+            r'Do you want to continue\? \[Y/n\]',
+            r'Proceed \(Y/n\)\? ',
         ]
         output = ''
         timeout_counter = 0
-        timeout = 5
+        timeout = 10
+        last_line = ''
         while True:
             try:
                 # Wait for one of the prompts
                 index = self.shell.expect(prompts, timeout=1)
                 line = self.shell.before
-                logger.info(line)
+                if line:
+                    logger.info(line)
                 output += line
                 if index == 0:
-                    self.shell.sendline('Y')
-                elif index == 1:
+                    logger.debug('Prompt matched')
                     break
-                elif index == 2:
+                elif index == 1:
                     logger.debug('End of file')
                     break
-                elif index == 3:
+                elif index == 2 and line == last_line:
                     timeout_counter += 1
                     if timeout_counter > timeout:
                         logger.exception(
                             'Command timed out, killing process...', exc_info=False
                         )
                         return self._send_interrupt(command, timeout=timeout)
+                else:
+                    self.shell.sendline('Y')
+                last_line = line
             except ExceptionPexpect as e:
                 logger.exception(f'Unexpected exception: {e}')
                 break
