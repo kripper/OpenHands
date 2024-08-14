@@ -60,6 +60,10 @@ class Message(BaseModel):
             if self.role in ['system', 'assistant']:
                 return {'role': self.role, 'content': self.content[0].text}
 
+        # TODO: check whether the model supports vision
+        if 'ollama/' in config.get_llm_config().model:
+            return {'role': self.role, 'content': self.content[0].text}
+
         for item in self.content:
             if isinstance(item, TextContent):
                 content.append(item.model_dump())
