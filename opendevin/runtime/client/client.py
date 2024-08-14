@@ -278,13 +278,14 @@ class RuntimeClient:
                 elif index == 1:
                     logger.debug('End of file')
                     break
-                elif index == 2 and line == last_line:
-                    timeout_counter += 1
-                    if timeout_counter > timeout:
-                        logger.exception(
-                            'Command timed out, killing process...', exc_info=False
-                        )
-                        return self._send_interrupt(command, timeout=timeout)
+                elif index == 2:
+                    if line == last_line:
+                        timeout_counter += 1
+                        if timeout_counter > timeout:
+                            logger.exception(
+                                'Command timed out, killing process...', exc_info=False
+                            )
+                            return self._send_interrupt(command, timeout=timeout)
                 else:
                     self.shell.sendline('Y')
                 last_line = line
