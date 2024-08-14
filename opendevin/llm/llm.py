@@ -109,7 +109,10 @@ class LLM(CondenserMixin):
             max_input_tokens = self.config.max_input_tokens
             max_output_tokens = self.config.max_output_tokens
             if max_input_tokens and max_output_tokens:
-                litellm.OllamaConfig.num_ctx = max_input_tokens + max_output_tokens
+                logger.info(f'{max_input_tokens=}, {max_output_tokens=}')
+                total = max_input_tokens + max_output_tokens
+                litellm.OllamaConfig.num_ctx = total
+                logger.info(f'Setting OllamaConfig.num_ctx to {total}')
 
         self._completion = partial(
             litellm_completion,
