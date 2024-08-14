@@ -4,7 +4,7 @@ import { IoMdChatbubbles } from "react-icons/io";
 import { RiArrowRightDoubleLine } from "react-icons/ri";
 import { useTranslation } from "react-i18next";
 import { VscArrowDown } from "react-icons/vsc";
-import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
+import { FaRegThumbsDown, FaRegThumbsUp, FaSyncAlt } from "react-icons/fa";
 import { useDisclosure } from "@nextui-org/react";
 import ChatInput from "./ChatInput";
 import Chat from "./Chat";
@@ -12,12 +12,15 @@ import TypingIndicator from "./TypingIndicator";
 import { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
 import { sendChatMessage, regenerateLastMessage } from "#/services/chatService";
-import { addUserMessage, addAssistantMessage, removeLastAssistantMessage } from "#/state/chatSlice";
+import {
+  addUserMessage,
+  addAssistantMessage,
+  removeLastAssistantMessage,
+} from "#/state/chatSlice";
 import { I18nKey } from "#/i18n/declaration";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import FeedbackModal from "../modals/feedback/FeedbackModal";
 import beep from "#/utils/beep";
-import { FaSyncAlt } from "react-icons/fa";
 
 interface ScrollButtonProps {
   onClick: () => void;
@@ -91,7 +94,6 @@ function ChatInterface() {
       t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE),
     );
   };
-
 
   const handleRegenerateClick = () => {
     dispatch(removeLastAssistantMessage());
