@@ -19,6 +19,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
   13) [Feat: Regenerate message](https://github.com/SmartManoj/Kevin/commit/66b3a0d0d8904c402fb952ff17520607d8636e66) 🔄
   14) [Feat: Editable Notebook](https://github.com/SmartManoj/Kevin/commit/46651deeb7d4a2109f0afab0d4bbd33ba755f040) 📝
   15) [Feat: Add docker to sandbox](https://github.com/SmartManoj/Kevin/commit/c145a4d6e9b080423af995f268b09c37ebc1184a) 🐳
+  16) [UI: Enable right click to paste in terminal](https://github.com/OpenDevin/OpenDevin/pull/3162) 🖱️
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
