@@ -28,6 +28,7 @@ from opendevin.events.observation import (
     IPythonRunCellObservation,
 )
 from opendevin.events.observation.browse import BrowserOutputObservation
+from opendevin.events.observation.error import ErrorObservation
 from opendevin.events.observation.observation import Observation
 from opendevin.events.serialization.event import truncate_content
 from opendevin.llm.llm import LLM
@@ -171,11 +172,6 @@ class CodeActAgent(Agent):
             text += (
                 f'\n[Command {obs.command_id} finished with exit code {obs.exit_code}]'
             )
-            return Message(
-                role='user',
-                content=[TextContent(text=text)],
-                event_id=obs.id,
-            )
         elif isinstance(obs, IPythonRunCellObservation):
             text = 'OBSERVATION:\n' + obs.content
             # replace base64 images with a placeholder
@@ -187,28 +183,25 @@ class CodeActAgent(Agent):
                     )
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
-            return Message(
-                role='user',
-                content=[TextContent(text=text)],
-                event_id=obs.id,
-            )
         elif isinstance(obs, AgentDelegateObservation):
             text = 'OBSERVATION:\n' + truncate_content(
                 str(obs.outputs), max_message_chars
             )
-            return Message(
-                role='user',
-                content=[TextContent(text=text)],
-                event_id=obs.id,
-            )
         elif isinstance(obs, BrowserOutputObservation):
             text = 'OBSERVATION:\n' + truncate_content(obs.content, max_message_chars)
-            return Message(
-                role='user',
-                content=[TextContent(text=text)],
-                event_id=obs.id,
-            )
-        return None
+        elif isinstance(obs, ErrorObservation):
+            text = 'OBSERVATION:\n' + truncate_content(obs.content, max_message_chars)
+            text += '\n[Error occurred in processing last action]'
+
+        else:
+            # If an observation message is not returned, it will cause an error
+            # when the LLM tries to return the next message
+            raise ValueError(f'Unknown observation type: {type(obs)}')
+        return Message(
+            role='user',
+            content=[TextContent(text=text)],
+            event_id=obs.id,
+        )
 
     def reset(self) -> None:
         """Resets the CodeAct Agent."""

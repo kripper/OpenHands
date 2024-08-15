@@ -28,6 +28,7 @@ from opendevin.events.observation import (
 )
 from opendevin.events.serialization import event_to_dict, observation_from_dict
 from opendevin.events.serialization.action import ACTION_TYPE_TO_CLASS
+from opendevin.runtime.builder import DockerRuntimeBuilder
 from opendevin.runtime.plugins import PluginRequirement
 from opendevin.runtime.runtime import Runtime
 from opendevin.runtime.utils import find_available_tcp_port
@@ -78,6 +79,8 @@ class EventStreamRuntime(Runtime):
 
         self.container = None
         self.action_semaphore = asyncio.Semaphore(1)  # Ensure one action at a time
+
+        self.runtime_builder = DockerRuntimeBuilder(self.docker_client)
         logger.debug(f'EventStreamRuntime `{sid}` config:\n{self.config}')
 
     async def ainit(self, env_vars: dict[str, str] | None = None):
@@ -95,7 +98,7 @@ class EventStreamRuntime(Runtime):
             logger.info('Creating new Docker container')
             self.container_image = build_runtime_image(
                 self.container_image,
-                self.docker_client,
+                self.runtime_builder,
                 extra_deps=self.config.sandbox.od_runtime_extra_deps,
             )
             self.container = await self._init_container(
@@ -211,37 +214,34 @@ class EventStreamRuntime(Runtime):
             self.session = aiohttp.ClientSession()
         return self.session
 
-    def log_after_second_attempt(self, retry_state):
-        if retry_state.attempt_number > 2:
-            container = self.docker_client.containers.get(self.container_name)
-            # print logs
-            _logs = container.logs(tail=10).decode('utf-8').split('\n')
-            # add indent
-            _logs = '\n'.join([f'    |{log}' for log in _logs])
-            logger.info(
-                '\n'
-                + '-' * 30
-                + 'Container logs (last 10 lines):'
-                + '-' * 30
-                + f'\n{_logs}'
-                + '\n'
-                + '-' * 90
-            )
+    def log_container_logs(self):
+        container = self.docker_client.containers.get(self.container_name)
+        # get logs
+        _logs = container.logs(tail=10).decode('utf-8').split('\n')
+        # add indent
+        _logs = '\n'.join([f'    |{log}' for log in _logs])
+        logger.info(
+            '\n'
+            + '-' * 30
+            + 'Container logs (last 10 lines):'
+            + '-' * 30
+            + f'\n{_logs}'
+            + '\n'
+            + '-' * 90
+        )
 
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
-        wait=tenacity.wait_exponential(multiplier=2, min=4, max=60),
-        # after=lambda retry_state: retry_state.fn.log_after_second_attempt(retry_state),
+        wait=tenacity.wait_exponential(multiplier=2, min=10, max=60),
     )
     async def _wait_until_alive(self):
         logger.info('Reconnecting session')
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{self.api_url}/alive') as response:
-                if response.status == 200:
-                    return
-                else:
+                if response.status != 200:
                     msg = f'Action execution API is not alive. Response: {response}'
                     logger.error(msg)
+                    self.log_container_logs()
                     raise RuntimeError(msg)
 
     @property
