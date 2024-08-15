@@ -62,7 +62,8 @@ class Message(BaseModel):
 
         # TODO: check whether the model supports vision
         if 'ollama/' in config.get_llm_config().model:
-            return {'role': self.role, 'content': self.content[0].text}
+            text_contents = '\n'.join([item.text for item in self.content])
+            return {'role': self.role, 'content': text_contents}
 
         for item in self.content:
             if isinstance(item, TextContent):
