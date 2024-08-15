@@ -1,5 +1,6 @@
 from enum import Enum
 
+import litellm
 from pydantic import BaseModel, Field, model_serializer
 from typing_extensions import Literal
 
@@ -60,8 +61,9 @@ class Message(BaseModel):
             if self.role in ['system', 'assistant']:
                 return {'role': self.role, 'content': self.content[0].text}
 
-        # TODO: check whether the model supports vision
-        if 'ollama/' in config.get_llm_config().model:
+        model = config.get_llm_config().model
+        supports_vision = litellm.supports_vision(model)
+        if not supports_vision:
             text_contents = '\n'.join([item.text for item in self.content])
             return {'role': self.role, 'content': text_contents}
 
