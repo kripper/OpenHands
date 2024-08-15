@@ -159,6 +159,11 @@ class EventStreamRuntime(Runtime):
 
             if mount_dir is not None:
                 volumes = {mount_dir: {'bind': sandbox_workspace_dir, 'mode': 'rw'}}
+                # mount sock
+                volumes['/var/run/docker.sock'] = {
+                    'bind': '/var/run/docker.sock',
+                    'mode': 'rw',
+                }
                 logger.info(f'Mount dir: {sandbox_workspace_dir}')
             else:
                 logger.warn(
