@@ -436,8 +436,14 @@ class AgentController:
         logger.info(action, extra={'msg_type': 'ACTION'})
 
         if self._is_stuck():
-            await self.report_error('Agent got stuck in a loop')
-            await self.set_agent_state_to(AgentState.ERROR)
+            if not getattr(self, 'almost_stuck', False):
+                await self.report_error(
+                    'You are almost stuck in a loop. This is your last attempt. Please think carefully before responding.'
+                )
+                self.almost_stuck = True
+            else:
+                await self.report_error('Agent got stuck in a loop')
+                await self.set_agent_state_to(AgentState.ERROR)
 
     def get_state(self):
         return self.state
