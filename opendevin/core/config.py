@@ -529,9 +529,6 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                     cfg.set_llm_config(llm_config, 'llm')
                     for nested_key, nested_value in value.items():
                         if isinstance(nested_value, dict):
-                            logger.opendevin_logger.info(
-                                f'Attempt to load group {nested_key} from config toml as llm config'
-                            )
                             llm_config = LLMConfig(**nested_value)
                             cfg.set_llm_config(llm_config, nested_key)
             except (TypeError, KeyError) as e:
@@ -645,10 +642,12 @@ def get_llm_config_arg(
         )
         return None
 
+    if llm_config_arg in toml_config:
+        return LLMConfig(**toml_config[llm_config_arg])
     # update the llm config with the specified section
     if 'llm' in toml_config and llm_config_arg in toml_config['llm']:
         return LLMConfig(**toml_config['llm'][llm_config_arg])
-    logger.opendevin_logger.debug(f'Loading from toml failed for {llm_config_arg}')
+    logger.opendevin_logger.info(f'Loading from toml failed for {llm_config_arg}')
     return None
 
 
