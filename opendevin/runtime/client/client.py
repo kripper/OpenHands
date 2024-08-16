@@ -125,11 +125,18 @@ class RuntimeClient:
         if username == 'root':
             return
 
+        # Check if the username already exists
         try:
-            subprocess.run(['id', username], stdout=subprocess.DEVNULL, check=True)
+            subprocess.run(
+                f'id -u {username}',
+                shell=True,
+                check=True,
+            )
+            logger.debug(f'User {username} already exists. Skipping creation.')
             return
         except subprocess.CalledProcessError:
-            pass
+            pass  # User does not exist, continue with creation
+
         # Add sudoer
         sudoer_line = r"echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
         output = subprocess.run(sudoer_line, shell=True, capture_output=True)
@@ -157,10 +164,6 @@ class RuntimeClient:
             raise RuntimeError(
                 f'Failed to create user {username}: {output.stderr.decode()}'
             )
-
-        logger.debug(
-            f'Added user {username} successfully. Output: [{output.stdout.decode()}]'
-        )
 
         command = 'deluser pn'
         output = subprocess.run(command, shell=True, capture_output=True)
