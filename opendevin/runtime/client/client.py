@@ -260,15 +260,10 @@ class RuntimeClient:
                 path = Path.home() / '.aws'
                 if os.path.exists(path):
                     output, exit_code = '[AWS already configured]', 0
-                else:
-                    output, exit_code = (
-                        '[Interactive AWS configuration is not supported]',
-                        1,
-                    )
 
-                if keep_prompt:
-                    output += '\r\n' + self._get_bash_prompt_and_update_pwd()
-                return output, exit_code
+                    if keep_prompt:
+                        output += '\r\n' + self._get_bash_prompt_and_update_pwd()
+                    return output, exit_code
 
         self.shell.sendline(command)
 
@@ -278,11 +273,13 @@ class RuntimeClient:
             TIMEOUT,
             r'Do you want to continue\? \[Y/n\]',
             r'Proceed \(Y/n\)\? ',
+            r'Enter .*:\s*$',
         ]
         output = ''
         timeout_counter = 0
-        timeout = 10
+        timeout = 5
         last_line = ''
+        seeking_input = False
         while True:
             try:
                 # Wait for one of the prompts
@@ -290,7 +287,6 @@ class RuntimeClient:
                 line = self.shell.before
                 if line:
                     logger.info(line)
-                output += line
                 if index == 0:
                     logger.debug('Prompt matched')
                     break
@@ -301,28 +297,38 @@ class RuntimeClient:
                     if line == last_line:
                         timeout_counter += 1
                         if timeout_counter > timeout:
-                            logger.exception(
-                                'Command timed out, killing process...', exc_info=False
-                            )
-                            return self._send_interrupt(command, timeout=timeout)
-                else:
+                            logger.debug('Timeout reached.')
+                            hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
+                            return line + hint, 1
+                elif index in [3, 4]:
                     self.shell.sendline('Y')
+                    output += line + self.shell.match.group(1)
+                elif index == 5:
+                    line += self.shell.match.group(0)
+                    logger.debug('Seems like asking for input.')
+                    seeking_input = True
+                    break
+
                 last_line = line
             except ExceptionPexpect as e:
                 logger.exception(f'Unexpected exception: {e}')
                 break
+        output += line
 
-        if keep_prompt:
-            output += '\r\n' + self._get_bash_prompt_and_update_pwd()
+        if not seeking_input:
+            if keep_prompt:
+                output += '\r\n' + self._get_bash_prompt_and_update_pwd()
 
-        # Get exit code
-        self.shell.sendline('echo $?')
-        logger.debug(f'Executing command for exit code: {command}')
-        self.shell.expect(self.__bash_expect_regex, timeout=timeout)
-        _exit_code_output = self.shell.before
-        logger.debug(f'Exit code Output: {_exit_code_output}')
-        exit_code = int(_exit_code_output.strip().split()[0])
-        logger.debug(f'Command output: {output}')
+            # Get exit code
+            self.shell.sendline('echo $?')
+            logger.debug(f'Executing command for exit code: {command}')
+            self.shell.expect(self.__bash_expect_regex, timeout=timeout)
+            _exit_code_output = self.shell.before
+            logger.debug(f'Exit code Output: {_exit_code_output}')
+            exit_code = int(_exit_code_output.strip().split()[0])
+            logger.debug(f'Command output: {output}')
+        else:
+            exit_code = 1  # command is asking for input
 
         return output, exit_code
 
@@ -356,9 +362,11 @@ class RuntimeClient:
                 if exit_code != 0:
                     break
 
+            # strip last line break only
+            all_output = '\r\n'.join(all_output.split('\r\n')[:-1])
             return CmdOutputObservation(
                 command_id=-1,
-                content=all_output.rstrip('\r\n'),
+                content=all_output,
                 command=action.command,
                 exit_code=exit_code,
             )
