@@ -2,7 +2,6 @@ import asyncio
 import os
 import tempfile
 import uuid
-from typing import Optional
 from zipfile import ZipFile
 
 import aiohttp
@@ -66,7 +65,7 @@ class EventStreamRuntime(Runtime):
             self._port = find_available_tcp_port()
         self.api_url = f'http://localhost:{self._port}'
         self.api_url = f'http://{self.config.sandbox.api_hostname}:{self._port}'
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.session: aiohttp.ClientSession | None = None
 
         # TODO: We can switch to aiodocker when `get_od_sandbox_image` is updated to use aiodocker
         self.docker_client: docker.DockerClient = self._init_docker_client()
