@@ -57,7 +57,7 @@ class EventStreamRuntime(Runtime):
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
             user = 'od' if self.config.run_as_devin else 'root'
-            path = config.workspace_mount_path
+            path = config.workspace_mount_path or ''
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
             self._port = self.config.sandbox.port
