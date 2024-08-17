@@ -91,7 +91,7 @@ class Session:
         max_iterations = args.get(ConfigType.MAX_ITERATIONS, self.config.max_iterations)
         # override default LLM config
         default_llm_config = self.config.get_llm_config()
-        if not self.config.override_UI_setttings:
+        if not self.config.override_UI_settings:
             default_llm_config.model = args.get(
                 ConfigType.LLM_MODEL, default_llm_config.model
             )
