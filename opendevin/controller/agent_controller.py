@@ -36,6 +36,7 @@ from opendevin.events.observation import (
     AgentStateChangedObservation,
     CmdOutputObservation,
     ErrorObservation,
+    IPythonRunCellObservation,
     Observation,
 )
 from opendevin.events.observation.browse import BrowserOutputObservation
@@ -203,7 +204,7 @@ class AgentController:
                 if self.state.agent_state == AgentState.USER_REJECTED:
                     await self.set_agent_state_to(AgentState.AWAITING_USER_INPUT)
                 logger.info(event, extra={'msg_type': 'OBSERVATION'})
-            elif isinstance(event, CmdOutputObservation):
+            elif isinstance(event, (CmdOutputObservation, IPythonRunCellObservation)):
                 logger.info(event, extra={'msg_type': 'OBSERVATION'})
             elif isinstance(event, BrowserOutputObservation):
                 logger.info(event, extra={'msg_type': 'OBSERVATION'})
