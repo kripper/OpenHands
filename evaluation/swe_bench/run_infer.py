@@ -378,7 +378,8 @@ if __name__ == '__main__':
 
     # NOTE: It is preferable to load datasets from huggingface datasets and perform post-processing
     # so we don't need to manage file uploading to OpenDevin's repo
-    dataset = load_dataset('princeton-nlp/SWE-bench_Lite')
+    # dataset = load_dataset('princeton-nlp/SWE-bench_Lite')
+    dataset = load_dataset('princeton-nlp/SWE-bench_Verified')
     swe_bench_tests = filter_dataset(dataset['test'].to_pandas(), 'instance_id')
 
     llm_config = None
