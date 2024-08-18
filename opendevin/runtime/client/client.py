@@ -294,7 +294,10 @@ class RuntimeClient:
                     logger.debug('End of file')
                     break
                 elif index == 2:
-                    if output == last_output:
+                    last_line = output.splitlines()[-1]
+                    if output == last_output and not re.search(
+                        r'Installing|Building|Downloading', last_line
+                    ):
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
