@@ -14,6 +14,7 @@ export const useTerminal = (commands: Command[] = []) => {
   const fitAddon = React.useRef<FitAddon | null>(null);
   const ref = React.useRef<HTMLDivElement>(null);
   const lastCommandIndex = React.useRef(0);
+  let lastCommand = React.useRef("");
 
   React.useEffect(() => {
     /* Create a new terminal instance */
@@ -47,6 +48,7 @@ export const useTerminal = (commands: Command[] = []) => {
         if (domEvent.key === "Enter") {
           terminal.current?.write("\r\n");
           sendTerminalCommand(commandBuffer);
+          lastCommand.current = commandBuffer;
           commandBuffer = "";
         } else if (domEvent.key === "Backspace") {
           if (commandBuffer.length > 0) {
@@ -106,6 +108,11 @@ export const useTerminal = (commands: Command[] = []) => {
   React.useEffect(() => {
     /* Write commands to the terminal */
     if (terminal.current && commands.length > 0) {
+      // commands would be cleared. Reset the last command index
+      if (lastCommandIndex.current >= commands.length) {
+        lastCommandIndex.current = 0;
+        terminal.current?.clear();
+      }
       // Start writing commands from the last command index
       for (let i = lastCommandIndex.current; i < commands.length; i += 1) {
         const command = commands[i];

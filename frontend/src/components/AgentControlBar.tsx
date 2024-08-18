@@ -8,7 +8,9 @@ import { changeAgentState } from "#/services/agentStateService";
 import store, { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
 import { clearMessages } from "#/state/chatSlice";
+import { clearCells } from "#/state/jupyterSlice";
 import Session from "#/services/session";
+import { clearCommands } from "#/state/commandSlice";
 
 const IgnoreTaskStateMap: { [k: string]: AgentState[] } = {
   [AgentState.PAUSED]: [
@@ -29,7 +31,7 @@ const IgnoreTaskStateMap: { [k: string]: AgentState[] } = {
     AgentState.AWAITING_USER_INPUT,
     AgentState.AWAITING_USER_CONFIRMATION,
   ],
-  [AgentState.STOPPED]: [AgentState.INIT, AgentState.STOPPED],
+  [AgentState.STOPPED]: [AgentState.STOPPED],
   [AgentState.USER_CONFIRMED]: [AgentState.RUNNING],
   [AgentState.USER_REJECTED]: [AgentState.RUNNING],
   [AgentState.AWAITING_USER_CONFIRMATION]: [],
@@ -89,6 +91,8 @@ function AgentControlBar() {
     if (action === AgentState.STOPPED) {
       Session._history = [];
       store.dispatch(clearMessages());
+      store.dispatch(clearCells());
+      store.dispatch(clearCommands());
     } else {
       setIsLoading(true);
     }
