@@ -275,18 +275,18 @@ class RuntimeClient:
             r'Proceed \(Y/n\)\? ',
             r'Enter .*:\s*$',
         ]
-        output = ''
+        full_output = ''
         timeout_counter = 0
         timeout = 5
-        last_line = ''
+        last_output = ''
         seeking_input = False
         while True:
             try:
                 # Wait for one of the prompts
                 index = self.shell.expect(prompts, timeout=1)
-                line = self.shell.before
-                if line:
-                    logger.info(line)
+                output = self.shell.before
+                if output:
+                    logger.info(output)
                 if index == 0:
                     logger.debug('Prompt matched')
                     break
@@ -294,30 +294,30 @@ class RuntimeClient:
                     logger.debug('End of file')
                     break
                 elif index == 2:
-                    if line == last_line:
+                    if output == last_output:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
                             hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
-                            return line + hint, 1
+                            return output + hint, 1
                 elif index in [3, 4]:
                     self.shell.sendline('Y')
-                    output += line + self.shell.match.group(1)
+                    full_output += output + self.shell.match.group(1)
                 elif index == 5:
-                    line += self.shell.match.group(0)
+                    full_output += self.shell.match.group(0)
                     logger.debug('Seems like asking for input.')
                     seeking_input = True
                     break
 
-                last_line = line
+                last_output = output
             except ExceptionPexpect as e:
                 logger.exception(f'Unexpected exception: {e}')
                 break
-        output += line
+        full_output += output
 
         if not seeking_input:
             if keep_prompt:
-                output += '\r\n' + self._get_bash_prompt_and_update_pwd()
+                full_output += '\r\n' + self._get_bash_prompt_and_update_pwd()
 
             # Get exit code
             self.shell.sendline('echo $?')
@@ -330,7 +330,7 @@ class RuntimeClient:
         else:
             exit_code = 1  # command is asking for input
 
-        return output, exit_code
+        return full_output, exit_code
 
     async def run_action(self, action) -> Observation:
         action_type = action.action
