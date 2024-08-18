@@ -392,6 +392,7 @@ class RuntimeClient:
         else:
             output = '\n[Kernel restarted successfully]'
 
+        self._jupyter_pwd = '/opendevin/code'
         # re-init the kernel after restart
         act = IPythonRunCellAction(code=kernel_init_code)
         await jupyter_plugin.run(act)
