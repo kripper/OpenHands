@@ -87,6 +87,10 @@ class Session {
       let data = null;
       try {
         data = JSON.parse(e.data);
+        // if first message is agent_state_changed, then we need to ignore it; happens when starting a new task
+        if (Session._history.length === 0 && data.observation === "agent_state_changed") {
+          return;
+        }
         Session._history.push(data);
       } catch (err) {
         // TODO: report the error
