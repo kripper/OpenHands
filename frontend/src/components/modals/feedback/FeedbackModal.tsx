@@ -36,7 +36,7 @@ function FeedbackModal({
 
   const [email, setEmail] = React.useState("");
   const [permissions, setPermissions] = React.useState<"public" | "private">(
-    "private",
+    "public",
   );
 
   React.useEffect(() => {
