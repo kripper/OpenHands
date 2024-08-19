@@ -141,7 +141,6 @@ class CondenserMixin:
             condense=True,
         )
 
-        print(f'summarize_messages gpt reply: {response.choices[0].message.content}')
-
-        action_response = response['choices'][0]['message']['content']
+        action_response = response.choices[0].message.content
+        print(f'summarize_messages gpt reply: {action_response}')
         return action_response
