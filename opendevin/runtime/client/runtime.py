@@ -208,7 +208,6 @@ class EventStreamRuntime(Runtime):
             raise e
 
     async def _ensure_session(self):
-        await asyncio.sleep(1)
         if self.session is None or self.session.closed:
             self.session = aiohttp.ClientSession()
         return self.session
@@ -234,7 +233,6 @@ class EventStreamRuntime(Runtime):
         wait=tenacity.wait_exponential(multiplier=2, min=10, max=60),
     )
     async def _wait_until_alive(self):
-        logger.info('Reconnecting session')
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{self.api_url}/alive') as response:
                 if response.status != 200:

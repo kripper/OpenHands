@@ -1,16 +1,9 @@
 import os
 
 from agenthub.codeact_agent.action_parser import CodeActResponseParser
-from agenthub.codeact_agent.prompt import (
-    COMMAND_DOCS,
-    EXAMPLES,
-    GITHUB_MESSAGE,
-    SYSTEM_PREFIX,
-    SYSTEM_SUFFIX,
-)
 from opendevin.controller.agent import Agent
 from opendevin.controller.state.state import State
-from opendevin.core.config import load_app_config
+from opendevin.core.config import AgentConfig, load_app_config
 from opendevin.core.message import ImageContent, Message, TextContent
 from opendevin.events.action import (
     Action,
@@ -37,27 +30,13 @@ from opendevin.runtime.plugins import (
     JupyterRequirement,
     PluginRequirement,
 )
-from opendevin.runtime.tools import RuntimeTool
-
-ENABLE_GITHUB = True
+from opendevin.utils.prompt import PromptManager
 
 config = load_app_config()
 
 
-# FIXME: We can tweak these two settings to create MicroAgents specialized toward different area
-def get_system_message() -> str:
-    if ENABLE_GITHUB:
-        return f'{SYSTEM_PREFIX}\n{GITHUB_MESSAGE}\n\n{COMMAND_DOCS}\n\n{SYSTEM_SUFFIX}'
-    else:
-        return f'{SYSTEM_PREFIX}\n\n{COMMAND_DOCS}\n\n{SYSTEM_SUFFIX}'
-
-
-def get_in_context_example() -> str:
-    return EXAMPLES
-
-
 class CodeActAgent(Agent):
-    VERSION = '1.8'
+    VERSION = '1.9'
     """
     The Code Act Agent is a minimalist agent.
     The agent works by passing the model a list of action-observation pairs and prompting the model to take the next step.
@@ -75,23 +54,6 @@ class CodeActAgent(Agent):
 
     ![image](https://github.com/OpenDevin/OpenDevin/assets/38853559/92b622e3-72ad-4a61-8f41-8c040b6d5fb3)
 
-    ### Plugin System
-
-    To make the CodeAct agent more powerful with only access to `bash` action space, CodeAct agent leverages OpenDevin's plugin system:
-    - [Jupyter plugin](https://github.com/OpenDevin/OpenDevin/tree/main/opendevin/runtime/plugins/jupyter): for IPython execution via bash command
-    - [SWE-agent tool plugin](https://github.com/OpenDevin/OpenDevin/tree/main/opendevin/runtime/plugins/swe_agent_commands): Powerful bash command line tools for software development tasks introduced by [swe-agent](https://github.com/princeton-nlp/swe-agent).
-
-    ### Demo
-
-    https://github.com/OpenDevin/OpenDevin/assets/38853559/f592a192-e86c-4f48-ad31-d69282d5f6ac
-
-    *Example of CodeActAgent with `gpt-4-turbo-2024-04-09` performing a data science task (linear regression)*
-
-    ### Work-in-progress & Next step
-
-    [] Support web-browsing
-    [] Complete the workflow for CodeAct agent to submit Github PRs
-
     """
 
     sandbox_plugins: list[PluginRequirement] = [
@@ -101,24 +63,26 @@ class CodeActAgent(Agent):
         AgentSkillsRequirement(),
         JupyterRequirement(),
     ]
-    runtime_tools: list[RuntimeTool] = [RuntimeTool.BROWSER]
-
-    system_message: str = get_system_message()
-    in_context_example: str = f"Here is an example of how you can interact with the environment for task solving:\n{get_in_context_example()}\n\nNOW, LET'S START!"
 
     action_parser = CodeActResponseParser()
 
     def __init__(
         self,
         llm: LLM,
+        config: AgentConfig,
     ) -> None:
         """Initializes a new instance of the CodeActAgent class.
 
         Parameters:
         - llm (LLM): The llm to be used by this agent
         """
-        super().__init__(llm)
+        super().__init__(llm, config)
         self.reset()
+        self.prompt_manager = PromptManager(
+            prompt_dir=os.path.join(os.path.dirname(__file__)),
+            agent_skills_docs=AgentSkillsRequirement.documentation,
+            micro_agent_name=None,  # TODO: implement micro-agent
+        )
 
     def action_to_str(self, action: Action) -> str:
         if isinstance(action, CmdRunAction):
@@ -252,12 +216,12 @@ class CodeActAgent(Agent):
         messages: list[Message] = [
             Message(
                 role='system',
-                content=[TextContent(text=self.system_message)],
+                content=[TextContent(text=self.prompt_manager.system_message)],
                 condensable=False,
             ),
             Message(
                 role='user',
-                content=[TextContent(text=self.in_context_example)],
+                content=[TextContent(text=self.prompt_manager.initial_user_message)],
                 condensable=False,
             ),
         ]
