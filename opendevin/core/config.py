@@ -215,7 +215,7 @@ class SandboxConfig(metaclass=Singleton):
     od_runtime_extra_deps: str | None = None
     od_runtime_startup_env_vars: dict[str, str] = field(default_factory=dict)
     browsergym_eval_env: str | None = None
-    persist_sandbox: bool = False
+    persist_sandbox: bool = True
     fast_boot: bool = False
     port: int = 63710
 
