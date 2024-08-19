@@ -12,6 +12,7 @@ import { clearCells } from "#/state/jupyterSlice";
 import Session from "#/services/session";
 import { clearCommands } from "#/state/commandSlice";
 import { useTerminal } from "#/hooks/useTerminal";
+import { clearCurentStep } from "#/state/agentSlice";
 
 const IgnoreTaskStateMap: { [k: string]: AgentState[] } = {
   [AgentState.PAUSED]: [
@@ -96,6 +97,7 @@ function AgentControlBar() {
       store.dispatch(clearMessages());
       store.dispatch(clearCells());
       store.dispatch(clearCommands());
+      store.dispatch(clearCurentStep());
       clearTerminal();
     } else {
       setIsLoading(true);
