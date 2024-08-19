@@ -21,6 +21,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
   15) [Feat: Add docker to sandbox](https://github.com/SmartManoj/Kevin/commit/c145a4d6e9b080423af995f268b09c37ebc1184a) 🐳
   16) [UI: Enable right click to paste in terminal](https://github.com/OpenDevin/OpenDevin/pull/3162) 🖱️
   17) [Added override UI settings configuration](https://github.com/SmartManoj/Kevin/pull/36) 🛠️
+  18) [UI: Show Step Count](https://github.com/SmartManoj/Kevin/commit/78b89b510a7d40fe16022f407974cf765487881a) 📊
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
