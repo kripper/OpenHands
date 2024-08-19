@@ -58,6 +58,7 @@ describe("ChatInterface", () => {
       preloadedState: {
         agent: {
           curAgentState: AgentState.INIT,
+          currentStep: "",
         },
       },
     });
@@ -77,6 +78,7 @@ describe("ChatInterface", () => {
       preloadedState: {
         agent: {
           curAgentState: AgentState.AWAITING_USER_INPUT,
+          currentStep: "",
         },
       },
     });
@@ -96,6 +98,7 @@ describe("ChatInterface", () => {
       preloadedState: {
         agent: {
           curAgentState: AgentState.LOADING,
+          currentStep: "",
         },
       },
     });

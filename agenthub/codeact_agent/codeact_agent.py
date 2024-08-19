@@ -15,6 +15,7 @@ from opendevin.events.action import (
     MessageAction,
 )
 from opendevin.events.action.browse import BrowseURLAction
+from opendevin.events.event import LogEvent
 from opendevin.events.observation import (
     AgentDelegateObservation,
     CmdOutputObservation,
@@ -251,6 +252,8 @@ class CodeActAgent(Agent):
                     message = self.get_action_message(event)
                 elif isinstance(event, Observation):
                     message = self.get_observation_message(event)
+                elif isinstance(event, LogEvent):
+                    message = None
                 else:
                     raise ValueError(f'Unknown event type: {type(event)}')
                 # add regular message

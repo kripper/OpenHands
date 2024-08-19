@@ -1,3 +1,4 @@
+import { setCurrentStep } from "#/state/agentSlice";
 import { addAssistantMessage, addUserMessage } from "#/state/chatSlice";
 import { setCode, setActiveFilepath } from "#/state/codeSlice";
 import { appendInput } from "#/state/commandSlice";
@@ -145,7 +146,9 @@ export function handleAssistantMessage(data: string | SocketMessage) {
 
   if ("action" in socketMessage) {
     handleActionMessage(socketMessage);
-  } else {
+  } else if ("observation" in socketMessage) {
     handleObservationMessage(socketMessage);
+  } else {
+    store.dispatch(setCurrentStep(socketMessage.log));
   }
 }

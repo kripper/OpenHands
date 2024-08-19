@@ -49,3 +49,8 @@ class Event:
     @timeout.setter
     def timeout(self, value: int | None) -> None:
         self._timeout = value
+
+
+@dataclass
+class LogEvent(Event):
+    log: str

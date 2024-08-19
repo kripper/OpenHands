@@ -30,7 +30,7 @@ from opendevin.events.action import (
     NullAction,
     RegenerateAction,
 )
-from opendevin.events.event import Event
+from opendevin.events.event import Event, LogEvent
 from opendevin.events.observation import (
     AgentDelegateObservation,
     AgentStateChangedObservation,
@@ -395,10 +395,10 @@ class AgentController:
                 self.event_stream.add_event(obs, EventSource.AGENT)
             return
 
-        logger.info(
-            f'{self.agent.name} LEVEL {self.state.delegate_level} LOCAL STEP {self.state.local_iteration} GLOBAL STEP {self.state.iteration}',
-            extra={'msg_type': 'STEP'},
-        )
+        step_log = f'{self.agent.name} LEVEL {self.state.delegate_level} LOCAL STEP {self.state.local_iteration} GLOBAL STEP {self.state.iteration}'
+        logger.info(step_log, extra={'msg_type': 'STEP'})
+        # send to frontend
+        self.event_stream.add_event(LogEvent(step_log), EventSource.AGENT)
 
         if self.state.iteration >= self.state.max_iterations:
             if self.state.traffic_control_state == TrafficControlState.PAUSED:

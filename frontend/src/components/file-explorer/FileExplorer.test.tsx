@@ -29,6 +29,7 @@ const renderFileExplorerWithRunningAgentState = () =>
     preloadedState: {
       agent: {
         curAgentState: AgentState.RUNNING,
+        currentStep: "",
       },
     },
   });

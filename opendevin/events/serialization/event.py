@@ -2,6 +2,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 from opendevin.events import Event, EventSource
+from opendevin.events.event import LogEvent
 from opendevin.events.observation.observation import Observation
 
 from .action import action_from_dict
@@ -9,7 +10,16 @@ from .observation import observation_from_dict
 from .utils import remove_fields
 
 # TODO: move `content` into `extras`
-TOP_KEYS = ['id', 'timestamp', 'source', 'message', 'cause', 'action', 'observation']
+TOP_KEYS = [
+    'id',
+    'timestamp',
+    'source',
+    'message',
+    'cause',
+    'action',
+    'observation',
+    'log',
+]
 UNDERSCORE_KEYS = ['id', 'timestamp', 'source', 'cause']
 
 DELETE_FROM_MEMORY_EXTRAS = {
@@ -29,6 +39,8 @@ def event_from_dict(data) -> 'Event':
         evt = action_from_dict(data)
     elif 'observation' in data:
         evt = observation_from_dict(data)
+    elif 'log' in data:
+        evt = LogEvent(log=data['log'])
     else:
         raise ValueError('Unknown event type: ' + data)
     for key in UNDERSCORE_KEYS:
@@ -66,8 +78,10 @@ def event_to_dict(event: 'Event') -> dict:
     elif 'observation' in d:
         d['content'] = props.pop('content', '')
         d['extras'] = props
+    elif 'log' in d:
+        pass
     else:
-        raise ValueError('Event must be either action or observation')
+        raise ValueError(f'Event must be either action or observation. Got {event}')
     return d
 
 
