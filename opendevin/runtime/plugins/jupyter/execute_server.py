@@ -220,10 +220,10 @@ class JupyterKernel:
             execution_done = await asyncio.wait_for(wait_for_messages(), timeout)
         except asyncio.TimeoutError:
             await interrupt_kernel()
-            return f'[Execution timed out ({timeout} seconds).]'
+            return f'[Execution timed out ({timeout} seconds)]'
 
         if not outputs and execution_done:
-            ret = '[Code executed successfully with no output]'
+            ret = '[Code executed successfully]'
         else:
             ret = ''.join(outputs)
 
