@@ -11,6 +11,7 @@ import { clearMessages } from "#/state/chatSlice";
 import { clearCells } from "#/state/jupyterSlice";
 import Session from "#/services/session";
 import { clearCommands } from "#/state/commandSlice";
+import { useTerminal } from "#/hooks/useTerminal";
 
 const IgnoreTaskStateMap: { [k: string]: AgentState[] } = {
   [AgentState.PAUSED]: [
@@ -79,6 +80,8 @@ function AgentControlBar() {
   const { curAgentState } = useSelector((state: RootState) => state.agent);
   const [desiredState, setDesiredState] = React.useState(AgentState.INIT);
   const [isLoading, setIsLoading] = React.useState(false);
+  const { clearTerminal } = useTerminal([]);
+
 
   const handleAction = (action: AgentState) => {
     if (IgnoreTaskStateMap[action].includes(curAgentState)) {
@@ -93,6 +96,7 @@ function AgentControlBar() {
       store.dispatch(clearMessages());
       store.dispatch(clearCells());
       store.dispatch(clearCommands());
+      clearTerminal();
     } else {
       setIsLoading(true);
     }

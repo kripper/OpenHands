@@ -8,7 +8,7 @@ import "@xterm/xterm/css/xterm.css";
 
 function Terminal() {
   const { commands } = useSelector((state: RootState) => state.cmd);
-  const ref = useTerminal(commands);
+  const { ref } = useTerminal(commands);
 
   return (
     <div className="flex flex-col h-full">

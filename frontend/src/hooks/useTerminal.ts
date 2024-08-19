@@ -131,5 +131,9 @@ export const useTerminal = (commands: Command[] = []) => {
     }
   }, [commands]);
 
-  return ref;
+  const clearTerminal = () => {
+    terminal.current?.clear();
+  };
+
+  return { ref, clearTerminal };
 };
