@@ -478,11 +478,11 @@ class AgentController:
 
         await self.update_state_after_step()
         logger.info(action, extra={'msg_type': 'ACTION'})
-
-        if self._is_stuck():
+        is_stuck, resolution = self._is_stuck()
+        if is_stuck:
             if not getattr(self, 'almost_stuck', False):
                 await self.report_error(
-                    'You are almost stuck in a loop. This is your last attempt. Please think carefully before responding.'
+                    f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
                 )
                 self.almost_stuck = True
             else:

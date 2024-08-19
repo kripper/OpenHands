@@ -1,7 +1,9 @@
 from typing import cast
 
 from opendevin.controller.state.state import State
+from opendevin.core.config import load_app_config
 from opendevin.core.logger import opendevin_logger as logger
+from opendevin.core.message import Message, TextContent
 from opendevin.events.action.action import Action
 from opendevin.events.action.empty import NullAction
 from opendevin.events.action.message import MessageAction
@@ -13,13 +15,40 @@ from opendevin.events.observation.commands import (
 from opendevin.events.observation.empty import NullObservation
 from opendevin.events.observation.error import ErrorObservation
 from opendevin.events.observation.observation import Observation
+from opendevin.llm.llm import LLM
+
+config = load_app_config()
+llm = LLM(config.get_llm_config())
 
 
 class StuckDetector:
     def __init__(self, state: State):
         self.state = state
 
-    def is_stuck(self):
+    def generate_resolution(self, actions, observations):
+        #
+        struck_prompt = 'You analyze the history to find out why the agent is stuck and generate a resolution'
+        # stuck input
+        stuck_input = 'Aanalyze the history'
+        for index, (action, observation) in enumerate(zip(actions, observations), 1):
+            stuck_input += f'\n{index = }. {action = }\n{observation = }'
+
+        message_sequence = []
+        message_sequence.append(
+            Message(role='system', content=[TextContent(text=struck_prompt)])
+        )
+        message_sequence.append(
+            Message(role='user', content=[TextContent(text=stuck_input)])
+        )
+
+        response = llm.completion(
+            messages=message_sequence,
+            temperature=0.0,
+            condense=True,
+        )
+        return response.choices[0].message.content
+
+    def is_stuck(self) -> tuple[bool, str | None]:
         # filter out MessageAction with source='user' from history
         filtered_history = [
             event
@@ -35,7 +64,7 @@ class StuckDetector:
 
         # it takes 3 actions minimum to detect a loop, otherwise nothing to do here
         if len(filtered_history) < 3:
-            return False
+            return False, None
 
         # the first few scenarios detect 3 or 4 repeated steps
         # prepare the last 4 actions and observations, to check them out
@@ -54,23 +83,24 @@ class StuckDetector:
 
         # scenario 1: same action, same observation
         if self._is_stuck_repeating_action_observation(last_actions, last_observations):
-            return True
+            return True, self.generate_resolution(last_actions, last_observations)
 
         # scenario 2: same action, errors
         if self._is_stuck_repeating_action_error(last_actions, last_observations):
-            return True
+            return True, self.generate_resolution(last_actions, last_observations)
 
         # scenario 3: monologue
         if self._is_stuck_monologue(filtered_history):
-            return True
+            return True, 'You repeated the same message three times'
 
         # scenario 4: action, observation pattern on the last six steps
         if len(filtered_history) < 6:
-            return False
+            return False, None
         if self._is_stuck_action_observation_pattern(filtered_history):
-            return True
+            # (action_1, obs_1), (action_2, obs_2), (action_1, obs_1), (action_2, obs_2)
+            return True, 'You repeated the same action and observation every other step'
 
-        return False
+        return False, None
 
     def _is_stuck_repeating_action_observation(self, last_actions, last_observations):
         # scenario 1: same action, same observation
