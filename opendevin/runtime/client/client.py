@@ -406,7 +406,6 @@ class RuntimeClient:
     async def parse_pip_output(self, code, output) -> str:
         print(output)
         package_names = code.split(' ', 2)[-1]
-        is_single_package = ' ' not in package_names
         parsed_output = output
         if 'Successfully installed' in output:
             parsed_output = '[Package installed successfully]'
@@ -418,11 +417,14 @@ class RuntimeClient:
             else:
                 # restart kernel if installed via bash too
                 await self.restart_kernel()
-        elif (
-            is_single_package
-            and f'Requirement already satisfied: {package_names}' in output
-        ):
-            parsed_output = '[Package already installed]'
+        else:
+            package_names = package_names.split()
+            if all(
+                f'Requirement already satisfied: {package_name}' in output
+                for package_name in package_names
+            ):
+                plural = 's' if len(package_names) > 1 else ''
+                parsed_output = f'[Package{plural} already installed]'
 
         prompt_output = self._get_bash_prompt_and_update_pwd()
         return parsed_output + '\r\n' + prompt_output
