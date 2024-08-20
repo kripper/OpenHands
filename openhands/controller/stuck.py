@@ -1,5 +1,6 @@
 from typing import cast
 
+from agenthub.codeact_agent.codeact_agent import CodeActAgent
 from openhands.controller.state.state import State
 from openhands.core.config import load_app_config
 from openhands.core.logger import openhands_logger as logger
@@ -31,6 +32,8 @@ class StuckDetector:
         # stuck input
         stuck_input = 'Aanalyze the history'
         for index, (action, observation) in enumerate(zip(actions, observations), 1):
+            action = CodeActAgent.get_action_message(action)
+            observation = CodeActAgent.get_observation_message(observation)
             stuck_input += f'\n{index = }. {action = }\n{observation = }'
 
         message_sequence = []
@@ -72,13 +75,19 @@ class StuckDetector:
         last_observations: list[Event] = []
 
         # retrieve the last four actions and observations starting from the end of history, wherever they are
+        check_length = 3
         for event in reversed(filtered_history):
-            if isinstance(event, Action) and len(last_actions) < 4:
+            if isinstance(event, Action) and len(last_actions) < check_length:
                 last_actions.append(event)
-            elif isinstance(event, Observation) and len(last_observations) < 4:
+            elif (
+                isinstance(event, Observation) and len(last_observations) < check_length
+            ):
                 last_observations.append(event)
 
-            if len(last_actions) == 4 and len(last_observations) == 4:
+            if (
+                len(last_actions) == check_length
+                and len(last_observations) == check_length
+            ):
                 break
 
         # scenario 1: same action, same observation

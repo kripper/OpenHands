@@ -85,6 +85,7 @@ class CodeActAgent(Agent):
             micro_agent_name=None,  # TODO: implement micro-agent
         )
 
+    @classmethod
     def action_to_str(self, action: Action) -> str:
         if isinstance(action, CmdRunAction):
             return (
@@ -108,6 +109,7 @@ class CodeActAgent(Agent):
             return action.thought
         return ''
 
+    @classmethod
     def get_action_message(self, action: Action) -> Message | None:
         if (
             isinstance(action, AgentDelegateAction)
@@ -130,8 +132,10 @@ class CodeActAgent(Agent):
             )
         return None
 
+    @classmethod
     def get_observation_message(self, obs: Observation) -> Message | None:
-        max_message_chars = self.llm.config.max_message_chars
+        # max_message_chars = self.llm.config.max_message_chars
+        max_message_chars = 10_000
         if isinstance(obs, CmdOutputObservation):
             text = 'OBSERVATION:\n' + truncate_content(obs.content, max_message_chars)
             text += (
