@@ -10,6 +10,7 @@ import { Cell, appendJupyterInput } from "#/state/jupyterSlice";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import { I18nKey } from "#/i18n/declaration";
 import { sendJupyterCode } from "#/services/chatService";
+import { Textarea } from "@nextui-org/react";
 
 interface IJupyterCell {
   cell: Cell;
@@ -91,10 +92,6 @@ function Jupyter(): JSX.Element {
 
   const [inputValue, setInputValue] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleInputSubmit = () => {
     if (inputValue.trim()) {
       dispatch(appendJupyterInput(inputValue));
@@ -139,13 +136,19 @@ function Jupyter(): JSX.Element {
         className="sticky bottom-2 flex items-center p-2 border-t border-neutral-600 bg-neutral-800"
         onKeyDown={onKeyPress}
       >
-        <input
-          type="text"
+        <Textarea
           value={inputValue}
-          size={1}
-          onChange={handleInputChange}
-          className="flex-1 p-2 bg-neutral-700 text-white rounded-l"
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={onKeyPress}
           placeholder="Enter Python code here..."
+          className="pb-3 px-3"
+          classNames={{
+            inputWrapper: "bg-neutral-700 border border-neutral-600 rounded-lg",
+            input: "pr-16 text-neutral-400",
+          }}
+          maxRows={10}
+          minRows={1}
+          variant="bordered"
         />
         <button
           type="button"

@@ -1,8 +1,8 @@
 SHELL=/bin/bash
-# Makefile for OpenDevin project
+# Makefile for OpenHands project
 
 # Variables
-DOCKER_IMAGE = ghcr.io/opendevin/sandbox:main
+DOCKER_IMAGE = ghcr.io/openhands/sandbox:main
 BACKEND_PORT = 3000
 BACKEND_HOST = "127.0.0.1:$(BACKEND_PORT)"
 FRONTEND_PORT = 3001
@@ -166,7 +166,7 @@ install-pre-commit-hooks:
 
 lint-backend:
 	@echo "$(YELLOW)Running linters...$(RESET)"
-	@poetry run pre-commit run --files opendevin/**/* agenthub/**/* evaluation/**/* --show-diff-on-failure --config $(PRE_COMMIT_CONFIG_PATH)
+	@poetry run pre-commit run --files openhands/**/* agenthub/**/* evaluation/**/* --show-diff-on-failure --config $(PRE_COMMIT_CONFIG_PATH)
 
 lint-frontend:
 	@echo "$(YELLOW)Running linters for frontend...$(RESET)"
@@ -190,7 +190,7 @@ build-frontend:
 # Start backend server with auto-reload
 start-backend:
 	@echo "$(YELLOW)Starting backend...$(RESET)"
-	@poetry run uvicorn opendevin.server.listen:app --port $(BACKEND_PORT) --reload --reload-exclude "workspace/*"
+	@poetry run uvicorn openhands.server.listen:app --port $(BACKEND_PORT) --reload --reload-exclude "workspace/*"
 
 ifeq ($(WSL_DISTRO_NAME),"")
 mode=start
@@ -215,7 +215,7 @@ run:
 	@$(MAKE) -s kill
 	@echo "$(YELLOW)Running the app...$(RESET)"
 	@$(MAKE) -s _run_check
-	@poetry run uvicorn opendevin.server.listen:app --port $(BACKEND_PORT) &
+	@poetry run uvicorn openhands.server.listen:app --port $(BACKEND_PORT) &
 	@echo "$(YELLOW)Waiting for the app to start...$(RESET)"
 	@until nc -z localhost $(BACKEND_PORT); do sleep 0.1; done
 	@echo "$(GREEN)Application started successfully.$(RESET)"
@@ -284,7 +284,7 @@ setup-config-prompts:
 # Clean up all caches
 clean:
 	@echo "$(YELLOW)Cleaning up caches...$(RESET)"
-	@rm -rf opendevin/.cache
+	@rm -rf openhands/.cache
 	@echo "$(GREEN)Caches cleaned up successfully.$(RESET)"
 
 processes:=$$(lsof -t -i:$(BACKEND_PORT) -i:$(FRONTEND_PORT))
@@ -301,16 +301,15 @@ help:
 	@echo "Targets:"
 	@echo "  $(GREEN)build$(RESET)               - Build project, including environment setup and dependencies."
 	@echo "  $(GREEN)lint$(RESET)                - Run linters on the project."
-	@echo "  $(GREEN)setup-config$(RESET)        - Setup the configuration for OpenDevin by providing LLM API key,"
+	@echo "  $(GREEN)setup-config$(RESET)        - Setup the configuration for OpenHands by providing LLM API key,"
 	@echo "                        LLM Model name, and workspace directory."
-	@echo "  $(GREEN)start-backend$(RESET)       - Start the backend server for the OpenDevin project with auto-reload."
-	@echo "  $(GREEN)start-frontend$(RESET)      - Start the frontend server for the OpenDevin project."
+	@echo "  $(GREEN)start-backend$(RESET)       - Start the backend server for the OpenHands project with auto-reload."
+	@echo "  $(GREEN)start-frontend$(RESET)      - Start the frontend server for the OpenHands project."
 	@echo "  $(GREEN)start$(RESET)               - Start both backend and frontend servers."
-	@echo "  $(GREEN)run$(RESET)                 - Run the OpenDevin application for end-users."
-	@echo "  $(GREEN)run-wsl$(RESET)         - Run the OpenDevin application, starting both backend and frontend servers for WSL users."
+	@echo "  $(GREEN)run$(RESET)                 - Run the OpenHands application for end-users."
 	@echo "  $(GREEN)kill$(RESET)                - Kill all processes on port 3000 and 3001."
 	@echo "                        Backend Log file will be stored in the 'logs' directory."
 	@echo "  $(GREEN)help$(RESET)                - Display this help message, providing information on available targets."
 
 # Phony targets
-.PHONY: build check-dependencies check-python check-npm check-docker check-poetry install-python-dependencies install-frontend-dependencies install-pre-commit-hooks lint start-backend start-frontend start run run-wsl setup-config setup-config-prompts kill help
+.PHONY: build check-dependencies check-python check-npm check-docker check-poetry install-python-dependencies install-frontend-dependencies install-pre-commit-hooks lint start-backend start-frontend start run setup-config setup-config-prompts kill help

@@ -1,11 +1,11 @@
 import os
 
 from agenthub.codeact_agent.action_parser import CodeActResponseParser
-from opendevin.controller.agent import Agent
-from opendevin.controller.state.state import State
-from opendevin.core.config import AgentConfig, load_app_config
-from opendevin.core.message import ImageContent, Message, TextContent
-from opendevin.events.action import (
+from openhands.controller.agent import Agent
+from openhands.controller.state.state import State
+from openhands.core.config import AgentConfig, load_app_config
+from openhands.core.message import ImageContent, Message, TextContent
+from openhands.events.action import (
     Action,
     AgentDelegateAction,
     AgentFinishAction,
@@ -14,24 +14,24 @@ from opendevin.events.action import (
     IPythonRunCellAction,
     MessageAction,
 )
-from opendevin.events.action.browse import BrowseURLAction
-from opendevin.events.event import LogEvent
-from opendevin.events.observation import (
+from openhands.events.action.browse import BrowseURLAction
+from openhands.events.event import LogEvent
+from openhands.events.observation import (
     AgentDelegateObservation,
     CmdOutputObservation,
     IPythonRunCellObservation,
 )
-from opendevin.events.observation.browse import BrowserOutputObservation
-from opendevin.events.observation.error import ErrorObservation
-from opendevin.events.observation.observation import Observation
-from opendevin.events.serialization.event import truncate_content
-from opendevin.llm.llm import LLM
-from opendevin.runtime.plugins import (
+from openhands.events.observation.browse import BrowserOutputObservation
+from openhands.events.observation.error import ErrorObservation
+from openhands.events.observation.observation import Observation
+from openhands.events.serialization.event import truncate_content
+from openhands.llm.llm import LLM
+from openhands.runtime.plugins import (
     AgentSkillsRequirement,
     JupyterRequirement,
     PluginRequirement,
 )
-from opendevin.utils.prompt import PromptManager
+from openhands.utils.prompt import PromptManager
 
 config = load_app_config()
 
@@ -53,7 +53,7 @@ class CodeActAgent(Agent):
     - Execute any valid Linux `bash` command
     - Execute any valid `Python` code with [an interactive Python interpreter](https://ipython.org/). This is simulated through `bash` command, see plugin system below for more details.
 
-    ![image](https://github.com/OpenDevin/OpenDevin/assets/38853559/92b622e3-72ad-4a61-8f41-8c040b6d5fb3)
+    ![image](https://github.com/All-Hands-AI/OpenHands/assets/38853559/92b622e3-72ad-4a61-8f41-8c040b6d5fb3)
 
     """
 
