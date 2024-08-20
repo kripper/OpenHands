@@ -43,7 +43,7 @@ export const useTerminal = (commands: Command[] = []) => {
       terminal.current.loadAddon(fitAddon.current);
       terminal.current.open(ref.current);
 
-      terminal.current.write("opendevin@docker-desktop:/workspace $ ");
+      terminal.current.write("openhands@docker-desktop:/workspace $ ");
       terminal.current.onKey(({ key, domEvent }) => {
         if (domEvent.key === "Enter") {
           terminal.current?.write("\r\n");

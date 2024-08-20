@@ -64,7 +64,7 @@ INIT_COMMANDS = [
     'git config --global user.email "openhands@all-hands.dev"',
     "alias git='git --no-pager'",
     'export TERM=xterm-256color',
-    "export PATH=/opendevin/poetry/$(ls /opendevin/poetry | sed -n '2p')/bin:$PATH",
+    "export PATH=/openhands/poetry/$(ls /openhands/poetry | sed -n '2p')/bin:$PATH",
 ]
 
 
@@ -397,7 +397,7 @@ class RuntimeClient:
         else:
             output = '\n[Kernel restarted successfully]'
 
-        self._jupyter_pwd = '/opendevin/code'
+        self._jupyter_pwd = '/openhands/code'
         # re-init the kernel after restart
         act = IPythonRunCellAction(code=kernel_init_code)
         await jupyter_plugin.run(act)

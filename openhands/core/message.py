@@ -4,7 +4,7 @@ import litellm
 from pydantic import BaseModel, Field, model_serializer
 from typing_extensions import Literal
 
-from opendevin.core.config import load_app_config
+from openhands.core.config import load_app_config
 
 config = load_app_config()
 

@@ -45,7 +45,7 @@ describe("Terminal", () => {
     expect(mockTerminal.open).toHaveBeenCalledTimes(1);
 
     expect(mockTerminal.write).toHaveBeenCalledWith(
-      "opendevin@docker-desktop:/workspace $ ",
+      "openhands@docker-desktop:/workspace $ ",
     );
   });
 
@@ -102,7 +102,7 @@ describe("Terminal", () => {
 
     expect(mockTerminal.writeln).toHaveBeenCalledWith("echo Hello");
     expect(mockTerminal.write).toHaveBeenCalledWith(
-      "opendevin@docker-desktop:/workspace $ ",
+      "openhands@docker-desktop:/workspace $ ",
     );
   });
 

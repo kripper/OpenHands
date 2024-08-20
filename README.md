@@ -4,22 +4,22 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
 
 ### Kevin Changelogs:
 
-  1) [Added Auto Mode](https://github.com/OpenDevin/OpenDevin/pull/2782) 🔥🔥🔥
-  2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/OpenDevin/OpenDevin/pull/3178) 👍
-  3) [Cleaned Browser Observattions](https://github.com/OpenDevin/OpenDevin/pull/3096) 🧹
-  4) [Showed relevant error in UI](https://github.com/OpenDevin/OpenDevin/pull/2657) 🚨
-  5) [Added Event History Condenser](https://github.com/OpenDevin/OpenDevin/pull/2937) 📜
+  1) [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782) 🔥🔥🔥
+  2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/All-Hands-AI/OpenHands/pull/3178) 👍
+  3) [Cleaned Browser Observattions](https://github.com/All-Hands-AI/OpenHands/pull/3096) 🧹
+  4) [Showed relevant error in UI](https://github.com/All-Hands-AI/OpenHands/pull/2657) 🚨
+  5) [Added Event History Condenser](https://github.com/All-Hands-AI/OpenHands/pull/2937) 📜
   6) [Feat: Persist sandbox for Event Runtime](https://github.com/SmartManoj/Kevin/commit/2200b21dd01ecf3618d7e676cf16f875c5fce154) 🥳🥳
   7) [Parsed pip output and restarted kernel automatically (for bash too)](https://github.com/SmartManoj/Kevin/commit/3b77d5b2ec592e0fcb5bd7ed8a0d5787378bc0de) 📦
-  8) [Added editable address bar in browser tab](https://github.com/OpenDevin/OpenDevin/pull/3078) 🌐
-  9) [Include workspace contents if any at first step only.](https://github.com/OpenDevin/OpenDevin/pull/2865#issuecomment-2257487634) 📂
-  10) [Add start and kill modes in Makefile](https://github.com/OpenDevin/OpenDevin/pull/2850) 📳
-  11) [Process interactive commands and stream output in logs](https://github.com/OpenDevin/OpenDevin/pull/3042) 📜
+  8) [Added editable address bar in browser tab](https://github.com/All-Hands-AI/OpenHands/pull/3078) 🌐
+  9) [Include workspace contents if any at first step only.](https://github.com/All-Hands-AI/OpenHands/pull/2865#issuecomment-2257487634) 📂
+  10) [Add start and kill modes in Makefile](https://github.com/All-Hands-AI/OpenHands/pull/2850) 📳
+  11) [Process interactive commands and stream output in logs](https://github.com/All-Hands-AI/OpenHands/pull/3042) 📜
   12) [Use execute tags for browsing agent too](https://github.com/SmartManoj/Kevin/commit/b2a02ce39295c33d00429937804cdd3e08d70969) 🏷️
   13) [Feat: Regenerate message](https://github.com/SmartManoj/Kevin/commit/66b3a0d0d8904c402fb952ff17520607d8636e66) 🔄
   14) [Feat: Editable Notebook](https://github.com/SmartManoj/Kevin/commit/46651deeb7d4a2109f0afab0d4bbd33ba755f040) 📝
   15) [Feat: Add docker to sandbox](https://github.com/SmartManoj/Kevin/commit/c145a4d6e9b080423af995f268b09c37ebc1184a) 🐳
-  16) [UI: Enable right click to paste in terminal](https://github.com/OpenDevin/OpenDevin/pull/3162) 🖱️
+  16) [UI: Enable right click to paste in terminal](https://github.com/All-Hands-AI/OpenHands/pull/3162) 🖱️
   17) [Added override UI settings configuration](https://github.com/SmartManoj/Kevin/pull/36) 🛠️
   18) [UI: Show Step Count](https://github.com/SmartManoj/Kevin/commit/78b89b510a7d40fe16022f407974cf765487881a) 📊
 
