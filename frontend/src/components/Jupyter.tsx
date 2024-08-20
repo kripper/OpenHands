@@ -5,12 +5,12 @@ import Markdown from "react-markdown";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { VscArrowDown, VscArrowUp } from "react-icons/vsc";
 import { useTranslation } from "react-i18next";
+import { Textarea } from "@nextui-org/react";
 import { RootState } from "#/store";
 import { Cell, appendJupyterInput } from "#/state/jupyterSlice";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import { I18nKey } from "#/i18n/declaration";
 import { sendJupyterCode } from "#/services/chatService";
-import { Textarea } from "@nextui-org/react";
 
 interface IJupyterCell {
   cell: Cell;
@@ -109,7 +109,7 @@ function Jupyter(): JSX.Element {
   return (
     <div className="flex-1">
       <div
-        className="overflow-y-auto h-full max-h-[85%] scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
+        className="overflow-y-auto h-full max-h-full scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
         ref={jupyterRef}
         onScroll={(e) => onChatBodyScroll(e.currentTarget)}
       >
@@ -132,16 +132,13 @@ function Jupyter(): JSX.Element {
           </button>
         </div>
       )}
-      <div
-        className="sticky bottom-2 flex items-center p-2 border-t border-neutral-600 bg-neutral-800"
-        onKeyDown={onKeyPress}
-      >
+      <div className="sticky bottom-0 flex p-1 border-t" onKeyDown={onKeyPress}>
         <Textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={onKeyPress}
           placeholder="Enter Python code here..."
-          className="pb-3 px-3"
+          className="p-1"
           classNames={{
             inputWrapper: "bg-neutral-700 border border-neutral-600 rounded-lg",
             input: "pr-16 text-neutral-400",
