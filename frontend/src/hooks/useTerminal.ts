@@ -14,7 +14,7 @@ export const useTerminal = (commands: Command[] = []) => {
   const fitAddon = React.useRef<FitAddon | null>(null);
   const ref = React.useRef<HTMLDivElement>(null);
   const lastCommandIndex = React.useRef(0);
-  let lastCommand = React.useRef("");
+  const lastCommand = React.useRef("");
 
   React.useEffect(() => {
     /* Create a new terminal instance */
