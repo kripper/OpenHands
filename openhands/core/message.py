@@ -56,11 +56,6 @@ class Message(BaseModel):
     @model_serializer
     def serialize_model(self) -> dict:
         content: list[dict[str, str | dict[str, str]]] = []
-        # check model provider is groq
-        if 'groq/' in config.get_llm_config().model:
-            if self.role in ['system', 'assistant']:
-                return {'role': self.role, 'content': self.content[0].text}
-
         model = config.get_llm_config().model
         supports_vision = litellm.supports_vision(model)
         if not supports_vision:
