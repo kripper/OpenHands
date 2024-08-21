@@ -65,6 +65,14 @@ export const useTerminal = (commands: Command[] = []) => {
         }
       });
       terminal.current.attachCustomKeyEventHandler((arg) => {
+        // ctrl + c to interrupt
+        if (
+          (arg.ctrlKey || arg.metaKey) &&
+          arg.code === "KeyC" &&
+          arg.type === "keydown"
+        ) {
+          sendTerminalCommand("\x03");
+        }
         if (
           (arg.ctrlKey || arg.metaKey) &&
           arg.code === "KeyV" &&
