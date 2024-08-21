@@ -4,10 +4,9 @@ from datetime import datetime
 from openhands.events import Event, EventSource
 from openhands.events.event import LogEvent
 from openhands.events.observation.observation import Observation
-
-from .action import action_from_dict
-from .observation import observation_from_dict
-from .utils import remove_fields
+from openhands.events.serialization.action import action_from_dict
+from openhands.events.serialization.observation import observation_from_dict
+from openhands.events.serialization.utils import remove_fields
 
 # TODO: move `content` into `extras`
 TOP_KEYS = [
