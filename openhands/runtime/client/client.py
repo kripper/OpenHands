@@ -300,7 +300,10 @@ class RuntimeClient:
                     logger.debug('End of file')
                     break
                 elif index == 2:
-                    last_line = output.splitlines()[-1]
+                    if output:
+                        last_line = output.splitlines()[-1]
+                    else:
+                        last_line = ''
                     if output == last_output and not re.search(
                         r'Installing|Building|Downloading', last_line
                     ):
