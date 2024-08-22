@@ -179,6 +179,8 @@ class EventStreamRuntime(Runtime):
             self.container = self.docker_client.containers.get(self.container_name)
             await self.start_docker_container()
 
+        self.log_buffer = LogBuffer(self.container)
+
     @staticmethod
     def _init_docker_client() -> docker.DockerClient:
         try:
@@ -259,7 +261,6 @@ class EventStreamRuntime(Runtime):
                 environment={'DEBUG': 'true'} if self.config.debug else None,
                 volumes=volumes,
             )
-            self.log_buffer = LogBuffer(container)
             logger.info(f'Container started. Server url: {self.api_url}')
             return container
         except Exception as e:
