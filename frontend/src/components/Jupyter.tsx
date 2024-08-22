@@ -109,7 +109,7 @@ function Jupyter(): JSX.Element {
   return (
     <div className="flex-1">
       <div
-        className="overflow-y-auto h-full max-h-full scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
+        className="overflow-y-auto h-full max-h-[85%] scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
         ref={jupyterRef}
         onScroll={(e) => onChatBodyScroll(e.currentTarget)}
       >
@@ -118,7 +118,7 @@ function Jupyter(): JSX.Element {
         ))}
       </div>
       {!hitBottom && (
-        <div className="sticky bottom-2 flex items-center justify-center">
+        <div className="sticky bottom-10 flex items-center justify-center">
           <button
             type="button"
             className="relative border-1 text-sm rounded px-3 py-1 border-neutral-600 bg-neutral-700 cursor-pointer select-none"
@@ -132,7 +132,7 @@ function Jupyter(): JSX.Element {
           </button>
         </div>
       )}
-      <div className="sticky bottom-0 flex p-1 border-t" onKeyDown={onKeyPress}>
+      <div className="sticky bottom-0 flex p-1 " onKeyDown={onKeyPress}>
         <Textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
