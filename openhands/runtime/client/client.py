@@ -179,7 +179,7 @@ class RuntimeClient:
         )
         self.__bash_PS1 = (
             r'[PEXPECT_BEGIN]\n'
-            r'$(which python >/dev/null 2>&1 && echo "[Python Interpreter: $(which python)]\n")'
+            # r'$(which python >/dev/null 2>&1 && echo "[Python Interpreter: $(which python)]\n")'
             r'\u@\h:\w\n'
             r'[PEXPECT_END]'
         )
@@ -461,8 +461,8 @@ class RuntimeClient:
             if 'pip install' in action.code:
                 obs.content = await self.parse_pip_output(action.code, obs.content)
             obs.content = obs.content.rstrip()
-            obs.content += f'\n[Jupyter current working directory: {self.pwd}]'
-            obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
+            # obs.content += f'\n[Jupyter current working directory: {self.pwd}]'
+            # obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
             return obs
         else:
             raise RuntimeError(
