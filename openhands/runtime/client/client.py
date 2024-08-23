@@ -218,7 +218,13 @@ class RuntimeClient:
         # In multi-line bash commands, the prompt will be repeated
         # and the matched regex captures all of them
         # - we only want the last one (newest prompt)
-        _begin_pos = ps1.rfind('[PEXPECT_BEGIN]')
+        try:
+            _begin_pos = ps1.rfind('[PEXPECT_BEGIN]')
+        except AttributeError:
+            # the above check is not working.
+            # AttributeError: type object 'EOF' has no attribute 'rfind'
+            return ''
+
         if _begin_pos != -1:
             ps1 = ps1[_begin_pos:]
 
