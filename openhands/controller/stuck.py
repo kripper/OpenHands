@@ -85,7 +85,7 @@ class StuckDetector:
             )
         ]
 
-        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 3)
+        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 4)
 
         if not last_actions:
             return False, None
