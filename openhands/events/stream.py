@@ -1,4 +1,5 @@
 import asyncio
+import os
 import threading
 from datetime import datetime
 from enum import Enum
@@ -36,6 +37,23 @@ class EventStream:
         self._cur_id = 0
         self._lock = threading.Lock()
         self._reinitialize_from_file_store()
+
+        # add events from trajectory.json
+        event_history_path = r'event_history.json'
+        if not os.path.exists(event_history_path):
+            return
+        for event in json.loads(open(event_history_path).read()):
+            if event.get('status'):
+                continue
+            if event.get('action') == 'initialize':
+                continue
+            event = event_from_dict(event)
+            source = (
+                EventSource.AGENT
+                if event.source == EventSource.AGENT
+                else EventSource.USER
+            )
+            self.add_event(event, source)
 
     def _reinitialize_from_file_store(self) -> None:
         try:

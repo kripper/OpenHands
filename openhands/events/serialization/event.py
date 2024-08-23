@@ -41,7 +41,7 @@ def event_from_dict(data) -> 'Event':
     elif 'log' in data:
         evt = LogEvent(log=data['log'])
     else:
-        raise ValueError('Unknown event type: ' + data)
+        raise ValueError(f'Unknown event: {data}')
     for key in UNDERSCORE_KEYS:
         if key in data:
             value = data[key]
