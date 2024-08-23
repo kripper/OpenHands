@@ -112,11 +112,15 @@ class EventStreamRuntime(Runtime):
         self.persist_sandbox = self.config.sandbox.persist_sandbox
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
-            user = 'od' if self.config.run_as_openhands else 'root'
+            if self.config.run_as_openhands:
+                user = 'oh'
+                self._port = self.config.sandbox.port
+            else:
+                user = 'root'
+                self._port = 63711
             path = config.workspace_mount_path or ''
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
-            self._port = self.config.sandbox.port
         else:
             self.instance_id = (sid or '') + str(uuid.uuid4())
             self._port = find_available_tcp_port()
