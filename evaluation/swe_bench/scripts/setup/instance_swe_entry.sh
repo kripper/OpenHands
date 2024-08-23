@@ -2,8 +2,7 @@
 
 # set -e
 
-# assert user name is `root`
-if [ "$USER" != "root" ]; then
+if [ "$(id -u)" -ne 0 ]; then
     echo "Error: This script is intended to be run by the 'root' user only." >&2
     exit 1
 fi
