@@ -231,3 +231,4 @@ containers/runtime/project.tar.gz
 /workspace2
 /workspace3
 trajectory.json
+event_history.json

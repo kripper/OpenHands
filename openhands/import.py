@@ -6,15 +6,16 @@ import requests
 # ==============================INPUTS==============================
 feedback_id = 'd9467879dfb19113adf4bd7ae67a5b83194a00b7d8c03eb7729706ebd3676a5e'
 step_count = -1
+disable_import = 1
 # ==================================================================
 
 
 data = {'feedback_id': feedback_id}
 file_name = f'_{feedback_id}.json'
-disable_import = False
 if disable_import:
     with open('event_history.json', 'w') as f:
         json.dump([], f)
+    exit()
 if os.path.exists(file_name):
     with open(file_name, 'r') as f:
         event_history = json.load(f)
