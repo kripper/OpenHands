@@ -408,8 +408,10 @@ class RuntimeClient:
 
         self._jupyter_pwd = '/openhands/code'
         # re-init the kernel after restart
+        logger.info('Re-initializing the kernel...')
         act = IPythonRunCellAction(code=kernel_init_code)
-        await jupyter_plugin.run(act)
+        obs = await jupyter_plugin.run(act)
+        logger.info(obs.content)
         return output
 
     async def parse_pip_output(self, code, output) -> str:
