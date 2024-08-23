@@ -22,6 +22,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
   16) [UI: Enable right click to paste in terminal](https://github.com/All-Hands-AI/OpenHands/pull/3162) 🖱️
   17) [Added override UI settings configuration](https://github.com/SmartManoj/Kevin/pull/36) 🛠️
   18) [UI: Show Step Count](https://github.com/SmartManoj/Kevin/commit/78b89b510a7d40fe16022f407974cf765487881a) 📊
+  19) [Import the event history upto specific steps](https://github.com/SmartManoj/Kevin/commit/7d9314fb79a78590f9612a374e700287584edbfb) 📜
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
