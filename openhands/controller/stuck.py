@@ -51,6 +51,26 @@ class StuckDetector:
         )
         return response.choices[0].message.content
 
+    def get_last_event_pairs(
+        self, history: list[Event], n: int
+    ) -> tuple[list[Event], list[Event]]:
+        if len(history) < n:
+            return [], []
+
+        last_actions: list[Event] = []
+        last_observations: list[Event] = []
+
+        for event in reversed(history):
+            if isinstance(event, Action) and len(last_actions) < n:
+                last_actions.append(event)
+            elif isinstance(event, Observation) and len(last_observations) < n:
+                last_observations.append(event)
+
+            if len(last_actions) == n and len(last_observations) == n:
+                break
+
+        return last_actions, last_observations
+
     def is_stuck(self) -> tuple[bool, str | None]:
         # filter out MessageAction with source='user' from history
         filtered_history = [
@@ -65,30 +85,10 @@ class StuckDetector:
             )
         ]
 
-        # it takes 3 actions minimum to detect a loop, otherwise nothing to do here
-        if len(filtered_history) < 3:
+        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 3)
+
+        if not last_actions:
             return False, None
-
-        # the first few scenarios detect 3 or 4 repeated steps
-        # prepare the last 4 actions and observations, to check them out
-        last_actions: list[Event] = []
-        last_observations: list[Event] = []
-
-        # retrieve the last four actions and observations starting from the end of history, wherever they are
-        check_length = 3
-        for event in reversed(filtered_history):
-            if isinstance(event, Action) and len(last_actions) < check_length:
-                last_actions.append(event)
-            elif (
-                isinstance(event, Observation) and len(last_observations) < check_length
-            ):
-                last_observations.append(event)
-
-            if (
-                len(last_actions) == check_length
-                and len(last_observations) == check_length
-            ):
-                break
 
         # scenario 1: same action, same observation
         if self._is_stuck_repeating_action_observation(last_actions, last_observations):
@@ -103,11 +103,18 @@ class StuckDetector:
             return True, 'You repeated the same message three times'
 
         # scenario 4: action, observation pattern on the last six steps
-        if len(filtered_history) < 6:
+        last_six_actions, last_six_observations = self.get_last_event_pairs(
+            filtered_history, 6
+        )
+        if not last_six_actions:
             return False, None
-        if self._is_stuck_action_observation_pattern(filtered_history):
+        if self._is_stuck_action_observation_pattern(
+            last_six_actions, last_six_observations
+        ):
             # (action_1, obs_1), (action_2, obs_2), (action_1, obs_1), (action_2, obs_2)
-            return True, 'You repeated the same action and observation every other step'
+            return True, self.generate_resolution(
+                last_six_actions, last_six_observations
+            )
 
         return False, None
 
@@ -223,22 +230,12 @@ class StuckDetector:
                     return True
         return False
 
-    def _is_stuck_action_observation_pattern(self, filtered_history):
+    def _is_stuck_action_observation_pattern(
+        self, last_six_actions, last_six_observations
+    ):
         # scenario 4: action, observation pattern on the last six steps
         # check if the agent repeats the same (Action, Observation)
         # every other step in the last six steps
-        last_six_actions: list[Event] = []
-        last_six_observations: list[Event] = []
-
-        # the end of history is most interesting
-        for event in reversed(filtered_history):
-            if isinstance(event, Action) and len(last_six_actions) < 6:
-                last_six_actions.append(event)
-            elif isinstance(event, Observation) and len(last_six_observations) < 6:
-                last_six_observations.append(event)
-
-            if len(last_six_actions) == 6 and len(last_six_observations) == 6:
-                break
 
         # this pattern is every other step, like:
         # (action_1, obs_1), (action_2, obs_2), (action_1, obs_1), (action_2, obs_2),...
