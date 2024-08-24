@@ -52,6 +52,7 @@ class LLMConfig:
         output_cost_per_token: The cost per output token. This will available in logs for the user to check.
         ollama_base_url: The base URL for the OLLAMA API.
         drop_params: Drop any unmapped (unsupported) params without causing an exception.
+        enable_cache: Whether to enable caching.
     """
 
     model: str = 'gpt-4o'
@@ -80,6 +81,7 @@ class LLMConfig:
     ollama_base_url: str | None = None
     message_summary_trunc_tokens_frac: float = 0.75
     drop_params: bool | None = None
+    enable_cache: bool = True
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""

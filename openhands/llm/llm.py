@@ -12,6 +12,7 @@ with warnings.catch_warnings():
     import litellm
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
+from litellm.caching import Cache
 from litellm.exceptions import (
     APIConnectionError,
     ContentPolicyViolationError,
@@ -38,6 +39,7 @@ from openhands.core.logger import openhands_logger as logger
 from openhands.core.metrics import Metrics
 
 message_separator = '\n\n----------\n\n'
+litellm.cache = Cache()
 
 
 class LLM(CondenserMixin):
@@ -124,6 +126,7 @@ class LLM(CondenserMixin):
             timeout=self.config.timeout,
             temperature=self.config.temperature,
             top_p=self.config.top_p,
+            caching=self.config.enable_cache,
         )
 
         def attempt_on_error(retry_state):
