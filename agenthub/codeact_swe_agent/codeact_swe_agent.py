@@ -16,6 +16,8 @@ from openhands.events.action import (
     IPythonRunCellAction,
     MessageAction,
 )
+from openhands.events.action.agent import AgentSummarizeAction
+from openhands.events.event import LogEvent
 from openhands.events.observation import (
     CmdOutputObservation,
     IPythonRunCellObservation,
@@ -84,6 +86,12 @@ class CodeActSWEAgent(Agent):
             return f'{action.thought}\n<execute_ipython>\n{action.code}\n</execute_ipython>'
         elif isinstance(action, MessageAction):
             return action.content
+        elif isinstance(action, AgentSummarizeAction):
+            return (
+                'Summary of all Action and Observations till now. \n'
+                f'Action: {action.summarized_actions}\n'
+                f'Observation: {action.summarized_observations}'
+            )
         return ''
 
     def get_action_message(self, action: Action) -> Message | None:
@@ -164,34 +172,50 @@ class CodeActSWEAgent(Agent):
                 '</execute_bash>',
             ],
             temperature=0.0,
+            condense=True,
         )
 
         return self.response_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
         messages: list[Message] = [
-            Message(role='system', content=[TextContent(text=self.system_message)]),
-            Message(role='user', content=[TextContent(text=self.in_context_example)]),
+            Message(
+                role='system',
+                content=[TextContent(text=self.system_message)],
+                condensable=False,
+            ),
+            Message(
+                role='user',
+                content=[TextContent(text=self.in_context_example)],
+                condensable=False,
+            ),
         ]
 
+        if state.history.summary:
+            summary_message = self.get_action_message(state.history.summary)
+            if summary_message:
+                messages.append(summary_message)
         for event in state.history.get_events():
-            # create a regular message from an event
-            if isinstance(event, Action):
-                message = self.get_action_message(event)
-            elif isinstance(event, Observation):
-                message = self.get_observation_message(event)
-            else:
-                raise ValueError(f'Unknown event type: {type(event)}')
-
-            # add regular message
-            if message:
-                # handle error if the message is the SAME role as the previous message
-                # litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - Error code: 400 - {'detail': 'Only supports u/a/u/a/u...'}
-                # there should not have two consecutive messages from the same role
-                if messages and messages[-1].role == message.role:
-                    messages[-1].content.extend(message.content)
+            if event.id > state.history.last_summarized_event_id:
+                # create a regular message from an event
+                if isinstance(event, Action):
+                    message = self.get_action_message(event)
+                elif isinstance(event, Observation):
+                    message = self.get_observation_message(event)
+                elif isinstance(event, LogEvent):
+                    message = None
                 else:
-                    messages.append(message)
+                    raise ValueError(f'Unknown event type: {type(event)}')
+
+                # add regular message
+                if message:
+                    # handle error if the message is the SAME role as the previous message
+                    # litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - Error code: 400 - {'detail': 'Only supports u/a/u/a/u...'}
+                    # there should not have two consecutive messages from the same role
+                    if messages and messages[-1].role == message.role:
+                        messages[-1].content.extend(message.content)
+                    else:
+                        messages.append(message)
 
         # the latest user message is important:
         # we want to remind the agent of the environment constraints
