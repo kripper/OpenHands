@@ -171,7 +171,8 @@ def prepare_dataset(dataset: pd.DataFrame, output_file: str, eval_n_limit: int):
     id_column = 'instance_id'
     logger.info(f'Writing evaluation output to {output_file}')
     finished_ids = set()
-    if os.path.exists(output_file):
+    ignore_finished = 0
+    if os.path.exists(output_file) and ignore_finished:
         with open(output_file, 'r') as f:
             for line in f:
                 data = json.loads(line)
