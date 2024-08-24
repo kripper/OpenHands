@@ -4,8 +4,7 @@ from pprint import pprint
 
 import requests
 
-file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActAgent\llama3-8b-8192_maxiter_500_N_v1.9-no-hint\output.jsonl'
-
+file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_500_N_v1.6-no-hint\output.jsonl'
 delete = 0
 if delete:
     import os
@@ -13,13 +12,20 @@ if delete:
     os.remove(file)
     print(f'Deleted {file}')
     exit()
-with open(file, 'r') as f:
-    data = f.readlines()
-    data = [json.loads(line) for line in data][0]
 
+# output.json or trajectory.json
+if 0:
+    with open(file, 'r') as f:
+        data = f.readlines()
+        data = [json.loads(line) for line in data][0]
+        history = data.pop('history')
+else:
+    fp = r'evaluation\evaluation_outputs\astropy__astropy-12907.json'
+    with open(fp, 'r') as f:
+        data = json.load(f)
+        history = data['traj']
 # for i in data['history']:
 #     pprint(i)
-history = data.pop('history')
 json_data = {}
 json_data.update(
     {
