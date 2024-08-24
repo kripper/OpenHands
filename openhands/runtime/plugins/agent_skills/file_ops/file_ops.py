@@ -11,7 +11,7 @@ Functions:
 - search_dir(search_term: str, dir_path: str = './'): Searches for a term in all files in the specified directory.
 - search_file(search_term: str, file_path: str | None = None): Searches for a term in the specified file or the currently open file.
 - find_file(file_name: str, dir_path: str = './'): Finds all files with the given name in the specified directory.
-- edit_file_by_replace(file_name: str, to_replace: str, new_content: str): Replaces specific content in a file with new content.
+- find_and_replace(file_name: str, find_string: str, replace_string: str): Replaces specific content in a file with new content.
 - insert_content_at_line(file_name: str, line_number: int, content: str): Inserts given content at the specified line number in a file.
 - append_file(file_name: str, content: str): Appends the given content to the end of the specified file.
 """
@@ -591,12 +591,12 @@ def _edit_file_impl(
     return ret_str
 
 
-def edit_file_by_replace(file_name: str, to_replace: str, new_content: str) -> None:
-    """Edit a file. This will search for `to_replace` in the given file and replace it with `new_content`.
+def find_and_replace(file_name: str, find_string: str, replace_string: str) -> None:
+    """Edit a file. This will search for `find_string` in the given file and replace it with `replace_string`.
 
-    Every *to_replace* must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
+    Every *find_string* must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
 
-    Include enough lines to make code in `to_replace` unique. `to_replace` should NOT be empty.
+    Include enough lines to make code in `find_string` unique. `find_string` should NOT be empty.
 
     For example, given a file "/workspace/example.txt" with the following content:
     ```
@@ -606,12 +606,12 @@ def edit_file_by_replace(file_name: str, to_replace: str, new_content: str) -> N
     line 3
     ```
 
-    EDITING: If you want to replace the second occurrence of "line 2", you can make `to_replace` unique:
+    EDITING: If you want to replace the second occurrence of "line 2", you can make `find_string` unique:
 
-    edit_file_by_replace(
+    find_and_replace(
         '/workspace/example.txt',
-        to_replace='line 2\nline 3',
-        new_content='new line\nline 3',
+        find_string='line 2\nline 3',
+        replace_string='new line\nline 3',
     )
 
     This will replace only the second "line 2" with "new line". The first "line 2" will remain unchanged.
@@ -624,42 +624,42 @@ def edit_file_by_replace(file_name: str, to_replace: str, new_content: str) -> N
     line 3
     ```
 
-    REMOVAL: If you want to remove "line 2" and "line 3", you can set `new_content` to an empty string:
+    REMOVAL: If you want to remove "line 2" and "line 3", you can set `replace_string` to an empty string:
 
-    edit_file_by_replace(
+    find_and_replace(
         '/workspace/example.txt',
-        to_replace='line 2\nline 3',
-        new_content='',
+        find_string='line 2\nline 3',
+        replace_string='',
     )
 
     Args:
         file_name: str: The name of the file to edit.
-        to_replace: str: The content to search for and replace.
-        new_content: str: The new content to replace the old content with.
+        find_string: str: The content to search for and replace.
+        replace_string: str: The new content to replace the old content with.
     """
     # FIXME: support replacing *all* occurrences
-    if to_replace.strip() == '':
-        raise ValueError('`to_replace` must not be empty.')
+    if find_string.strip() == '':
+        raise ValueError('`find_string` must not be empty.')
 
-    if to_replace == new_content:
-        raise ValueError('`to_replace` and `new_content` must be different.')
+    if find_string == replace_string:
+        raise ValueError('`find_string` and `replace_string` must be different.')
 
-    # search for `to_replace` in the file
-    # if found, replace it with `new_content`
-    # if not found, perform a fuzzy search to find the closest match and replace it with `new_content`
+    # search for `find_string` in the file
+    # if found, replace it with `replace_string`
+    # if not found, perform a fuzzy search to find the closest match and replace it with `replace_string`
     with open(file_name, 'r') as file:
         file_content = file.read()
 
-    if file_content.count(to_replace) > 1:
+    if file_content.count(find_string) > 1:
         raise ValueError(
-            '`to_replace` appears more than once, please include enough lines to make code in `to_replace` unique.'
+            '`find_string` appears more than once, please include enough lines to make code in `find_string` unique.'
         )
 
-    start = file_content.find(to_replace)
+    start = file_content.find(find_string)
     if start != -1:
         # Convert start from index to line number
         start_line_number = file_content[:start].count('\n') + 1
-        end_line_number = start_line_number + len(to_replace.splitlines()) - 1
+        end_line_number = start_line_number + len(find_string.splitlines()) - 1
     else:
 
         def _fuzzy_transform(s: str) -> str:
@@ -667,24 +667,24 @@ def edit_file_by_replace(file_name: str, to_replace: str, new_content: str) -> N
             return re.sub(r'[^\S\n]+', '', s)
 
         # perform a fuzzy search (remove all spaces except newlines)
-        to_replace_fuzzy = _fuzzy_transform(to_replace)
+        find_string_fuzzy = _fuzzy_transform(find_string)
         file_content_fuzzy = _fuzzy_transform(file_content)
         # find the closest match
-        start = file_content_fuzzy.find(to_replace_fuzzy)
+        start = file_content_fuzzy.find(find_string_fuzzy)
         if start == -1:
             print(
-                f'[No exact match found in {file_name} for\n```\n{to_replace}\n```\n]'
+                f'[No exact match found in {file_name} for\n```\n{find_string}\n```\n]'
             )
             return
         # Convert start from index to line number for fuzzy match
         start_line_number = file_content_fuzzy[:start].count('\n') + 1
-        end_line_number = start_line_number + len(to_replace.splitlines()) - 1
+        end_line_number = start_line_number + len(find_string.splitlines()) - 1
 
     ret_str = _edit_file_impl(
         file_name,
         start=start_line_number,
         end=end_line_number,
-        content=new_content,
+        content=replace_string,
         is_insert=False,
     )
     # lint_error = bool(LINTER_ERROR_MSG in ret_str)
@@ -848,7 +848,7 @@ __all__ = [
     'scroll_down',
     'scroll_up',
     'create_file',
-    'edit_file_by_replace',
+    'find_and_replace',
     'insert_content_at_line',
     'append_file',
     'search_dir',
