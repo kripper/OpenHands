@@ -31,7 +31,6 @@ from tenacity import (
 from openhands.condenser.condenser import CondenserMixin
 from openhands.core.exceptions import (
     ContextWindowLimitExceededError,
-    TokenLimitExceededError,
     UserCancelledError,
 )
 from openhands.core.logger import llm_prompt_logger, llm_response_logger
@@ -163,17 +162,11 @@ class LLM(CondenserMixin):
             else:
                 messages = args[1]
 
-            try:
-                if self.is_over_token_limit(messages):
-                    raise TokenLimitExceededError()
-            except TokenLimitExceededError:
-                # If we got a context alert, try trimming the messages length, then try again
-                if kwargs['condense'] and self.is_over_token_limit(messages):
-                    # A separate call to run a summarizer
+            if self.is_over_token_limit(messages):
+                if kwargs['condense']:
                     summary_action = self.condense(messages=messages)
                     return summary_action
                 else:
-                    print('step() failed with an unrecognized exception:')
                     raise ContextWindowLimitExceededError()
 
             kwargs.pop('condense', None)

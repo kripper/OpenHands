@@ -69,13 +69,6 @@ class LLMResponseError(Exception):
         super().__init__(message)
 
 
-class TokenLimitExceededError(Exception):
-    """Exception raised when the user-defined max_input_tokens limit is exceeded."""
-
-    def __init__(self, message='User-defined token limit exceeded. Condensing memory.'):
-        super().__init__(message)
-
-
 class ContextWindowLimitExceededError(Exception):
     def __init__(
         self, message='Context window limit exceeded. Unable to condense memory.'
