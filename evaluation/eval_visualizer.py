@@ -4,17 +4,10 @@ from pprint import pprint
 
 import requests
 
-file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_500_N_v1.6-no-hint\output.jsonl'
-delete = 0
-if delete:
-    import os
-
-    os.remove(file)
-    print(f'Deleted {file}')
-    exit()
+file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_6_N_v1.6-no-hint\output.jsonl'
 
 # output.json or trajectory.json
-if 0:
+if 1:
     with open(file, 'r') as f:
         data = f.readlines()
         data = [json.loads(line) for line in data][0]
