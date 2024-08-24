@@ -12,11 +12,11 @@ from openhands.core.message import ImageContent, Message, TextContent
 from openhands.events.action import (
     Action,
     AgentFinishAction,
+    AgentSummarizeAction,
     CmdRunAction,
     IPythonRunCellAction,
     MessageAction,
 )
-from openhands.events.action.agent import AgentSummarizeAction
 from openhands.events.event import LogEvent
 from openhands.events.observation import (
     CmdOutputObservation,
@@ -106,7 +106,9 @@ class CodeActSWEAgent(Agent):
                 content.append(ImageContent(image_urls=action.images_urls))
 
             return Message(
-                role='user' if action.source == 'user' else 'assistant', content=content
+                role='user' if action.source == 'user' else 'assistant',
+                content=content,
+                event_id=action.id,
             )
 
         return None
@@ -118,7 +120,6 @@ class CodeActSWEAgent(Agent):
             text += (
                 f'\n[Command {obs.command_id} finished with exit code {obs.exit_code}]'
             )
-            return Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, IPythonRunCellObservation):
             text = 'OBSERVATION:\n' + obs.content
             # replace base64 images with a placeholder
@@ -130,15 +131,18 @@ class CodeActSWEAgent(Agent):
                     )
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
-            return Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, ErrorObservation):
             text = 'OBSERVATION:\n' + truncate_content(obs.content, max_message_chars)
             text += '\n[Error occurred in processing last action]'
-            return Message(role='user', content=[TextContent(text=text)])
         else:
             # If an observation message is not returned, it will cause an error
             # when the LLM tries to return the next message
             raise ValueError(f'Unknown observation type: {type(obs)}')
+        return Message(
+            role='user',
+            content=[TextContent(text=text)],
+            event_id=obs.id,
+        )
 
     def reset(self) -> None:
         """Resets the CodeAct Agent."""
@@ -149,7 +153,7 @@ class CodeActSWEAgent(Agent):
         This includes gathering info on previous steps and prompting the model to make a command to execute.
 
         Parameters:
-        - state (State): used to get updated info and background commands
+        - state (State): used to get updated info
 
         Returns:
         - CmdRunAction(command) - bash command to run
@@ -166,7 +170,7 @@ class CodeActSWEAgent(Agent):
         messages: list[Message] = self._get_messages(state)
 
         response = self.llm.completion(
-            messages=[message.model_dump() for message in messages],
+            messages=messages,
             stop=[
                 '</execute_ipython>',
                 '</execute_bash>',

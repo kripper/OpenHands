@@ -6,6 +6,7 @@ from agenthub.codeact_swe_agent.action_parser import (
 )
 from openhands.controller.action_parser import ResponseParser
 from openhands.events.action import Action
+from openhands.events.action.agent import AgentSummarizeAction
 
 
 class CodeActSWEResponseParser(ResponseParser):
@@ -27,6 +28,8 @@ class CodeActSWEResponseParser(ResponseParser):
         self.default_parser = CodeActSWEActionParserMessage()
 
     def parse(self, response: str) -> Action:
+        if isinstance(response, AgentSummarizeAction):
+            return response
         action_str = self.parse_response(response)
         return self.parse_action(action_str)
 
