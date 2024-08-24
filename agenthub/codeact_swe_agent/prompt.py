@@ -59,7 +59,7 @@ Looks like a rounding issue here: https://github.com/marshmallow-code/marshmallo
 ASSISTANT:
 Let's first start by reproducing the results of the issue. The issue includes some example code for reproduction, which we can use. We'll create a new file called `reproduce.py` and paste the example code into it.
 <execute_ipython>
-create_file('/workspace/marshmallow-code__marshmallow/reproduce.py')
+create_file('reproduce.py')
 </execute_ipython>
 
 USER:
@@ -81,7 +81,7 @@ obj["td_field"] = timedelta(milliseconds=345)
 
 print(td_field.serialize("td_field", obj))
 \"\"\"
-edit_file(start=1, end=1, content=EDITED_CODE)
+append_file(file='reproduce.py', content=EDITED_CODE)
 </execute_ipython>
 
 USER:
