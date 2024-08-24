@@ -534,6 +534,12 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                         if isinstance(nested_value, dict):
                             llm_config = LLMConfig(**nested_value)
                             cfg.set_llm_config(llm_config, nested_key)
+                elif key is not None and key.lower() == 'security':
+                    non_dict_fields = {
+                        k: v for k, v in value.items() if not isinstance(v, dict)
+                    }
+                    security_config = SecurityConfig(**non_dict_fields)
+                    cfg.security = security_config
                 elif not key.startswith('sandbox') and key.lower() != 'core':
                     logger.openhands_logger.warning(
                         f'Unknown key in {toml_file}: "{key}"'
