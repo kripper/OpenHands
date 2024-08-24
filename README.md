@@ -23,6 +23,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
   17) [Added override UI settings configuration](https://github.com/SmartManoj/Kevin/pull/36) 🛠️
   18) [UI: Show Step Count](https://github.com/SmartManoj/Kevin/commit/78b89b510a7d40fe16022f407974cf765487881a) 📊
   19) [Import the event history upto specific steps](https://github.com/SmartManoj/Kevin/commit/7d9314fb79a78590f9612a374e700287584edbfb) 📜
+  20) [Add litellm caching](https://github.com/SmartManoj/Kevin/commit/092f0077c843dd873cbb4acfd6d20f5e07b32912) 📦
 
 ### Bug Fixes:
   1) [Fixed GroqException - content must be a string for role system & assisstant](https://github.com/SmartManoj/Kevin/commit/30c98d458a299d789ebd6b8ada842c050bc91b20) 🛠️
