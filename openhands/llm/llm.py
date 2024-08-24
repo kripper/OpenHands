@@ -113,7 +113,7 @@ class LLM(CondenserMixin):
                 litellm.OllamaConfig.num_ctx = total
                 logger.info(f'Setting OllamaConfig.num_ctx to {total}')
 
-        self._completion = partial(
+        self.completion_unwrapped = partial(
             litellm_completion,
             model=self.config.model,
             api_key=self.config.api_key,
@@ -125,8 +125,6 @@ class LLM(CondenserMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
         )
-
-        self.completion_unwrapped = self._completion
 
         def attempt_on_error(retry_state):
             logger.error(
@@ -217,7 +215,7 @@ class LLM(CondenserMixin):
         self._completion = wrapper  # type: ignore
 
         # Async version
-        self._async_completion = partial(
+        async_completion_unwrapped = partial(
             self._call_acompletion,
             model=self.config.model,
             api_key=self.config.api_key,
@@ -230,8 +228,6 @@ class LLM(CondenserMixin):
             top_p=self.config.top_p,
             drop_params=True,
         )
-
-        async_completion_unwrapped = self._async_completion
 
         @retry(
             reraise=True,
