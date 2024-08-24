@@ -196,24 +196,18 @@ class CodeActAgent(Agent):
             return AgentFinishAction()
 
         response = None
-        # give it multiple chances to get a response
-        # if it fails, we'll try to condense memory
-        attempt = 0
-        # TODO check why loop is necessary as response is not None after the first attempt
-        while not response and attempt < self.llm.config.attempts_to_condense:
-            # prepare what we want to send to the LLM
-            messages: list[Message] = self._get_messages(state)
-            response = self.llm.completion(
-                messages=messages,
-                stop=[
-                    '</execute_ipython>',
-                    '</execute_bash>',
-                    '</execute_browse>',
-                ],
-                temperature=0.0,
-                condense=True,
-            )
-            attempt += 1
+        # prepare what we want to send to the LLM
+        messages: list[Message] = self._get_messages(state)
+        response = self.llm.completion(
+            messages=messages,
+            stop=[
+                '</execute_ipython>',
+                '</execute_bash>',
+                '</execute_browse>',
+            ],
+            temperature=0.0,
+            condense=True,
+        )
 
         return self.action_parser.parse(response)
 
