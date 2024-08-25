@@ -112,10 +112,11 @@ class RuntimeClient:
         # TODO: refactor AgentSkills to be part of JupyterPlugin
         # AFTER ServerRuntime is deprecated
         if 'agent_skills' in self.plugins and 'jupyter' in self.plugins:
+            self.kernel_init_code = (
+                'from openhands.runtime.plugins.agent_skills.agentskills import *'
+            )
             obs = await self.run_ipython(
-                IPythonRunCellAction(
-                    code='from openhands.runtime.plugins.agent_skills.agentskills import *\n'
-                )
+                IPythonRunCellAction(code=self.kernel_init_code)
             )
             logger.info(f'AgentSkills initialized: {obs}')
 
@@ -394,9 +395,7 @@ class RuntimeClient:
             raise RuntimeError('Command output could not be decoded as utf-8')
 
     async def restart_kernel(self) -> str:
-        if 'agent_skills' in self.plugins:
-            kernel_init_code = 'from agentskills import *'
-        else:
+        if 'agent_skills' not in self.plugins:
             return ''
 
         jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
@@ -415,7 +414,7 @@ class RuntimeClient:
         self._jupyter_pwd = '/openhands/code'
         # re-init the kernel after restart
         logger.info('Re-initializing the kernel...')
-        act = IPythonRunCellAction(code=kernel_init_code)
+        act = IPythonRunCellAction(code=self.kernel_init_code)
         obs = await jupyter_plugin.run(act)
         logger.info(obs.content)
         return output
