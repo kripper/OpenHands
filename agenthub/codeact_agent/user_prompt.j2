@@ -178,10 +178,10 @@ USER:
 ASSISTANT:
 I should edit the file to display the numbers in a table format. I should include correct indentation. Let me update the file:
 <execute_ipython>
-edit_file_by_replace(
+find_and_replace(
   'app.py',
-  to_replace="    return str(numbers)",
-  new_content="    return '<table>' + ''.join([f'<tr><td>{i}</td></tr>' for i in numbers]) + '</table>'",
+  find_string="    return str(numbers)",
+  replace_string="    return '<table>' + ''.join([f'<tr><td>{i}</td></tr>' for i in numbers]) + '</table>'",
 )
 </execute_ipython>
 
