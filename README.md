@@ -2,6 +2,11 @@ The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.
 
 The vision is to leverage SLMs effectively and work towards solving most of the issues on the SWE-Bench Lite evaluation.
 
+### Sample Examples using `groq/llama3-8b-8192`
+
+ 1) Create an application in flask that can convert AWS cloudformation stack format from json to yaml and use curl to test ; don't do anything extra please.
+ [Event history link](https://www.all-hands.dev/share?share_id=870d002486313bbbff706d62376412930ab6c95384dbb3d5c35205acdc946c3f)
+
 ### Kevin Changelogs:
 
   1) [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782) 🔥🔥🔥
