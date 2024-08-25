@@ -10,7 +10,7 @@ from termcolor import colored
 
 DISABLE_COLOR_PRINTING = False
 DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 'yes']
-LOG_TO_FILE = 1
+LOG_TO_FILE = os.getenv('USER') not in ['openhands', 'root']
 
 ColorType = Literal[
     'red',
