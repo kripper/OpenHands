@@ -2,6 +2,7 @@
 import json
 import sys
 import webbrowser
+from pprint import pprint
 
 import requests
 
@@ -14,15 +15,22 @@ else:
 if 1:
     with open(file, 'r') as f:
         data = f.readlines()
-        data = [json.loads(line) for line in data][-1]
-        history = data.pop('history')
+        # data = [json.loads(line) for line in data][-1]
+        data = [json.loads(line) for line in data]
+        history = []
+        for d in data:
+            history.extend(d['history'])
+        history = [i for sublist in history for i in sublist]
+        history = history[3:]
+
 else:
     fp = r'evaluation\evaluation_outputs\astropy__astropy-12907.json'
     with open(fp, 'r') as f:
         data = json.load(f)
         history = data['traj']
-# for i in data['history']:
-#     pprint(i)
+if sys.argv[1:]:
+    pprint(history)
+    # exit()
 json_data = {}
 json_data.update(
     {
@@ -34,7 +42,7 @@ json_data.update(
     }
 )
 # flatten the history
-history = [i for sublist in history for i in sublist]
+
 json_data['trajectory'] = history
 
 # pprint(json_data);exit()
