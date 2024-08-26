@@ -232,3 +232,4 @@ containers/runtime/project.tar.gz
 /workspace3
 trajectory.json
 event_history.json
+sc.py

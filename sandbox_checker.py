@@ -1,24 +1,7 @@
 import json
+from time import sleep
 
 import requests
-
-data = {
-    'action': {
-        'action': 'run_ipython',
-        'args': {
-            'code': '%cd /workspace && %pwd',
-        },
-    }
-}
-data1 = {
-    'action': {
-        'action': 'run',
-        'args': {
-            'command': 'pwd',
-        },
-        'timeout': 1,
-    }
-}
 
 
 def run_ipython(code):
@@ -51,12 +34,27 @@ def execute_action(data):
             'http://localhost:63711/execute_action', data=data, timeout=1
         )
         print(response.json()['content'])
-    except Exception:
+    except Exception as e:
+        print(e)
         print(response.json())
         print(response.status_code)
 
 
-# execute_action(run_ipython('%cd /workspace/astropy__astropy__4.3'))
-execute_action(run_ipython('%pwd'))
-execute_action(run_ipython('edit_file'))
-# execute_action(run('pwd'))
+if __name__ == '__main__':
+    execute_action(run_ipython('%pwd'))
+    # execute_action(run_ipython('!which python'))
+    if 0:
+        if 0:
+            execute_action(
+                run_ipython(
+                    'import IPython\nIPython.Application.instance().kernel.do_shutdown(True)'
+                )
+            )
+            sleep(3)
+        execute_action(
+            run_ipython(
+                'from openhands.runtime.plugins.agent_skills.agentskills import *'
+            )
+        )
+    # execute_action(run_ipython('open_file'))
+    execute_action(run('pwd'))
