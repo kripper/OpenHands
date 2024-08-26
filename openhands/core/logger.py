@@ -130,7 +130,11 @@ def get_file_handler(log_dir):
     os.makedirs(log_dir, exist_ok=True)
     timestamp = datetime.now().strftime('%Y-%m-%d')
     file_name = f'openhands_{timestamp}.log'
-    file_handler = logging.FileHandler(os.path.join(log_dir, file_name))
+    full_path = os.path.join(log_dir, file_name)
+    # clear the log file
+    with open(full_path, 'w') as f:
+        f.write('')
+    file_handler = logging.FileHandler(full_path)
     file_handler.setLevel(logging.getLevelName(LOG_LEVEL))
     file_handler.setFormatter(file_formatter)
     return file_handler
