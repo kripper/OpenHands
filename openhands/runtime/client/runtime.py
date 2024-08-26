@@ -400,7 +400,7 @@ class EventStreamRuntime(Runtime):
             assert action.timeout is not None
 
             try:
-                logger.info(f'Executing action {action}')
+                # logger.info(f'Executing action {action}')
                 async with session.post(
                     f'{self.api_url}/execute_action',
                     json={'action': event_to_dict(action)},

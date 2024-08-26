@@ -71,9 +71,9 @@ class State:
 
     root_task: RootTask = field(default_factory=RootTask)
     # global iteration for the current task
-    iteration: int = 0
+    iteration: int = 1
     # local iteration for the current subtask
-    local_iteration: int = 0
+    local_iteration: int = 1
     # max number of iterations for the current task
     max_iterations: int = 100
     confirmation_mode: bool = False
