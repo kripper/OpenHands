@@ -254,7 +254,9 @@ async def run_evaluation(
         cleanup()
 
     output_fp.close()
-    os.system('evaluation/eval_visualizer.py ' + output_file)
+    cmd = f'evaluation/eval_visualizer.py {output_file}'
+    logger.info(f'Run the following command to visualize the results:\n{cmd}')
+    os.system(cmd)
     logger.info('Evaluation finished.')
 
 

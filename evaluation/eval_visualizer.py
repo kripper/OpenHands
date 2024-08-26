@@ -2,7 +2,6 @@
 import json
 import sys
 import webbrowser
-from pprint import pprint
 
 import requests
 
@@ -37,7 +36,7 @@ json_data.update(
 # flatten the history
 history = [i for sublist in history for i in sublist]
 json_data['trajectory'] = history
-pprint(json_data)
+# pprint(json_data)
 # exit()
 FEEDBACK_URL = 'https://share-od-trajectory-3u9bw9tx.uc.gateway.dev/share_od_trajectory'
 
