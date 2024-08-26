@@ -4,13 +4,18 @@ This module provides various file manipulation skills for the OpenHands agent.
 
 Functions:
 - open_file(path: str, line_number: int | None = 1, context_lines: int = 100): Opens a file and optionally moves to a specific line.
+
 - goto_line(line_number: int): Moves the window to show the specified line number.
 - scroll_down(): Moves the window down by the number of lines specified in WINDOW.
 - scroll_up(): Moves the window up by the number of lines specified in WINDOW.
+
 - create_file(filename: str): Creates a new file with the given name.
+
 - search_dir(search_term: str, dir_path: str = './'): Searches for a term in all files in the specified directory.
 - search_file(search_term: str, file_path: str | None = None): Searches for a term in the specified file or the currently open file.
+
 - find_file(file_name: str, dir_path: str = './'): Finds all files with the given name in the specified directory.
+
 - find_and_replace(file_name: str, find_string: str, replace_string: str): Replaces specific content in a file with new content.
 - insert_content_at_line(file_name: str, line_number: int, content: str): Inserts given content at the specified line number in a file.
 - append_file(file_name: str, content: str): Appends the given content to the end of the specified file.
