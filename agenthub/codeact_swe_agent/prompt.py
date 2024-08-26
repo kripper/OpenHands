@@ -151,7 +151,7 @@ OBSERVATION:
 ASSISTANT:
 It looks like the `fields.py` file is present in the `./src/marshmallow/` directory. The issue also points to a specific URL with line number 1474. We should navigate to that line in fields.py to see the relevant code for the `TimeDelta` serialization.
 <execute_ipython>
-open_file("/workspace/marshmallow-code__marshmallow/src/marshmallow/fields.py", 1474)
+open_file(path="/workspace/marshmallow-code__marshmallow/src/marshmallow/fields.py", line_number=1474)
 </execute_ipython>
 
 USER:
