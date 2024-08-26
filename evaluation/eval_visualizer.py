@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!python
 import json
 import sys
 import webbrowser
@@ -8,13 +8,13 @@ import requests
 if sys.argv[1:]:
     file = sys.argv[1]
 else:
-    file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_6_N_v1.6-no-hint\output.jsonl'
+    file = r'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActSWEAgent/llama3-8b-8192_maxiter_15_N_v1.6-no-hint/output.jsonl'
 
 # output.json or trajectory.json
 if 1:
     with open(file, 'r') as f:
         data = f.readlines()
-        data = [json.loads(line) for line in data][0]
+        data = [json.loads(line) for line in data][-1]
         history = data.pop('history')
 else:
     fp = r'evaluation\evaluation_outputs\astropy__astropy-12907.json'
@@ -36,8 +36,8 @@ json_data.update(
 # flatten the history
 history = [i for sublist in history for i in sublist]
 json_data['trajectory'] = history
-# pprint(json_data)
-# exit()
+
+# pprint(json_data);exit()
 FEEDBACK_URL = 'https://share-od-trajectory-3u9bw9tx.uc.gateway.dev/share_od_trajectory'
 
 response = requests.post(
