@@ -199,6 +199,9 @@ class RuntimeClient:
 
     async def _init_bash_commands(self):
         logger.info(f'Initializing by running {len(INIT_COMMANDS)} bash commands...')
+        # if root user, skip last command
+        if self.username == 'root':
+            INIT_COMMANDS.pop()
         for command in INIT_COMMANDS:
             action = CmdRunAction(command=command)
             action.timeout = 300
