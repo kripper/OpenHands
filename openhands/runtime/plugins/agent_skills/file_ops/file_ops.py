@@ -134,7 +134,8 @@ def _print_window(file_path, targeted_line, window, return_str=False):
         else:
             output += '(this is the beginning of the file)\n'
         for i in range(start, end + 1):
-            _new_line = f'{i}|{lines[i-1]}'
+            width = len(str(end))
+            _new_line = f'{i:>{width}}|{lines[i-1]}'
             if not _new_line.endswith('\n'):
                 _new_line += '\n'
             output += _new_line
