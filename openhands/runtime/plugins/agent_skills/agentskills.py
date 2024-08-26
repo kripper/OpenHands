@@ -9,7 +9,8 @@ import_functions(
 import_functions(
     module=file_reader, function_names=file_reader.__all__, target_globals=globals()
 )
-__all__ = file_ops.__all__ + file_reader.__all__
+# __all__ = file_ops.__all__ + file_reader.__all__
+__all__ = file_ops.__all__
 
 DOCUMENTATION = ''
 for func_name in __all__:
