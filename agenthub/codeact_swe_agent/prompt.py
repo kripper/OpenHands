@@ -81,7 +81,7 @@ obj["td_field"] = timedelta(milliseconds=345)
 
 print(td_field.serialize("td_field", obj))
 \"\"\"
-append_file(file='reproduce.py', content=EDITED_CODE)
+append_file(file_name='reproduce.py', content=EDITED_CODE)
 </execute_ipython>
 
 USER:
