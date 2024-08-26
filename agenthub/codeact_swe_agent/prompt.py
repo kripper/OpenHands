@@ -5,7 +5,6 @@ _AGENT_SKILLS_DOCS = AgentSkillsRequirement.documentation
 COMMAND_DOCS = (
     '\nApart from the standard Python library, the assistant can also use the following functions (already imported) in <execute_ipython> environment:\n'
     f'{_AGENT_SKILLS_DOCS}'
-    "Please note that THE `edit_file` FUNCTION REQUIRES PROPER INDENTATION. If the assistant would like to add the line '        print(x)', it must fully write that out, with all those spaces before the code! Indentation is important and code that is not indented correctly will fail and require fixing before it can be run."
 )
 
 # ======= SYSTEM MESSAGE =======
@@ -263,7 +262,7 @@ OBSERVATION:
 ASSISTANT:
 We are now looking at the relevant section of the `fields.py` file where the `TimeDelta` serialization occurs. The issue suggests that there is a rounding problem near line 1474. The current implementation uses integer division, which truncates the decimal part and can lead to incorrect rounding on line 1475. To fix this issue, we should ensure that the division results in a float, and then round the result to the nearest integer before converting it to an int. This should preserve the milliseconds precision as expected. Let's make the necessary edit to the code.
 <execute_ipython>
-edit_file(start=1475, end=1475, content="return int(round(value.total_seconds() / base_unit.total_seconds()))  # round to nearest int")
+insert_content_at_line(file_name='src/marshmallow/fields.py', line_number=1475, content="return int(round(value.total_seconds() / base_unit.total_seconds()))  # round to nearest int")
 </execute_ipython>
 
 USER:
@@ -316,7 +315,7 @@ ASSISTANT:
 My edit command did not use the proper indentation, I will fix my syntax in this follow up edit command.
 <execute_ipython>
 EDITED_CODE="        return int(round(value.total_seconds() / base_unit.total_seconds()))  # round to nearest int"
-edit_file(start=1475, end=1475, content=EDITED_CODE)
+insert_content_at_line(file_name='src/marshmallow/fields.py', line_number=1475, content=EDITED_CODE)
 </execute_ipython>
 
 USER:
