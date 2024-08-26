@@ -257,10 +257,20 @@ def create_file(filename: str) -> None:
     if os.path.exists(filename):
         print(f"File '{filename}' already exists.")
     else:
-        with open(filename, 'w') as file:
-            file.write('\n')
+        try:
+            with open(filename, 'w') as file:
+                file.write('\n')
 
-        print(f'[File {filename} created.]')
+            print(f'[File {filename} created.]')
+        except FileNotFoundError:
+            print('Weird case where the file is not found when creating it')
+            cwd = os.getcwd()
+            print(f'cwd: {cwd}')
+            print(f'filename: {filename}')
+            print(f'os.path.exists(filename): {os.path.exists(filename)}')
+            print(f'os.path.isfile(filename): {os.path.isfile(filename)}')
+            print(f'os.path.abspath(filename): {os.path.abspath(filename)}')
+            raise
 
 
 LINTER_ERROR_MSG = '[Your proposed edit has introduced new syntax error(s). Please understand the errors and retry your edit command.]\n'
