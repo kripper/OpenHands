@@ -254,6 +254,7 @@ async def run_evaluation(
         cleanup()
 
     output_fp.close()
+    os.system('evaluation/eval_visualizer.py ' + output_file)
     logger.info('Evaluation finished.')
 
 

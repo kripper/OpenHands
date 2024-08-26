@@ -1,10 +1,15 @@
+#!/usr/bin/env python
 import json
+import sys
 import webbrowser
 from pprint import pprint
 
 import requests
 
-file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_6_N_v1.6-no-hint\output.jsonl'
+if sys.argv[1:]:
+    file = sys.argv[1]
+else:
+    file = r'evaluation\evaluation_outputs\outputs\swe-bench-lite\CodeActSWEAgent\llama3-8b-8192_maxiter_6_N_v1.6-no-hint\output.jsonl'
 
 # output.json or trajectory.json
 if 1:
