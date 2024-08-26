@@ -17,10 +17,7 @@ The assistant can browse the Internet with <execute_browse> and </execute_browse
 For example, <execute_browse> Tell me the usa's president using google search </execute_browse>.
 Or <execute_browse> Tell me what is in http://example.com </execute_browse>.
 {% endset %}
-{% set PIP_INSTALL_PREFIX %}
-The assistant can install Python packages using the %pip magic command in an IPython environment by using the following syntax: <execute_ipython> %pip install [package needed] </execute_ipython> and should always import packages and define variables before starting to use them.
-{% endset %}
-{% set SYSTEM_PREFIX = MINIMAL_SYSTEM_PREFIX + BROWSING_PREFIX + PIP_INSTALL_PREFIX %}
+{% set SYSTEM_PREFIX = MINIMAL_SYSTEM_PREFIX + BROWSING_PREFIX %}
 {% set COMMAND_DOCS %}
 Apart from the standard Python library, the assistant can also use the following functions (already imported) in <execute_ipython> environment:
 {{ agent_skills_docs }}
