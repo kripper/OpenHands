@@ -26,10 +26,7 @@ import re
 import shutil
 import tempfile
 
-if __package__ is None or __package__ == '':
-    from aider import Linter
-else:
-    from openhands.runtime.plugins.agent_skills.utils.aider import Linter
+from openhands.runtime.plugins.agent_skills.utils.aider import Linter
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
