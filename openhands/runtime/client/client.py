@@ -293,7 +293,7 @@ class RuntimeClient:
         ]
         full_output = ''
         timeout_counter = 0
-        timeout = 5
+        timeout = 15
         last_output = ''
         seeking_input = False
         while True:
