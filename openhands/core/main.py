@@ -150,7 +150,7 @@ async def run_controller(
     # Logging
     logger.info(
         f'Agent Controller Initialized: Running agent {agent.name}, model '
-        f'{agent.llm.config.model}, with task: "{task_str}"'
+        f'{agent.llm.config.model}'
     )
 
     # start event is a MessageAction with the task, either resumed or new
