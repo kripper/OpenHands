@@ -16,7 +16,7 @@ def run_ipython(code):
 
 
 def run(command):
-    if command.startswith('!'):
+    if command.startswith('!') or command.startswith('%'):
         return run_ipython(command)
     return {
         'action': {
@@ -31,7 +31,7 @@ def run(command):
 
 def execute_action(data):
     data = json.dumps(data)
-    for timeout in range(1, 3):
+    for timeout in range(1, 2):
         try:
             response = requests.post(
                 'http://localhost:63711/execute_action', data=data, timeout=timeout
