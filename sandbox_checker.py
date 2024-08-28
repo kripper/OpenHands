@@ -16,6 +16,8 @@ def run_ipython(code):
 
 
 def run(command):
+    if command.startswith('!'):
+        return run_ipython(command)
     return {
         'action': {
             'action': 'run',
@@ -29,15 +31,21 @@ def run(command):
 
 def execute_action(data):
     data = json.dumps(data)
-    try:
-        response = requests.post(
-            'http://localhost:63711/execute_action', data=data, timeout=1
-        )
-        print(response.json()['content'])
-    except Exception as e:
-        print(e)
-        print(response.json())
-        print(response.status_code)
+    for timeout in range(1, 3):
+        try:
+            response = requests.post(
+                'http://localhost:63711/execute_action', data=data, timeout=timeout
+            )
+            print(response.json()['content'].replace('\r', ''))
+            break
+        except requests.exceptions.Timeout:
+            # print('Timeout')
+            # sleep(1)
+            pass
+        except Exception as e:
+            print(e)
+            print(response.json())
+            print(response.status_code)
 
 
 if __name__ == '__main__':
