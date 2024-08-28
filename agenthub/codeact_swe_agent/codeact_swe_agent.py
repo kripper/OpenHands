@@ -188,11 +188,11 @@ class CodeActSWEAgent(Agent):
                 content=[TextContent(text=self.system_message)],
                 condensable=False,
             ),
-            Message(
-                role='user',
-                content=[TextContent(text=self.in_context_example)],
-                condensable=False,
-            ),
+            # Message(
+            #     role='user',
+            #     content=[TextContent(text=self.in_context_example)],
+            #     condensable=False,
+            # ),
         ]
 
         if state.history.summary:

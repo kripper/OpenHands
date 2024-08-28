@@ -218,11 +218,11 @@ class CodeActAgent(Agent):
                 content=[TextContent(text=self.prompt_manager.system_message)],
                 condensable=False,
             ),
-            Message(
-                role='user',
-                content=[TextContent(text=self.prompt_manager.initial_user_message)],
-                condensable=False,
-            ),
+            # Message(
+            #     role='user',
+            #     content=[TextContent(text=self.prompt_manager.initial_user_message)],
+            #     condensable=False,
+            # ),
         ]
 
         if len(state.history.get_events_as_list()) == 1:
