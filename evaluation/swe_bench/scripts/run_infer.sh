@@ -6,9 +6,9 @@ source "evaluation/utils/version_control.sh"
 MODEL_CONFIG=$1
 COMMIT_HASH=$2
 AGENT=$3
-EVAL_LIMIT=$4
-MAX_ITER=$5
-NUM_WORKERS=$6
+MAX_ITER=$4
+NUM_WORKERS=$5
+EVAL_LIMIT=$6
 
 if [ -z "$NUM_WORKERS" ]; then
   NUM_WORKERS=1
