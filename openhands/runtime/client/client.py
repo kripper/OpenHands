@@ -242,7 +242,10 @@ class RuntimeClient:
         self.pwd = os.path.expanduser(working_dir)
 
         # re-assemble the prompt
-        prompt = f'{other_info.strip()}\n{username}@{hostname}:{working_dir} '
+        other_info = other_info.strip()
+        if other_info:
+            other_info += '\n'
+        prompt = f'{other_info.strip()}{username}@{hostname}:{working_dir} '
         if username == 'root':
             prompt += '#'
         else:
