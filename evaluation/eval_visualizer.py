@@ -28,7 +28,7 @@ else:
     with open(fp, 'r') as f:
         data = json.load(f)
         history = data['traj']
-if sys.argv[1:]:
+if not sys.argv[1:]:
     pprint(history)
     # exit()
 json_data = {}
