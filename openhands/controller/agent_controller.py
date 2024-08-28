@@ -419,7 +419,7 @@ class AgentController:
         # send to frontend
         self.event_stream.add_event(LogEvent(step_log), EventSource.AGENT)
 
-        if self.state.iteration >= self.state.max_iterations:
+        if self.state.iteration > self.state.max_iterations:
             if self.state.traffic_control_state == TrafficControlState.PAUSED:
                 logger.info(
                     'Hitting traffic control, temporarily resume upon user request'
