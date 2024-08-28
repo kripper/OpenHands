@@ -39,7 +39,8 @@ def execute_action(data):
             print(response.json()['content'].replace('\r', ''))
             break
         except requests.exceptions.Timeout:
-            # print('Timeout')
+            if timeout == 2:
+                print('Timeout')
             # sleep(1)
             pass
         except Exception as e:
