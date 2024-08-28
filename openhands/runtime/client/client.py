@@ -422,7 +422,7 @@ class RuntimeClient:
         logger.info('Re-initializing the kernel...')
         act = IPythonRunCellAction(code=self.kernel_init_code)
         obs = await jupyter_plugin.run(act)
-        logger.info(obs.content)
+        logger.info(f'Kernel re-initialized. Output: {obs}')
         return output
 
     async def parse_pip_output(self, code, output) -> str:
