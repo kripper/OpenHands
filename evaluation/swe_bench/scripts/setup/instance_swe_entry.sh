@@ -73,8 +73,4 @@ if [[ "$REPO_PATH" == "None" ]]; then
     exit 1
 fi
 
-# Activate instance-specific environment
-. /opt/miniconda3/etc/profile.d/conda.sh
-conda activate testbed
-
 # set +e
