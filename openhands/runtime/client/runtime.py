@@ -127,7 +127,7 @@ class EventStreamRuntime(Runtime):
         self.api_url = f'http://{self.config.sandbox.api_hostname}:{self._port}'
         self.session: aiohttp.ClientSession | None = None
 
-        # TODO: We can switch to aiodocker when `get_od_sandbox_image` is updated to use aiodocker
+        # TODO: We can switch to aiodocker when `build_sandbox_image` is updated to use aiodocker
         self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
         self.runtime_container_image = self.config.sandbox.runtime_container_image
@@ -141,6 +141,7 @@ class EventStreamRuntime(Runtime):
 
         # Buffer for container logs
         self.log_buffer: LogBuffer | None = None
+        self.startup_done = False
 
     async def ainit(self, env_vars: dict[str, str] | None = None):
         if self.config.sandbox.runtime_extra_deps:
@@ -300,6 +301,7 @@ class EventStreamRuntime(Runtime):
         wait=tenacity.wait_exponential(multiplier=2, min=10, max=60),
     )
     async def _wait_until_alive(self):
+        # init_msg = 'Runtime client initialized.'
         logger.debug('Getting container logs...')
 
         # Print and clear the log buffer

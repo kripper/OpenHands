@@ -16,6 +16,7 @@ class ContentType(Enum):
 
 class Content(BaseModel):
     type: ContentType
+    cache_prompt: bool = False
 
     @model_serializer
     def serialize_model(self):
@@ -28,7 +29,13 @@ class TextContent(Content):
 
     @model_serializer
     def serialize_model(self):
-        return {'type': self.type.value, 'text': self.text}
+        data: dict[str, str | dict[str, str]] = {
+            'type': self.type.value,
+            'text': self.text,
+        }
+        if self.cache_prompt:
+            data['cache_control'] = {'type': 'ephemeral'}
+        return data
 
 
 class ImageContent(Content):
@@ -40,6 +47,8 @@ class ImageContent(Content):
         images: list[dict[str, str | dict[str, str]]] = []
         for url in self.image_urls:
             images.append({'type': self.type.value, 'image_url': {'url': url}})
+        if self.cache_prompt and images:
+            images[-1]['cache_control'] = {'type': 'ephemeral'}
         return images
 
 
