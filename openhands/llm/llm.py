@@ -493,8 +493,8 @@ class LLM(CondenserMixin):
                     'Input tokens (cache read): ' + str(cache_read_input_tokens) + '\n'
                 )
 
-        if stats:
-            logger.info(stats)
+        # if stats:
+        # logger.info(stats)
 
     def get_token_count(self, messages=None, text=None):
         """Get the number of tokens in a list of messages.
