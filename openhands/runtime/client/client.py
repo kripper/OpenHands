@@ -400,6 +400,21 @@ class RuntimeClient:
         except UnicodeDecodeError:
             raise RuntimeError('Command output could not be decoded as utf-8')
 
+    async def chdir(self):
+        if 'jupyter' not in self.plugins:
+            return
+        _jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
+        logger.debug(
+            f"{self.pwd} != {getattr(self, '_jupyter_pwd', None)} -> reset Jupyter PWD"
+        )
+        reset_jupyter_pwd_code = f'import os; os.chdir("{self.pwd}")'
+        _aux_action = IPythonRunCellAction(code=reset_jupyter_pwd_code)
+        _reset_obs = await _jupyter_plugin.run(_aux_action)
+        logger.debug(
+            f'Changed working directory in IPython to: {self.pwd}. Output: {_reset_obs}'
+        )
+        self._jupyter_pwd = self.pwd
+
     async def restart_kernel(self) -> str:
         if 'agent_skills' not in self.plugins:
             return ''
@@ -417,7 +432,7 @@ class RuntimeClient:
         else:
             output = '\n[Kernel restarted successfully]'
 
-        self._jupyter_pwd = '/openhands/code'
+        await self.chdir()
         # re-init the kernel after restart
         logger.info('Re-initializing the kernel...')
         act = IPythonRunCellAction(code=self.kernel_init_code)
@@ -457,16 +472,7 @@ class RuntimeClient:
             # This is used to make AgentSkills in Jupyter aware of the
             # current working directory in Bash
             if self.pwd != getattr(self, '_jupyter_pwd', None):
-                logger.debug(
-                    f"{self.pwd} != {getattr(self, '_jupyter_pwd', None)} -> reset Jupyter PWD"
-                )
-                reset_jupyter_pwd_code = f'import os; os.chdir("{self.pwd}")'
-                _aux_action = IPythonRunCellAction(code=reset_jupyter_pwd_code)
-                _reset_obs = await _jupyter_plugin.run(_aux_action)
-                logger.debug(
-                    f'Changed working directory in IPython to: {self.pwd}. Output: {_reset_obs}'
-                )
-                self._jupyter_pwd = self.pwd
+                await self.chdir()
 
             if 'app.run' in action.code.strip().split('\n')[-1]:
                 return ErrorObservation(
