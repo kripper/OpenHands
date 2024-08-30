@@ -9,7 +9,9 @@ import requests
 if sys.argv[1:]:
     file = sys.argv[1]
 else:
-    file = r'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActSWEAgent/llama3-8b-8192_maxiter_15_N_v1.6-no-hint/output.jsonl'
+    from pyperclip import paste
+
+    file = paste()
 
 # output.json or trajectory.json
 if 1:
@@ -21,7 +23,7 @@ if 1:
         for d in data:
             history.extend(d['history'])
         history = [i for sublist in history for i in sublist]
-        history = history[3:]
+        # history = history[3:]
 
 else:
     fp = r'evaluation\evaluation_outputs\astropy__astropy-12907.json'
