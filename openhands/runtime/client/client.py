@@ -265,7 +265,7 @@ class RuntimeClient:
         self.shell.expect(self.__bash_expect_regex, timeout=timeout)
         command_output = self.shell.before
         return (
-            f'Command: "{command}" timed out. Sent SIGINT to the process: {command_output}',
+            f'Command: "{command}" timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.',
             130,
         )
 
@@ -323,6 +323,8 @@ class RuntimeClient:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
+                            if 'Press CTRL+C to quit' in output:
+                                return self._send_interrupt(command, timeout)
                             hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
                             return output + hint, 1
                 elif index in [3, 4]:
@@ -476,8 +478,9 @@ class RuntimeClient:
 
             if 'app.run' in action.code.strip().split('\n')[-1]:
                 return ErrorObservation(
-                    "Don't run Flask app in Jupyter notebook. Save the code to a file and run it in the terminal."
+                    "Don't run Flask app in Jupyter notebook. Save the code to a file and run it in the terminal in background."
                 )
+
             action.code = action.code.replace('!pip', '%pip')
             obs: IPythonRunCellObservation = await _jupyter_plugin.run(action)
             if 'pip install' in action.code:
