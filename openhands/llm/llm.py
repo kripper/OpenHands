@@ -38,7 +38,7 @@ from openhands.core.logger import openhands_logger as logger
 from openhands.core.metrics import Metrics
 
 message_separator = '\n\n----------\n\n'
-litellm.cache = Cache()
+
 
 cache_prompting_supported_models = [
     'claude-3-5-sonnet-20240620',
@@ -71,6 +71,9 @@ class LLM(CondenserMixin):
         self.supports_prompt_caching = (
             self.config.model in cache_prompting_supported_models
         )
+
+        if self.config.enable_cache:
+            litellm.cache = Cache()
 
         # Set up config attributes with default values to prevent AttributeError
         LLMConfig.set_missing_attributes(self.config)
