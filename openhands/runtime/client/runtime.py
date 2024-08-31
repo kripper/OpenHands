@@ -274,63 +274,33 @@ class EventStreamRuntime(Runtime):
             self.close(close_client=False)
             raise e
 
+    def log_container_logs(self):
+        if self.log_buffer:
+            logs = self.log_buffer.get_and_clear()
+            if logs:
+                formatted_logs = '\n'.join([f'    |{log}' for log in logs])
+                logger.info(
+                    '\n'
+                    + '-' * 30
+                    + 'Container logs:'
+                    + '-' * 30
+                    + f'\n{formatted_logs}'
+                    + '\n'
+                    + '-' * 90
+                )
+
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
         wait=tenacity.wait_exponential(multiplier=2, min=10, max=60),
     )
     def _wait_until_alive(self):
-        init_msg = 'Runtime client initialized.'
-        logger.debug('Getting container logs...')
-
-        # Print and clear the log buffer
-        assert (
-            self.log_buffer is not None
-        ), 'Log buffer is expected to be initialized when container is started'
-
-        # Always process logs, regardless of startup_done status
-        logs = self.log_buffer.get_and_clear()
-        if logs:
-            formatted_logs = '\n'.join([f'    |{log}' for log in logs])
-            logger.info(
-                '\n'
-                + '-' * 30
-                + 'Container logs:'
-                + '-' * 30
-                + f'\n{formatted_logs}'
-                + '\n'
-                + '-' * 90
-            )
-            # Check for initialization message even if startup_done is True
-            if any(init_msg in log for log in logs):
-                self.startup_done = True
-
-        if not self.startup_done:
-            attempts = 0
-            while not self.startup_done and attempts < 10:
-                attempts += 1
-                time.sleep(1)
-                logs = self.log_buffer.get_and_clear()
-                if logs:
-                    formatted_logs = '\n'.join([f'    |{log}' for log in logs])
-                    logger.info(
-                        '\n'
-                        + '-' * 30
-                        + 'Container logs:'
-                        + '-' * 30
-                        + f'\n{formatted_logs}'
-                        + '\n'
-                        + '-' * 90
-                    )
-                    if any(init_msg in log for log in logs):
-                        self.startup_done = True
-                        break
-
         response = self.session.get(f'{self.api_url}/alive')
         if response.status_code == 200:
             return
         else:
             msg = f'Action execution API is not alive. Response: {response}'
             logger.error(msg)
+            self.log_container_logs()
             raise RuntimeError(msg)
 
     @property
