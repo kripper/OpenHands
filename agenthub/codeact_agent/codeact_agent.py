@@ -1,4 +1,5 @@
 import os
+import re
 
 from agenthub.codeact_agent.action_parser import CodeActResponseParser
 from openhands.controller.agent import Agent
@@ -149,6 +150,8 @@ class CodeActAgent(Agent):
         # max_message_chars = self.llm.config.max_message_chars
         max_message_chars = 10_000
         if isinstance(obs, CmdOutputObservation):
+            ansi_color_escape = re.compile(r'\x1b\[[0-9;]*m')
+            obs.content = ansi_color_escape.sub('', obs.content)
             text = 'OBSERVATION:\n' + truncate_content(obs.content, max_message_chars)
             text += (
                 f'\n[Command {obs.command_id} finished with exit code {obs.exit_code}]'
