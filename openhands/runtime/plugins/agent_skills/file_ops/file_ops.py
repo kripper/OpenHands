@@ -891,4 +891,5 @@ __all__ = [
     'search_dir',
     'search_file',
     'find_file',
+    'kill_port',
 ]
