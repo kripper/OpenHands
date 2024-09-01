@@ -131,6 +131,7 @@ class EventStream:
     def subscribe(self, id: EventStreamSubscriber, callback: Callable, append=False):
         if id in self._subscribers:
             if append:
+                logger.info(f'Appending callback to subscriber {id}')
                 self._subscribers[id].append(callback)
             else:
                 raise ValueError('Subscriber already exists: ' + id)
