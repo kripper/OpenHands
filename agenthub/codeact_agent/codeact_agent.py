@@ -243,16 +243,16 @@ class CodeActAgent(Agent):
                 ],
                 condensable=False,
             ),
-            # Message(
-            #     role='user',
-            #     content=[
-            #         TextContent(
-            #             text=self.prompt_manager.initial_user_message,
-            #             cache_prompt=self.llm.supports_prompt_caching,  # if the user asks the same query,
-            #         )
-            #     ],
-            #     condensable=False,
-            # ),
+            Message(
+                role='user',
+                content=[
+                    TextContent(
+                        text=self.prompt_manager.initial_user_message,
+                        cache_prompt=self.llm.supports_prompt_caching,  # if the user asks the same query,
+                    )
+                ],
+                condensable=False,
+            ),
         ]
 
         if len(state.history.get_events_as_list()) == 1:
