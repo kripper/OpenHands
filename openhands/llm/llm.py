@@ -16,6 +16,7 @@ from litellm.exceptions import (
     APIConnectionError,
     ContentPolicyViolationError,
     InternalServerError,
+    NotFoundError,
     OpenAIError,
     RateLimitError,
     ServiceUnavailableError,
@@ -156,11 +157,11 @@ class LLM(CondenserMixin):
             ),
             retry=retry_if_exception_type(
                 (
-                    RateLimitError,
                     APIConnectionError,
-                    ServiceUnavailableError,
-                    InternalServerError,
                     ContentPolicyViolationError,
+                    InternalServerError,
+                    OpenAIError,
+                    RateLimitError,
                 )
             ),
             after=attempt_on_error,
@@ -253,11 +254,11 @@ class LLM(CondenserMixin):
             ),
             retry=retry_if_exception_type(
                 (
-                    RateLimitError,
                     APIConnectionError,
-                    ServiceUnavailableError,
-                    InternalServerError,
                     ContentPolicyViolationError,
+                    InternalServerError,
+                    OpenAIError,
+                    RateLimitError,
                 )
             ),
             after=attempt_on_error,
@@ -327,14 +328,14 @@ class LLM(CondenserMixin):
             except UserCancelledError:
                 logger.info('LLM request cancelled by user.')
                 raise
-            except OpenAIError as e:
-                logger.error(f'OpenAIError occurred:\n{e}')
-                raise
             except (
-                RateLimitError,
                 APIConnectionError,
-                ServiceUnavailableError,
+                ContentPolicyViolationError,
                 InternalServerError,
+                NotFoundError,
+                OpenAIError,
+                RateLimitError,
+                ServiceUnavailableError,
             ) as e:
                 logger.error(f'Completion Error occurred:\n{e}')
                 raise
@@ -357,11 +358,11 @@ class LLM(CondenserMixin):
             ),
             retry=retry_if_exception_type(
                 (
-                    RateLimitError,
                     APIConnectionError,
-                    ServiceUnavailableError,
-                    InternalServerError,
                     ContentPolicyViolationError,
+                    InternalServerError,
+                    OpenAIError,
+                    RateLimitError,
                 )
             ),
             after=attempt_on_error,
@@ -405,14 +406,14 @@ class LLM(CondenserMixin):
             except UserCancelledError:
                 logger.info('LLM request cancelled by user.')
                 raise
-            except OpenAIError as e:
-                logger.error(f'OpenAIError occurred:\n{e}')
-                raise
             except (
-                RateLimitError,
                 APIConnectionError,
-                ServiceUnavailableError,
+                ContentPolicyViolationError,
                 InternalServerError,
+                NotFoundError,
+                OpenAIError,
+                RateLimitError,
+                ServiceUnavailableError,
             ) as e:
                 logger.error(f'Completion Error occurred:\n{e}')
                 raise
