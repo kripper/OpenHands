@@ -447,7 +447,7 @@ def _edit_file_impl(
         n_added_lines = None
 
         # lint the original file
-        enable_auto_lint = os.getenv('ENABLE_AUTO_LINT', 'false').lower() == 'true'
+        enable_auto_lint = os.getenv('ENABLE_AUTO_LINT', 'true').lower() == 'true'
         if enable_auto_lint:
             original_lint_error, _ = _lint_file(file_name)
 
