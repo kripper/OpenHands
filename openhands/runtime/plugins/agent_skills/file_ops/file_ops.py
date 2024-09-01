@@ -19,11 +19,14 @@ Functions:
 - find_and_replace(file_name: str, find_string: str, replace_string: str): Replaces specific content in a file with new content.
 - insert_content_at_line(file_name: str, line_number: int, content: str): Inserts given content at the specified line number in a file.
 - append_file(file_name: str, content: str): Appends the given content to the end of the specified file.
+
+- kill_port(port_number: int): Kills the process running on the specified port.
 """
 
 import os
 import re
 import shutil
+import subprocess
 import tempfile
 
 from openhands.runtime.plugins.agent_skills.utils.aider import Linter
@@ -853,6 +856,27 @@ def find_file(file_name: str, dir_path: str = './') -> None:
         print(f'[End of matches for "{file_name}" in {dir_path}]')
     else:
         print(f'[No matches found for "{file_name}" in {dir_path}]')
+
+
+def kill_port(port: int):
+    """Kills the process running on the specified port.
+
+    Args:
+        port: int: The port number to kill the process on.
+    """
+    process = subprocess.run(
+        ['lsof', '-t', '-i', f':{port}'], capture_output=True, text=True
+    )
+    if process.returncode != 0:
+        print(f'No process found running on port {port}')
+        return
+    kill_process = subprocess.run(
+        ['kill', '-9', process.stdout.strip()], capture_output=True, text=True
+    )
+    if kill_process.returncode != 0:
+        print(f'Failed to kill process running on port {port}')
+        return
+    print(f'Killed process running on port {port}')
 
 
 __all__ = [
