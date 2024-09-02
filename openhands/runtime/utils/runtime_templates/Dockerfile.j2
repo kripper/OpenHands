@@ -14,7 +14,7 @@ FROM {{ base_image }}
 
 # Install necessary packages and clean up in one layer
 RUN apt-get update && \
-    apt-get install -y wget sudo apt-utils {{ LIBGL_MESA }} libasound2-plugins git docker.io && \
+    apt-get install -y wget sudo apt-utils {{ LIBGL_MESA }} libasound2-plugins git docker.io lsof && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
