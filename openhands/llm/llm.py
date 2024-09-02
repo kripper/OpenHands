@@ -259,6 +259,7 @@ class LLM(CondenserMixin):
                     InternalServerError,
                     OpenAIError,
                     RateLimitError,
+                    ServiceUnavailableError,
                 )
             ),
             after=attempt_on_error,
