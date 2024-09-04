@@ -94,6 +94,9 @@ class Session:
             default_llm_config.model = args.get(
                 ConfigType.LLM_MODEL, default_llm_config.model
             )
+            import openhands.core.config2 as config2
+
+            config2.model = default_llm_config.model
             default_llm_config.api_key = args.get(
                 ConfigType.LLM_API_KEY, default_llm_config.api_key
             )

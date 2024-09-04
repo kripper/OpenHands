@@ -65,8 +65,11 @@ class Message(BaseModel):
     @model_serializer
     def serialize_model(self) -> dict:
         content: list[dict[str, str | dict[str, str]]] = []
-        model = config.get_llm_config().model
+        import openhands.core.config2 as config2
+
+        model = config2.model
         supports_vision = litellm.supports_vision(model)
+
         if not supports_vision:
             text_contents = '\n'.join([item.text for item in self.content])
             return {'role': self.role, 'content': text_contents}
