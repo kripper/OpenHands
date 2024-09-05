@@ -138,9 +138,8 @@ class CodeActAgent(Agent):
             content = [TextContent(text=self.action_to_str(action))]
 
             if (
-                self.llm.vision_is_active()
-                and isinstance(action, MessageAction)
-                and action.images_urls
+                # self.llm.vision_is_active()
+                isinstance(action, MessageAction) and action.images_urls
             ):
                 content.append(ImageContent(image_urls=action.images_urls))
 
