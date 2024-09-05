@@ -2,6 +2,7 @@ import asyncio
 import copy
 import warnings
 from functools import partial
+from typing import Union
 
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
@@ -37,6 +38,7 @@ from openhands.core.exceptions import (
 )
 from openhands.core.logger import llm_prompt_logger, llm_response_logger
 from openhands.core.logger import openhands_logger as logger
+from openhands.core.message import format_messages
 from openhands.core.metrics import Metrics
 
 message_separator = '\n\n----------\n\n'
@@ -67,18 +69,20 @@ class LLM(CondenserMixin):
         Args:
             config: The LLM configuration
         """
-        self.config = copy.deepcopy(config)
         self.metrics = metrics if metrics is not None else Metrics()
         self.cost_metric_supported = True
-        self.supports_prompt_caching = (
-            self.config.model in cache_prompting_supported_models
-        )
+        self.config = copy.deepcopy(config)
 
         if self.config.enable_cache:
             litellm.cache = Cache()
 
         # Set up config attributes with default values to prevent AttributeError
         LLMConfig.set_missing_attributes(self.config)
+
+        self.supports_prompt_caching = (
+            self.vision_is_active()
+            and self.config.model in cache_prompting_supported_models
+        )
 
         # litellm actually uses base Exception here for unknown model
         self.model_info = None
@@ -173,7 +177,7 @@ class LLM(CondenserMixin):
             if 'messages' in kwargs:
                 messages = kwargs['messages']
             else:
-                messages = args[1]
+                messages = args[1] if len(args) > 1 else []
 
             if self.is_over_token_limit(messages):
                 if kwargs['condense']:
@@ -190,33 +194,43 @@ class LLM(CondenserMixin):
             # log the prompt
             debug_message = ''
             for message in messages:
+                debug_str = ''  # helper to prevent empty messages
                 content = message['content']
 
                 if isinstance(content, list):
                     for element in content:
                         if isinstance(element, dict):
                             if 'text' in element:
-                                content_str = element['text'].strip()
+                                debug_str = element['text'].strip()
                             elif (
-                                'image_url' in element and 'url' in element['image_url']
+                                self.vision_is_active()
+                                and 'image_url' in element
+                                and 'url' in element['image_url']
                             ):
-                                content_str = element['image_url']['url']
+                                debug_str = element['image_url']['url']
                             else:
-                                content_str = str(element)
+                                debug_str = str(element)
                         else:
-                            content_str = str(element)
-
-                        debug_message += message_separator + content_str
+                            debug_str = str(element)
                 else:
-                    content_str = str(content)
-                    debug_message += message_separator + content_str
+                    debug_str = str(content)
 
-            llm_prompt_logger.debug(debug_message)
+                if debug_str:
+                    debug_message += message_separator + debug_str
+
+            if self.supports_prompt_caching:
+                # Anthropic-specific prompt caching
+                if 'claude-3' in self.config.model:
+                    kwargs['extra_headers'] = {
+                        'anthropic-beta': 'prompt-caching-2024-07-31',
+                    }
 
             # skip if messages is empty (thus debug_message is empty)
             if debug_message:
+                llm_prompt_logger.debug(debug_message)
                 resp = self.completion_unwrapped(*args, **kwargs)
             else:
+                logger.debug('No completion messages!')
                 resp = {'choices': [{'message': {'content': ''}}]}
 
             # log the response
@@ -282,21 +296,23 @@ class LLM(CondenserMixin):
                     for element in content:
                         if isinstance(element, dict):
                             if 'text' in element:
-                                content_str = element['text']
+                                debug_str = element['text']
                             elif (
-                                'image_url' in element and 'url' in element['image_url']
+                                self.vision_is_active()
+                                and 'image_url' in element
+                                and 'url' in element['image_url']
                             ):
-                                content_str = element['image_url']['url']
+                                debug_str = element['image_url']['url']
                             else:
-                                content_str = str(element)
+                                debug_str = str(element)
                         else:
-                            content_str = str(element)
+                            debug_str = str(element)
 
-                        debug_message += message_separator + content_str
+                        debug_message += message_separator + debug_str
                 else:
-                    content_str = str(content)
+                    debug_str = str(content)
 
-                debug_message += message_separator + content_str
+                debug_message += message_separator + debug_str
 
             llm_prompt_logger.debug(debug_message)
 
@@ -463,8 +479,19 @@ class LLM(CondenserMixin):
         except Exception as e:
             raise LLMResponseError(e)
 
-    def supports_vision(self):
-        return litellm.supports_vision(self.config.model)
+    def vision_is_active(self):
+        return not self.config.disable_vision and self._supports_vision()
+
+    def _supports_vision(self):
+        """Acquire from litellm if model is vision capable.
+
+        Returns:
+            bool: True if model is vision capable. If model is not supported by litellm, it will return False.
+        """
+        try:
+            return litellm.supports_vision(self.config.model)
+        except Exception:
+            return False
 
     def _post_completion(self, response) -> None:
         """Post-process the completion response."""
@@ -522,9 +549,13 @@ class LLM(CondenserMixin):
         """
         if messages and isinstance(messages[0], Message):
             messages = [m.model_dump() for m in messages]
-        return litellm.token_counter(
-            model=self.config.model, messages=messages, text=text
-        )
+        try:
+            return litellm.token_counter(
+                model=self.config.model, messages=messages, text=text
+            )
+        except Exception:
+            # TODO: this is to limit logspam in case token count is not supported
+            return 0
 
     def is_local(self):
         """Determines if the system is using a locally running LLM.
@@ -615,3 +646,8 @@ class LLM(CondenserMixin):
         for message in messages:
             text_messages.append(message.model_dump())
         return text_messages
+
+    def format_messages_for_llm(
+        self, messages: Union[Message, list[Message]]
+    ) -> list[dict]:
+        return format_messages(messages, self.vision_is_active())

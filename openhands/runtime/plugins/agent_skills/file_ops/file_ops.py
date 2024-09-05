@@ -28,6 +28,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import uuid
 
 from openhands.runtime.plugins.agent_skills.utils.aider import Linter
 
@@ -470,7 +471,6 @@ def _edit_file_impl(
     # Use a temporary file to write changes
     content = str(content or '')
     temp_file_path = ''
-    src_abs_path = os.path.abspath(file_name)
     first_error_line = None
 
     try:
@@ -485,10 +485,13 @@ def _edit_file_impl(
                 shutil.copy2(file_name, orig_file_clone.name)
                 original_lint_error, _ = _lint_file(orig_file_clone.name)
 
-        # Create a temporary file
-        with tempfile.NamedTemporaryFile('w', delete=False) as temp_file:
-            temp_file_path = temp_file.name
+        # Create a temporary file in the same directory as the original file
+        original_dir = os.path.dirname(file_name)
+        original_ext = os.path.splitext(file_name)[1]
+        temp_file_name = f'.temp_{uuid.uuid4().hex}{original_ext}'
+        temp_file_path = os.path.join(original_dir, temp_file_name)
 
+        with open(temp_file_path, 'w') as temp_file:
             # Read the original file and check if empty and for a trailing newline
             with open(file_name) as original_file:
                 lines = original_file.readlines()
@@ -514,8 +517,8 @@ def _edit_file_impl(
             # Write the new content to the temporary file
             temp_file.write(content)
 
-        # Replace the original file with the temporary file atomically
-        shutil.move(temp_file_path, src_abs_path)
+        # Replace the original file with the temporary file
+        os.replace(temp_file_path, file_name)
 
         # Handle linting
         # NOTE: we need to get env var inside this function
@@ -613,6 +616,8 @@ def _edit_file_impl(
 
     except FileNotFoundError as e:
         ret_str += f'File not found: {e}\n'
+    except PermissionError as e:
+        ret_str += f'Permission error during file operation: {str(e)}\n'
     except IOError as e:
         ret_str += f'An error occurred while handling the file: {e}\n'
     except ValueError as e:

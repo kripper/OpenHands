@@ -52,6 +52,7 @@ class LLMConfig:
         ollama_base_url: The base URL for the OLLAMA API.
         drop_params: Drop any unmapped (unsupported) params without causing an exception.
         enable_cache: Whether to enable caching.
+        disable_vision: If model is vision capable, this option allows to disable image processing (useful for cost reduction).
     """
 
     model: str = 'gpt-4o'
@@ -81,6 +82,7 @@ class LLMConfig:
     message_summary_trunc_tokens_frac: float = 0.75
     drop_params: bool | None = None
     enable_cache: bool = True
+    disable_vision: bool | None = None
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""

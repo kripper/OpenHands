@@ -102,7 +102,11 @@ class CodeActSWEAgent(Agent):
         ):
             content = [TextContent(text=self.action_to_str(action))]
 
-            if isinstance(action, MessageAction) and action.images_urls:
+            if (
+                self.llm.vision_is_active()
+                and isinstance(action, MessageAction)
+                and action.images_urls
+            ):
                 content.append(ImageContent(image_urls=action.images_urls))
 
             return Message(
@@ -168,7 +172,6 @@ class CodeActSWEAgent(Agent):
 
         # prepare what we want to send to the LLM
         messages: list[Message] = self._get_messages(state)
-
         response = self.llm.completion(
             messages=messages,
             stop=[

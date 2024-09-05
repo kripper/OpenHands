@@ -29,7 +29,7 @@ class BrowsingResponseParser(ResponseParser):
         end_tag = '</execute_browse>'
         if start_tag in action_str and end_tag not in action_str:
             action_str += end_tag
-        logger.info(action_str)
+        logger.debug(action_str)
         return action_str
 
     def parse_action(self, action_str: str) -> Action:
