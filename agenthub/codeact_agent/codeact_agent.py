@@ -1,5 +1,6 @@
 import os
 import re
+import traceback
 from itertools import islice
 
 from agenthub.codeact_agent.action_parser import CodeActResponseParser
@@ -231,9 +232,10 @@ class CodeActAgent(Agent):
         }
         try:
             response = self.llm.completion(**params)
-        except Exception:
+        except Exception as e:
+            traceback.print_exc()
             return AgentFinishAction(
-                thought='Agent encountered an error while processing the last action. Please try again.'
+                thought=f'Agent encountered an error while processing the last action. Error: {e}. '
             )
 
         return self.action_parser.parse(response)
