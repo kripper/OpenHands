@@ -92,6 +92,7 @@ function ChatInput({ disabled = false, onSendMessage }: ChatInputProps) {
         onCompositionEnd={() => setIsComposing(false)}
         placeholder={t(I18nKey.CHAT_INTERFACE$INPUT_PLACEHOLDER)}
         onPaste={handlePaste}
+        id="chat-input"
         className="pb-3 px-3"
         classNames={{
           inputWrapper: "bg-neutral-700 border border-neutral-600 rounded-lg",
@@ -125,6 +126,7 @@ function ChatInput({ disabled = false, onSendMessage }: ChatInputProps) {
         type="button"
         onClick={handleSendChatMessage}
         disabled={disabled}
+        id="send-message-button"
         className={twMerge(
           "bg-transparent border rounded-lg p-1 border-white hover:opacity-80 cursor-pointer select-none absolute right-5 bottom-[19px] transition active:bg-white active:text-black",
           disabled
