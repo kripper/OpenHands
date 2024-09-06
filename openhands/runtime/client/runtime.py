@@ -108,9 +108,7 @@ class EventStreamRuntime(Runtime):
         plugins: list[PluginRequirement] | None = None,
         env_vars: dict[str, str] | None = None,
     ):
-        super().__init__(
-            config, event_stream, sid, plugins
-        )  # will initialize the event stream
+        super().__init__(config, event_stream, sid, plugins, env_vars)
         self.persist_sandbox = self.config.sandbox.persist_sandbox
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
@@ -172,9 +170,6 @@ class EventStreamRuntime(Runtime):
                 mount_dir=self.config.workspace_mount_path,
                 plugins=plugins,
             )
-
-            # will initialize both the event stream and the env vars
-            super().__init__(config, event_stream, sid, plugins, env_vars)
 
             logger.info(
                 f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}'
