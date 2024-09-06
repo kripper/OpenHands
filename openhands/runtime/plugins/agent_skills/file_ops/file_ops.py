@@ -305,6 +305,9 @@ def create_file(filename: str) -> None:
             print(f'os.path.isfile(filename): {os.path.isfile(filename)}')
             print(f'os.path.abspath(filename): {os.path.abspath(filename)}')
             raise
+        except Exception as e:
+            print(f'Error creating file {filename}: {e}')
+            raise
 
 
 class LineNumberError(Exception):
