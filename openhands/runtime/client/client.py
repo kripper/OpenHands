@@ -352,7 +352,11 @@ class RuntimeClient:
             self.shell.expect(self.__bash_expect_regex, timeout=timeout)
             _exit_code_output = self.shell.before
             logger.debug(f'Exit code Output: {_exit_code_output}')
-            exit_code = int(_exit_code_output.strip().split()[0])
+            try:
+                exit_code = int(_exit_code_output.strip().split()[0])
+            except ValueError:
+                logger.warning(f'Failed to get exit code: {_exit_code_output}')
+                exit_code = -1
             logger.debug(f'Command output: {output}')
         else:
             exit_code = 1  # command is asking for input
