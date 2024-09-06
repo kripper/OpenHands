@@ -99,6 +99,7 @@ class LLM(CondenserMixin):
             InternalServerError,
             OpenAIError,
             RateLimitError,
+            ServiceUnavailableError,
         )
 
         # Set the max tokens in an LM-specific way if not set
