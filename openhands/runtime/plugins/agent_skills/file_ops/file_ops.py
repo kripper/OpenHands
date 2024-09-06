@@ -18,6 +18,7 @@ Functions:
 
 - find_and_replace(file_name: str, find_string: str, replace_string: str): Replaces specific content in a file with new content.
 - insert_content_at_line(file_name: str, line_number: int, content: str): Inserts given content at the specified line number in a file.
+- replace_content(file_name: str, content: str): Replaces the content of the specified file with the given content.
 - append_file(file_name: str, content: str): Appends the given content to the end of the specified file.
 
 - kill_port(port_number: int): Kills the process running on the specified port.
@@ -792,6 +793,20 @@ def insert_content_at_line(file_name: str, line_number: int, content: str) -> No
         print(ret_str)
 
 
+def replace_content(file_name: str, content: str) -> None:
+    """Replace the content of the specified file with the given content."""
+    ret_str = _edit_file_impl(
+        file_name,
+        start=None,
+        end=None,
+        content=content,
+        is_insert=False,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
+
+
 def append_file(file_name: str, content: str) -> None:
     """Append content to the given file.
     It appends text `content` to the end of the specified file, ideal after a `create_file`!
@@ -940,6 +955,7 @@ __all__ = [
     'create_file',
     'find_and_replace',
     'insert_content_at_line',
+    'replace_content',
     'append_file',
     'search_dir',
     'search_file',
