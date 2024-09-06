@@ -27,7 +27,7 @@ from tenacity import (
     retry,
     retry_if_exception_type,
     stop_after_attempt,
-    wait_random_exponential,
+    wait_exponential,
 )
 
 from openhands.condenser.condenser import CondenserMixin
@@ -79,11 +79,6 @@ class LLM(CondenserMixin):
         # Set up config attributes with default values to prevent AttributeError
         LLMConfig.set_missing_attributes(self.config)
 
-        self.supports_prompt_caching = (
-            self.vision_is_active()
-            and self.config.model in cache_prompting_supported_models
-        )
-
         # litellm actually uses base Exception here for unknown model
         self.model_info = None
         try:
@@ -96,6 +91,15 @@ class LLM(CondenserMixin):
         # noinspection PyBroadException
         except Exception:
             logger.warning(f'Could not get model info for {config.model}')
+
+        # Tuple of exceptions to retry on
+        self.retry_exceptions = (
+            APIConnectionError,
+            ContentPolicyViolationError,
+            InternalServerError,
+            OpenAIError,
+            RateLimitError,
+        )
 
         # Set the max tokens in an LM-specific way if not set
         if config.max_input_tokens is None:
@@ -145,31 +149,56 @@ class LLM(CondenserMixin):
             caching=self.config.enable_cache,
         )
 
+        if self.vision_is_active():
+            logger.debug('LLM: model has vision enabled')
+
         def attempt_on_error(retry_state):
+            """Custom attempt function for litellm completion."""
             logger.error(
-                f'{retry_state.outcome.exception()}. Attempt #{retry_state.attempt_number} | You can customize these settings in the configuration.',
+                f'{retry_state.outcome.exception()}. Attempt #{retry_state.attempt_number} | You can customize retry values in the configuration.',
                 exc_info=False,
             )
             return None
 
+        def custom_completion_wait(retry_state):
+            """Custom wait function for litellm completion."""
+            if not retry_state:
+                return 0
+            exception = retry_state.outcome.exception() if retry_state.outcome else None
+            if exception is None:
+                return 0
+
+            min_wait_time = self.config.retry_min_wait
+            max_wait_time = self.config.retry_max_wait
+
+            # for rate limit errors, wait 1 minute by default, max 4 minutes between retries
+            exception_type = type(exception).__name__
+            logger.error(f'\nexception_type: {exception_type}\n')
+
+            if exception_type == 'RateLimitError':
+                min_wait_time = 60
+                max_wait_time = 240
+            elif exception_type == 'BadRequestError' and exception.response:
+                # this should give us the burried, actual error message from
+                # the LLM model.
+                logger.error(f'\n\nBadRequestError: {exception.response}\n\n')
+
+            # Return the wait time using exponential backoff
+            exponential_wait = wait_exponential(
+                multiplier=self.config.retry_multiplier,
+                min=min_wait_time,
+                max=max_wait_time,
+            )
+
+            # Call the exponential wait function with retry_state to get the actual wait time
+            return exponential_wait(retry_state)
+
         @retry(
-            reraise=True,
-            stop=stop_after_attempt(config.num_retries),
-            wait=wait_random_exponential(
-                multiplier=config.retry_multiplier,
-                min=config.retry_min_wait,
-                max=config.retry_max_wait,
-            ),
-            retry=retry_if_exception_type(
-                (
-                    APIConnectionError,
-                    ContentPolicyViolationError,
-                    InternalServerError,
-                    OpenAIError,
-                    RateLimitError,
-                )
-            ),
             after=attempt_on_error,
+            stop=stop_after_attempt(self.config.num_retries),
+            reraise=True,
+            retry=retry_if_exception_type(self.retry_exceptions),
+            wait=custom_completion_wait,
         )
         def wrapper(*args, **kwargs):
             """Wrapper for the litellm completion function. Logs the input and output of the completion function."""
@@ -218,7 +247,7 @@ class LLM(CondenserMixin):
                 if debug_str:
                     debug_message += message_separator + debug_str
 
-            if self.supports_prompt_caching:
+            if self.is_caching_prompt_active():
                 # Anthropic-specific prompt caching
                 if 'claude-3' in self.config.model:
                     kwargs['extra_headers'] = {
@@ -260,24 +289,11 @@ class LLM(CondenserMixin):
         )
 
         @retry(
-            reraise=True,
-            stop=stop_after_attempt(self.config.num_retries),
-            wait=wait_random_exponential(
-                multiplier=self.config.retry_multiplier,
-                min=self.config.retry_min_wait,
-                max=self.config.retry_max_wait,
-            ),
-            retry=retry_if_exception_type(
-                (
-                    APIConnectionError,
-                    ContentPolicyViolationError,
-                    InternalServerError,
-                    OpenAIError,
-                    RateLimitError,
-                    ServiceUnavailableError,
-                )
-            ),
             after=attempt_on_error,
+            stop=stop_after_attempt(self.config.num_retries),
+            reraise=True,
+            retry=retry_if_exception_type(self.retry_exceptions),
+            wait=custom_completion_wait,
         )
         async def async_completion_wrapper(*args, **kwargs):
             """Async wrapper for the litellm acompletion function."""
@@ -367,23 +383,11 @@ class LLM(CondenserMixin):
                     pass
 
         @retry(
-            reraise=True,
-            stop=stop_after_attempt(self.config.num_retries),
-            wait=wait_random_exponential(
-                multiplier=self.config.retry_multiplier,
-                min=self.config.retry_min_wait,
-                max=self.config.retry_max_wait,
-            ),
-            retry=retry_if_exception_type(
-                (
-                    APIConnectionError,
-                    ContentPolicyViolationError,
-                    InternalServerError,
-                    OpenAIError,
-                    RateLimitError,
-                )
-            ),
             after=attempt_on_error,
+            stop=stop_after_attempt(self.config.num_retries),
+            reraise=True,
+            retry=retry_if_exception_type(self.retry_exceptions),
+            wait=custom_completion_wait,
         )
         async def async_acompletion_stream_wrapper(*args, **kwargs):
             """Async wrapper for the litellm acompletion with streaming function."""
@@ -492,6 +496,17 @@ class LLM(CondenserMixin):
             return litellm.supports_vision(self.config.model)
         except Exception:
             return False
+
+    def is_caching_prompt_active(self) -> bool:
+        """Check if prompt caching is enabled and supported for current model.
+
+        Returns:
+            boolean: True if prompt caching is active for the given model.
+        """
+        return (
+            self.config.caching_prompt is True
+            and self.config.model in cache_prompting_supported_models
+        )
 
     def _post_completion(self, response) -> None:
         """Post-process the completion response."""
