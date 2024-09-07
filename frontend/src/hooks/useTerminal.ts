@@ -86,6 +86,7 @@ export const useTerminal = (commands: Command[] = []) => {
         }
         if (
           (arg.ctrlKey || arg.metaKey) &&
+          arg.shiftKey &&
           arg.code === "KeyC" &&
           arg.type === "keydown"
         ) {
