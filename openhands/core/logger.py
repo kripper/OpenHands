@@ -194,6 +194,21 @@ logging.getLogger('LiteLLM Router').disabled = True
 logging.getLogger('LiteLLM Proxy').disabled = True
 
 
+def clear_llm_logs(dir: str):
+    """Clear all LLM logs in the given directory if not in debug mode.
+
+    Args:
+        dir (str): The directory to clear.
+    """
+    openhands_logger.info(f'Clearing LLM logs in: {dir}')
+    for file in os.listdir(dir):
+        file_path = os.path.join(dir, file)
+        try:
+            os.unlink(file_path)
+        except Exception as e:
+            openhands_logger.error('Failed to delete %s. Reason: %s', file_path, e)
+
+
 class LlmFileHandler(logging.FileHandler):
     """# LLM prompt and response logging"""
 
@@ -214,16 +229,8 @@ class LlmFileHandler(logging.FileHandler):
             self.session = 'default'
         self.log_directory = os.path.join(LOG_DIR, 'llm', self.session)
         os.makedirs(self.log_directory, exist_ok=True)
-        if not DEBUG:
-            # Clear the log directory if not in debug mode
-            for file in os.listdir(self.log_directory):
-                file_path = os.path.join(self.log_directory, file)
-                try:
-                    os.unlink(file_path)
-                except Exception as e:
-                    openhands_logger.error(
-                        'Failed to delete %s. Reason: %s', file_path, e
-                    )
+        # Clear the log directory if not in debug mode
+        clear_llm_logs(self.log_directory)
         filename = f'{self.filename}_{self.message_counter:03}.log'
         self.baseFilename = os.path.join(self.log_directory, filename)
         super().__init__(self.baseFilename, mode, encoding, delay)
@@ -241,6 +248,11 @@ class LlmFileHandler(logging.FileHandler):
         self.stream.close()
         openhands_logger.debug('Logging to %s', self.baseFilename)
         self.message_counter += 1
+
+    def reset_counter(self):
+        """Resets the message counter."""
+        self.message_counter = 1
+        clear_llm_logs(self.log_directory)
 
 
 def _get_llm_file_handler(name: str, log_level: int):

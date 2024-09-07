@@ -2,6 +2,7 @@ from openhands.controller import AgentController
 from openhands.controller.agent import Agent
 from openhands.controller.state.state import State
 from openhands.core.config import AgentConfig, AppConfig, LLMConfig
+from openhands.core.logger import llm_prompt_logger, llm_response_logger
 from openhands.core.logger import openhands_logger as logger
 from openhands.events.stream import EventStream
 from openhands.runtime import get_runtime_cls
@@ -95,6 +96,8 @@ class AgentSession:
             sid=self.sid,
             plugins=agent.sandbox_plugins,
         )
+        llm_prompt_logger.handlers[0].reset_counter()
+        llm_response_logger.handlers[0].reset_counter()
 
     async def _create_controller(
         self,
