@@ -200,7 +200,7 @@ def clear_llm_logs(dir: str):
     Args:
         dir (str): The directory to clear.
     """
-    openhands_logger.info(f'Clearing LLM logs in: {dir}')
+    openhands_logger.debug(f'Clearing LLM logs in: {dir}')
     for file in os.listdir(dir):
         file_path = os.path.join(dir, file)
         try:
