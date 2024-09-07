@@ -406,7 +406,14 @@ async def list_files(request: Request, path: str | None = None):
             content={'error': 'Runtime not yet initialized'},
         )
     runtime: Runtime = request.state.session.agent_session.runtime
-    file_list = runtime.list_files(path)
+    try:
+        file_list = runtime.list_files(path)
+    except Exception as e:
+        logger.exception('Error listing files')
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={'error': f'Error listing files: {e}'},
+        )
     return file_list
 
 
