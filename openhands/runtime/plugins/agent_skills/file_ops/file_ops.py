@@ -947,6 +947,20 @@ def kill_port(port: int):
     print(f'Killed process running on port {port}')
 
 
+def clean_workspace():
+    """Clean the workspace directory and all its contents except for the test files and directories."""
+    root_dir = os.getcwd()
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if not filename.startswith('test'):
+                file_path = os.path.join(dirpath, filename)
+                os.remove(file_path)
+        for dirname in dirnames:
+            if not dirname.startswith('test'):
+                dir_path = os.path.join(dirpath, dirname)
+                shutil.rmtree(dir_path)
+
+
 __all__ = [
     'open_file',
     'goto_line',
@@ -961,4 +975,5 @@ __all__ = [
     'search_file',
     'find_file',
     'kill_port',
+    'clean_workspace',
 ]

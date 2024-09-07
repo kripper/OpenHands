@@ -14,6 +14,8 @@ __all__ = file_ops.__all__
 
 DOCUMENTATION = ''
 for func_name in __all__:
+    if func_name == 'clean_workspace':
+        continue
     func = globals()[func_name]
 
     cur_doc = func.__doc__
