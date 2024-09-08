@@ -482,11 +482,6 @@ class RuntimeClient:
             if self.pwd != getattr(self, '_jupyter_pwd', None):
                 await self.chdir()
 
-            if 'app.run' in action.code.strip().split('\n')[-1]:
-                return ErrorObservation(
-                    "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
-                )
-
             action.code = action.code.replace('!pip', '%pip')
             obs: IPythonRunCellObservation = await _jupyter_plugin.run(action)
             if 'pip install' in action.code:
