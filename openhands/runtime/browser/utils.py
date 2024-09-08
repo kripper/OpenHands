@@ -33,6 +33,8 @@ async def browse(
     try:
         if 'summarize' in action_str:
             raise ValueError('Summarize is an invalid action')
+        if action_str.startswith('curl'):
+            raise ValueError('curl is an bash action')
         # obs provided by BrowserGym:
         # https://github.com/ServiceNow/BrowserGym/blob/main/browsergym/core/src/browsergym/core/env.py#L521
         # https://github.com/ServiceNow/BrowserGym/blob/418421abdc5da4d77dc71d3b82a9e5e931be0c4f/browsergym/core/src/browsergym/core/env.py#L521
