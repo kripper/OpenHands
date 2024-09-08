@@ -5,20 +5,10 @@ USER: create a python file that prints hello world
 
 ASSISTANT:
 <execute_ipython>
-create_file('hello.py')
-</execute_ipython>
-
-USER:
-OBSERVATION:
-[File hello.py created.]
-
-ASSISTANT:
-<execute_ipython>
 full_content='''
-string = "hello world"
-print(string)
+print("hello world")
 '''
-insert_content_at_line('hello.py', 1, full_content)
+create_file('hello.py', full_content)
 </execute_ipython>
 
 USER:

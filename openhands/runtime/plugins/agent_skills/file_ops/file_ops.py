@@ -285,7 +285,7 @@ def scroll_up() -> None:
 
 
 def create_file(filename: str, content: str = '') -> None:
-    """Creates a new file with the given name.
+    """Creates a new file with the given name and appends the content to it.
 
     Args:
         filename: str: The name of the file to create.
@@ -986,6 +986,7 @@ def custom_import(name, *args, **kwargs):
             print(
                 "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
             )
+            sys.exit(1)
     return module
 
 
