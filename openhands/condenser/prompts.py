@@ -17,21 +17,15 @@ MESSAGE_SUMMARY_WARNING_FRAC = 0.75
 SUMMARY_PROMPT_SYSTEM = """
 Your job is to summarize a history of previous messages in a conversation between an AI persona and a human. The conversation you are given is a from a fixed context window and may not be complete. Keep your summary less than {WORD_LIMIT} words, do NOT exceed this word limit.
 Only output the summary, do NOT include anything else in your output.
-Given the following actions and observations, create a JSON response with:
-    - "action": "summarize"
-    - args:
-      - "summarized_actions": A precise sentence summarizing all the provided actions, written in the first person.
-      - "summarized_observations": A few precise sentences summarizing all the provided observations, written in the third person.
-Example:
+Given the following actions and observations, create a JSON response like this:
 {
     "action": "summarize",
     "args": {
-        "summarized_actions": "I located the UML specification PDF, parsed its content, and searched for information about sequence diagrams.",
-        "summarized_observations": "The agent encountered a UnicodeDecodeError when initially searching the PDF text, but was able to resolve this by installing the PyPDF2 library and successfully extracting relevant information about sequence diagrams."
+        "summarized_actions": "A precise sentence summarizing all the provided actions, written in the first person.",
+        "summarized_observations": "A few precise sentences summarizing all the provided observations, written in the third person."
     }
 }
 Make sure to include in observations any relevant information that the agent needs to remember.
-%(events)s
 """
 
 
