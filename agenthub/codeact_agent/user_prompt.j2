@@ -14,14 +14,18 @@ OBSERVATION:
 
 ASSISTANT:
 <execute_ipython>
-content = '''print("hello world")'''
-insert_content_at_line('hello.py', 1, content)
+full_content='''
+string = "hello world"
+print(string)
+'''
+insert_content_at_line('hello.py', 1, full_content)
 </execute_ipython>
 
 USER:
 OBSERVATION:
 (this is the beginning of the file)
-1 print("hello world")
+1 | string = "hello world"
+2 | print(string)
 (this is the end of the file)
 [File updated (edited at line 1). Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.]
 
