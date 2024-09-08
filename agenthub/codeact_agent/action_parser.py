@@ -89,7 +89,7 @@ class CodeActActionParserCmdRun(ActionParser):
 
     def check_condition(self, action_str: str) -> bool:
         self.bash_command = re.search(
-            r'<execute_bash>(.*?)</execute_bash>', action_str, re.DOTALL
+            r'<execute_bash>(.*\S.*)</execute_bash>', action_str, re.DOTALL
         )
         return self.bash_command is not None
 
@@ -117,7 +117,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
 
     def check_condition(self, action_str: str) -> bool:
         self.python_code = re.search(
-            r'<execute_ipython>(.*?)</execute_ipython>', action_str, re.DOTALL
+            r'<execute_ipython>(.*\S.*)</execute_ipython>', action_str, re.DOTALL
         )
         return self.python_code is not None
 
