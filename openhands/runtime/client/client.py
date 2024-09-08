@@ -274,6 +274,9 @@ class RuntimeClient:
     ) -> tuple[str, int]:
         logger.debug(f'Executing command: {command}')
         aws_cmd = 'aws configure'
+        # skip venv
+        if '-m venv' in command:
+            return 'Virtual environment is not needed in the sandbox.', 0
         if command.startswith(aws_cmd):
             if command == aws_cmd:
                 path = Path.home() / '.aws'
@@ -323,10 +326,10 @@ class RuntimeClient:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
-                            if 'Press CTRL+C to quit' in output:
+                            if 'Press CTRL+C to quit' in output or 1:
                                 return self._send_interrupt(command, timeout)
-                            hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
-                            return output + hint, 1
+                            # hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
+                            # return output + hint, 1
                 elif index in [3, 4]:
                     self.shell.sendline('Y')
                     full_output += output + self.shell.match.group(1)
@@ -482,7 +485,7 @@ class RuntimeClient:
 
             if 'app.run' in action.code.strip().split('\n')[-1]:
                 return ErrorObservation(
-                    "Don't run Flask app in Jupyter notebook. Save the code to a file and run it in the terminal in background."
+                    "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
                 )
 
             action.code = action.code.replace('!pip', '%pip')
