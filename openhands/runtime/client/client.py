@@ -326,8 +326,7 @@ class RuntimeClient:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
-                            if 'Press CTRL+C to quit' in output or 1:
-                                return self._send_interrupt(command, timeout)
+                            return self._send_interrupt(command, timeout)
                             # hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
                             # return output + hint, 1
                 elif index in [3, 4]:
