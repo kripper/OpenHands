@@ -440,7 +440,7 @@ class RuntimeClient:
 
         await self.chdir()
         # re-init the kernel after restart
-        logger.info('Re-initializing the kernel...')
+        logger.info(f'Re-initializing the kernel with {self.kernel_init_code}')
         act = IPythonRunCellAction(code=self.kernel_init_code)
         obs = await jupyter_plugin.run(act)
         logger.info(f'Kernel re-initialized. Output: {obs}')
