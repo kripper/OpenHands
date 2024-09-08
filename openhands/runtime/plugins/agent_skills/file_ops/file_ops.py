@@ -943,7 +943,7 @@ def kill_port(port: int):
         ['kill', '-9', process.stdout.strip()], capture_output=True, text=True
     )
     if kill_process.returncode != 0:
-        print(f'Failed to kill process running on port {port}')
+        print(f'Failed to kill process running on port {port}. {kill_process.stderr}')
         return
     print(f'Killed process running on port {port}')
 
