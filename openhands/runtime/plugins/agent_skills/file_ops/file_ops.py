@@ -9,7 +9,7 @@ Functions:
 - scroll_down(): Moves the window down by the number of lines specified in WINDOW.
 - scroll_up(): Moves the window up by the number of lines specified in WINDOW.
 
-- create_file(filename: str): Creates a new file with the given name.
+- create_file(filename: str, content: str = ''): Creates a new file with the given name.
 
 - search_dir(search_term: str, dir_path: str = './'): Searches for a term in all files in the specified directory.
 - search_file(search_term: str, file_path: str | None = None): Searches for a term in the specified file or the currently open file.
@@ -28,6 +28,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import uuid
 
@@ -283,20 +284,20 @@ def scroll_up() -> None:
     print(output)
 
 
-def create_file(filename: str) -> None:
+def create_file(filename: str, content: str = '') -> None:
     """Creates a new file with the given name.
 
     Args:
         filename: str: The name of the file to create.
+        content: str = '': The content to write to the file. Defaults to an empty string.
     """
     if os.path.exists(filename):
         _output_error(f"File '{filename}' already exists.")
     else:
         try:
             with open(filename, 'w') as file:
-                file.write('\n')
-
-            print(f'[File {filename} created.]')
+                file.write('')
+            insert_content_at_line(filename, 1, content)
         except FileNotFoundError:
             print('Weird case where the file is not found when creating it')
             cwd = os.getcwd()
@@ -960,6 +961,35 @@ def clean_workspace():
                 dir_path = os.path.join(dirpath, dirname)
                 shutil.rmtree(dir_path)
 
+
+# Check if running inside Jupyter
+def in_jupyter_notebook():
+    try:
+        shell = globals()['get_ipython']().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True  # Running in Jupyter Notebook
+        else:
+            return False  # Running in other environments
+    except Exception:
+        return False  # Not in Jupyter Notebook
+
+
+# Original Flask import
+original_import = __import__
+
+
+# Monkey-patch the import function
+def custom_import(name, *args, **kwargs):
+    module = original_import(name, *args, **kwargs)
+    if name == 'flask':
+        if in_jupyter_notebook():
+            print(
+                "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
+            )
+    return module
+
+
+sys.modules['builtins'].__import__ = custom_import  # type: ignore
 
 __all__ = [
     'open_file',
