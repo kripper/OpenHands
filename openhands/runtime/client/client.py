@@ -64,6 +64,7 @@ INIT_COMMANDS = [
     'export TERM=xterm-256color',
     "export PATH=/openhands/poetry/$(ls /openhands/poetry | sed -n '2p')/bin:$PATH",
 ]
+SOFT_TIMEOUT_SECONDS = 5
 
 
 class RuntimeClient:
@@ -216,8 +217,13 @@ class RuntimeClient:
 
     def _get_bash_prompt_and_update_pwd(self):
         ps1 = self.shell.after
-        if isinstance(ps1, (EOF, TIMEOUT)):
+        if ps1 == pexpect.EOF:
+            logger.error(f'Bash shell EOF! {self.shell.after=}, {self.shell.before=}')
+            raise RuntimeError('Bash shell EOF')
+        if ps1 == pexpect.TIMEOUT:
+            logger.warning('Bash shell timeout')
             return ''
+
         # begin at the last occurrence of '[PEXPECT_BEGIN]'.
         # In multi-line bash commands, the prompt will be repeated
         # and the matched regex captures all of them
@@ -252,43 +258,38 @@ class RuntimeClient:
             prompt += '$'
         return prompt + ' '
 
-    def _send_interrupt(
+    def _execute_bash(
         self,
         command: str,
         timeout: int | None,
+        keep_prompt: bool = True,
+        kill_on_timeout: bool = True,
     ) -> tuple[str, int]:
-        logger.exception(
-            f'Command "{command}" timed out, killing process...', exc_info=False
+        logger.debug(f'Executing command: {command}')
+        self.shell.sendline(command)
+        return self._continue_bash(
+            timeout=timeout, keep_prompt=keep_prompt, kill_on_timeout=kill_on_timeout
         )
+
+    def _interrupt_bash(
+        self,
+        timeout: int | None,
+    ) -> tuple[str, int]:
         # send a SIGINT to the process
         self.shell.sendintr()
         self.shell.expect(self.__bash_expect_regex, timeout=timeout)
         command_output = self.shell.before
         return (
-            f'Command: "{command}" timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.\n',
+            f'Command timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.\n',
             130,
         )
 
-    def _execute_bash(
-        self, command: str, timeout: int | None, keep_prompt: bool = True
+    def _continue_bash(
+        self,
+        timeout: int | None,
+        keep_prompt: bool = True,
+        kill_on_timeout: bool = True,
     ) -> tuple[str, int]:
-        logger.debug(f'Executing command: {command}')
-        aws_cmd = 'aws configure'
-        # skip venv
-        if '-m venv' in command:
-            return 'Virtual environment is not needed in the sandbox.', 0
-        if command.startswith(aws_cmd):
-            if command == aws_cmd:
-                path = Path.home() / '.aws'
-                if os.path.exists(path):
-                    output, exit_code = '[AWS already configured]', 0
-
-                    if keep_prompt:
-                        output += '\r\n' + self._get_bash_prompt_and_update_pwd()
-                    return output, exit_code
-
-        self.shell.sendline(command)
-
         prompts = [
             self.__bash_expect_regex,
             EOF,
@@ -326,9 +327,7 @@ class RuntimeClient:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
-                            return self._send_interrupt(command, timeout)
-                            # hint = '\r\n[Hint: Command not completed yet.]\r\n\r\n'
-                            # return output + hint, 1
+                            return self._interrupt_bash(timeout=timeout)
                 elif index in [3, 4]:
                     self.shell.sendline('Y')
                     full_output += output + self.shell.match.group(1)
@@ -345,12 +344,13 @@ class RuntimeClient:
         full_output += output
 
         if not seeking_input:
+            bash_prompt = self._get_bash_prompt_and_update_pwd()
             if keep_prompt:
-                full_output += '\r\n' + self._get_bash_prompt_and_update_pwd()
+                output += '\r\n' + bash_prompt
 
             # Get exit code
             self.shell.sendline('echo $?')
-            logger.debug(f'Executing command for exit code: {command}')
+            logger.debug('Requesting exit code...')
             self.shell.expect(self.__bash_expect_regex, timeout=timeout)
             _exit_code_output = self.shell.before
             logger.debug(f'Exit code Output: {_exit_code_output}')
@@ -363,7 +363,8 @@ class RuntimeClient:
         else:
             exit_code = 1  # command is asking for input
 
-        return full_output, exit_code
+        logger.debug(f'Command output: {output}')
+        return output, exit_code
 
     async def run_action(self, action) -> Observation:
         action_type = action.action
@@ -380,11 +381,23 @@ class RuntimeClient:
             commands = split_bash_commands(action.command)
             all_output = ''
             for command in commands:
-                output, exit_code = self._execute_bash(
-                    command,
-                    timeout=action.timeout,
-                    keep_prompt=action.keep_prompt,
-                )
+                if command == '':
+                    output, exit_code = self._continue_bash(
+                        timeout=SOFT_TIMEOUT_SECONDS,
+                        keep_prompt=action.keep_prompt,
+                        kill_on_timeout=False,
+                    )
+                elif command.lower() == 'ctrl+c':
+                    output, exit_code = self._interrupt_bash(
+                        timeout=SOFT_TIMEOUT_SECONDS
+                    )
+                else:
+                    output, exit_code = self._execute_bash(
+                        command,
+                        timeout=SOFT_TIMEOUT_SECONDS,
+                        keep_prompt=action.keep_prompt,
+                        kill_on_timeout=False,
+                    )
                 if command.startswith('pip install'):
                     output = await self.parse_pip_output(command, output)
                 if all_output:
@@ -844,5 +857,4 @@ if __name__ == '__main__':
             return []
 
     logger.info(f'Starting action execution API on port {args.port}')
-    print(f'Starting action execution API on port {args.port}')
     run(app, host='0.0.0.0', port=args.port)
