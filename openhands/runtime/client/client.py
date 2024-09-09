@@ -265,7 +265,7 @@ class RuntimeClient:
         self.shell.expect(self.__bash_expect_regex, timeout=timeout)
         command_output = self.shell.before
         return (
-            f'Command: "{command}" timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.',
+            f'Command: "{command}" timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.\n',
             130,
         )
 
