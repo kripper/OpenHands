@@ -47,6 +47,9 @@ class LogBuffer:
     """
 
     def __init__(self, container: docker.models.containers.Container):
+        self.client_ready = False
+        self.init_msg = 'Runtime client initialized.'
+
         self.buffer: list[str] = []
         self.lock = threading.Lock()
         self.log_generator = container.logs(stream=True, follow=True)
@@ -77,9 +80,12 @@ class LogBuffer:
                 if self._stop_event.is_set():
                     break
                 if log_line:
-                    self.append(log_line.decode('utf-8').rstrip())
+                    decoded_line = log_line.decode('utf-8').rstrip()
+                    self.append(decoded_line)
+                    if self.init_msg in decoded_line:
+                        self.client_ready = True
         except Exception as e:
-            logger.error(f'Error in stream_logs: {e}')
+            logger.error(f'Error streaming docker logs: {e}')
 
     def __del__(self):
         if self.log_stream_thread.is_alive():
@@ -141,7 +147,6 @@ class EventStreamRuntime(Runtime):
 
         # Buffer for container logs
         self.log_buffer: LogBuffer | None = None
-        self.startup_done = False
 
         if self.config.sandbox.runtime_extra_deps:
             logger.info(
@@ -189,7 +194,7 @@ class EventStreamRuntime(Runtime):
             return docker.from_env()
         except Exception as ex:
             logger.error(
-                'Launch docker client failed. Please make sure you have installed docker and started the docker daemon.'
+                'Launch docker client failed. Please make sure you have installed docker and started docker desktop/daemon.'
             )
             raise ex
 
