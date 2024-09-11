@@ -209,6 +209,15 @@ def test_create_file(tmp_path):
     expected = f'[File {temp_file_path} created.]\n'
     assert result.split('\n') == expected.split('\n')
 
+    # create again
+    with io.StringIO() as buf:
+        with contextlib.redirect_stdout(buf):
+            create_file(str(temp_file_path))
+        result = buf.getvalue()
+
+    expected = f"ERROR: File '{temp_file_path}' already exists.\n"
+    assert result.split('\n') == expected.split('\n')
+
 
 def test_goto_line(tmp_path):
     temp_file_path = tmp_path / 'a.txt'

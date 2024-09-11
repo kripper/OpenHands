@@ -297,7 +297,10 @@ def create_file(filename: str, content: str = '') -> None:
         try:
             with open(filename, 'w') as file:
                 file.write('')
-            insert_content_at_line(filename, 1, content)
+            if content:
+                insert_content_at_line(filename, 1, content)
+            else:
+                print(f'[File {filename} created.]')
         except FileNotFoundError:
             print('Weird case where the file is not found when creating it')
             cwd = os.getcwd()
