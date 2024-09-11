@@ -18,7 +18,7 @@ if 1:
     with open(file, 'r') as f:
         data = f.readlines()
         # data = [json.loads(line) for line in data][-1]
-        data = [json.loads(line) for line in data]
+        data = [json.loads(line) for line in data][-1:]
         history = []
         for d in data:
             history.extend(d['history'])
