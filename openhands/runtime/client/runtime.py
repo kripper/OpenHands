@@ -114,7 +114,7 @@ class EventStreamRuntime(Runtime):
         plugins: list[PluginRequirement] | None = None,
         env_vars: dict[str, str] | None = None,
     ):
-        super().__init__(config, event_stream, sid, plugins, env_vars)
+        self.config = config
         self.persist_sandbox = self.config.sandbox.persist_sandbox
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
@@ -130,7 +130,6 @@ class EventStreamRuntime(Runtime):
         else:
             self.instance_id = (sid or '') + str(uuid.uuid4())
             self._port = find_available_tcp_port()
-        self.config = config
         self.api_url = f'http://{self.config.sandbox.api_hostname}:{self._port}'
         self.session = requests.Session()
 
@@ -175,10 +174,10 @@ class EventStreamRuntime(Runtime):
                 mount_dir=self.config.workspace_mount_path,
                 plugins=plugins,
             )
-
-            logger.info(
-                f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}'
-            )
+            if plugins:
+                logger.info(
+                    f'Container initialized with plugins: {[plugin.name for plugin in plugins]}'
+                )
             logger.info(f'Container initialized with env vars: {env_vars}')
 
         else:
@@ -187,6 +186,7 @@ class EventStreamRuntime(Runtime):
             self.start_docker_container()
 
         self.log_buffer = LogBuffer(self.container)
+        super().__init__(config, event_stream, sid, plugins, env_vars)
 
     @staticmethod
     def _init_docker_client() -> docker.DockerClient:
