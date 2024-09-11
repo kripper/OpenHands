@@ -348,9 +348,7 @@ class EventStreamRuntime(Runtime):
                 # only remove the container it created
                 # otherwise all other containers with the same prefix will be removed
                 # which will mess up with parallel evaluation
-                if rm_all_containers and container.name.startswith(self.container_name):
-                    container.remove(force=True)
-                elif container.name == self.container_name:
+                if container.name == self.container_name:
                     logs = container.logs(tail=1000).decode('utf-8')
                     logger.debug(
                         f'==== Container logs ====\n{logs}\n==== End of container logs ===='
