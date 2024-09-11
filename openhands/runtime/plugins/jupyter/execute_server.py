@@ -223,7 +223,7 @@ class JupyterKernel:
             return f'[Execution timed out ({timeout} seconds)]'
 
         if not outputs and execution_done:
-            ret = '[Code executed successfully]'
+            ret = '[Code executed successfully with no output]'
         else:
             ret = ''.join(outputs)
 
