@@ -188,10 +188,11 @@ def mock_user_response(*args, test_name, **kwargs):
 def mock_completion(*args, test_name, **kwargs):
     global cur_id
     messages = kwargs['messages']
-    message_str = ''
     if isinstance(messages[0], Message):
         messages = [message.model_dump() for message in messages]
-    plain_messages = format_messages(messages, with_images=False)
+    plain_messages = format_messages(
+        messages, with_images=False, with_prompt_caching=False
+    )
     message_str = message_separator.join(msg['content'] for msg in plain_messages)
 
     # this assumes all response_(*).log filenames are in numerical order, starting from one

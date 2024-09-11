@@ -327,7 +327,15 @@ class EventStreamRuntime(Runtime):
         except Exception:
             logger.exception('Failed to start container')
 
-    def close(self, close_client: bool = True):
+    def close(self, close_client: bool = True, rm_all_containers: bool = True):
+        """
+        Closes the EventStreamRuntime and associated objects
+
+        Parameters:
+        - close_client (bool): Whether to close the DockerClient
+        - rm_all_containers (bool): Whether to remove all containers with the 'openhands-sandbox-' prefix
+        """
+
         if self.log_buffer:
             self.log_buffer.close()
 
@@ -340,7 +348,9 @@ class EventStreamRuntime(Runtime):
                 # only remove the container it created
                 # otherwise all other containers with the same prefix will be removed
                 # which will mess up with parallel evaluation
-                if container.name.startswith(self.container_name):
+                if rm_all_containers and container.name.startswith(self.container_name):
+                    container.remove(force=True)
+                elif container.name == self.container_name:
                     logs = container.logs(tail=1000).decode('utf-8')
                     logger.debug(
                         f'==== Container logs ====\n{logs}\n==== End of container logs ===='
@@ -352,6 +362,7 @@ class EventStreamRuntime(Runtime):
                         container.remove(force=True)
             except docker.errors.NotFound:
                 pass
+
         if close_client:
             self.docker_client.close()
 
