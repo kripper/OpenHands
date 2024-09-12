@@ -92,7 +92,6 @@ def codeact_user_response(
     )
     msg = (
         'Please continue working on the task on whatever approach you think is suitable.\n'
-        'If you think you have solved the task, please first send your answer to user through message and then <execute_bash> exit </execute_bash>.\n'
         f'{encaps_str}'
         'IMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
     )
@@ -243,7 +242,7 @@ def run_evaluation(
         f'model {metadata.llm_config.model}, max iterations {metadata.max_iterations}.\n'
     )
     pbar = tqdm(total=len(dataset))
-    output_fp = open(output_file, 'a')
+    output_fp = open(output_file, 'w')
 
     def update_progress(future):
         pbar.update(1)
