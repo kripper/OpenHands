@@ -215,7 +215,7 @@ def open_file(
         CURRENT_LINE,
         _clamp(context_lines, 1, 300),
         return_str=True,
-        ignore_window=False,
+        ignore_window=True,
     )
     if output.strip().endswith('more lines below)'):
         output += '\n[Use `scroll_down` to view the next 100 lines of the file!]'
@@ -241,7 +241,7 @@ def goto_line(line_number: int) -> None:
 
     output = _cur_file_header(CURRENT_FILE, total_lines)
     output += _print_window(
-        CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True, ignore_window=False
+        CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True, ignore_window=True
     )
     print(output)
 
@@ -284,14 +284,14 @@ def scroll_up() -> None:
     print(output)
 
 
-def create_file(filename: str, content: str = '') -> None:
+def create_file(filename: str, content: str = '', overwrite: bool = False) -> None:
     """Creates a new file with the given name and appends the content to it.
 
     Args:
         filename: str: The name of the file to create.
         content: str = '': The content to write to the file. Defaults to an empty string.
     """
-    if os.path.exists(filename):
+    if os.path.exists(filename) and not overwrite:
         _output_error(f"File '{filename}' already exists.")
     else:
         try:
@@ -647,10 +647,11 @@ def _edit_file_impl(
             CURRENT_LINE = max(1, len(lines))  # end of original file
         else:
             CURRENT_LINE = start or n_total_lines or 1
-    ret_str += f'[File: {os.path.abspath(file_name)} ({n_total_lines} lines total after edit)]\n'
+    # ret_str += f'[File: {os.path.abspath(file_name)} ({n_total_lines} lines total after edit)]\n'
     CURRENT_FILE = file_name
-    ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
-    ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
+    # ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
+    # ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
+    ret_str = '[File updated successfully]'
     return ret_str
 
 
