@@ -187,6 +187,7 @@ class EventStreamRuntime(Runtime):
 
         self.log_buffer = LogBuffer(self.container)
         super().__init__(config, event_stream, sid, plugins, env_vars)
+        self._wait_until_alive()
 
     @staticmethod
     def _init_docker_client() -> docker.DockerClient:

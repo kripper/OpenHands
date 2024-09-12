@@ -63,9 +63,14 @@ In order to accomplish my goal I need to send the information asked back to the 
 """
 
 
-def get_prompt(error_prefix: str, cur_axtree_txt: str, prev_action_str: str) -> str:
+def get_prompt(
+    error_prefix: str, cur_url: str, cur_axtree_txt: str, prev_action_str: str
+) -> str:
     prompt = f"""\
 {error_prefix}
+
+# Current Page URL:
+{cur_url}
 
 # Current Accessibility Tree:
 {cur_axtree_txt}
@@ -137,6 +142,7 @@ class BrowsingAgent(Agent):
         """
         messages: list[Message] = []
         prev_actions = []
+        cur_url = ''
         cur_axtree_txt = ''
         error_prefix = ''
         last_obs = None
@@ -177,6 +183,8 @@ class BrowsingAgent(Agent):
                 self.error_accumulator += 1
                 if self.error_accumulator > 5:
                     return MessageAction('Too many errors encountered. Task failed.')
+            cur_url = last_obs.url
+
             cur_axtree_txt = last_obs.axtree_txt
             if not cur_axtree_txt:
                 cur_axtree_txt = self.previous_axtree_txt
@@ -198,7 +206,7 @@ class BrowsingAgent(Agent):
 
         messages.append(Message(role='system', content=[TextContent(text=system_msg)]))
 
-        prompt = get_prompt(error_prefix, cur_axtree_txt, prev_action_str)
+        prompt = get_prompt(error_prefix, cur_url, cur_axtree_txt, prev_action_str)
         messages.append(Message(role='user', content=[TextContent(text=prompt)]))
 
         flat_messages = self.llm.format_messages_for_llm(messages)
