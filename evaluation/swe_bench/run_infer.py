@@ -29,7 +29,7 @@ from openhands.core.config import (
 )
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.main import create_runtime, run_controller
-from openhands.events.action import CmdRunAction
+from openhands.events.action import CmdRunAction, IPythonRunCellAction
 from openhands.events.observation import CmdOutputObservation, ErrorObservation
 from openhands.runtime.runtime import Runtime
 
@@ -83,7 +83,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
         )
 
     # NOTE: You can actually set slightly different instruction for different agents
-    instruction += AGENT_CLS_TO_INST_SUFFIX[metadata.agent_class]
+    # instruction += AGENT_CLS_TO_INST_SUFFIX[metadata.agent_class]
     return instruction
 
 
@@ -246,6 +246,41 @@ def initialize_runtime(
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert obs.exit_code == 0
+
+    # delete pycache
+    action = CmdRunAction(command='rm -rf __pycache__')
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
+    assert obs.exit_code == 0
+
+    test_code = '''
+FILE_CONTENT = """
+import os
+os.chdir('/workspace/astropy__astropy__4.3')
+from astropy.modeling import models as m
+from astropy.modeling.separable import separability_matrix
+
+cm = m.Linear1D(10) & m.Linear1D(5)
+
+a= separability_matrix(m.Pix2Sky_TAN() & cm)
+
+import numpy as np
+
+expected_matrix = np.array([[ True,  True, False, False],
+                            [ True,  True, False, False],
+                            [False, False,  True,  False],
+                            [False, False,  False,  True]])
+
+assert np.array_equal(a, expected_matrix), "Matrix does not match expected structure"
+print('End the task with <finish2></finish2>')
+"""
+create_file('/workspace/test_task.py', FILE_CONTENT)
+'''
+    action = IPythonRunCellAction(test_code)
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
 
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
