@@ -63,9 +63,15 @@ class CodeActActionParserFinish(ActionParser):
         self,
     ):
         self.finish_command = None
+        self.is_finish2 = False
 
     def check_condition(self, action_str: str) -> bool:
         self.finish_command = re.search(r'<finish>.*</finish>', action_str, re.DOTALL)
+        if self.finish_command is not None:
+            self.finish_command = re.search(
+                r'<finish2>.*</finish2>', action_str, re.DOTALL
+            )
+            self.is_finish2 = True
         return self.finish_command is not None
 
     def parse(self, action_str: str) -> Action:
@@ -73,7 +79,10 @@ class CodeActActionParserFinish(ActionParser):
             self.finish_command is not None
         ), 'self.finish_command should not be None when parse is called'
         thought = action_str.replace(self.finish_command.group(0), '').strip()
-        return AgentFinishAction(thought=thought)
+        if self.is_finish2:
+            return AgentFinishAction(thought=thought)
+        print('Finish thought:', thought)
+        return CmdRunAction('python /workspace/test_task.py', thought='')
 
 
 class CodeActActionParserCmdRun(ActionParser):
@@ -99,10 +108,12 @@ class CodeActActionParserCmdRun(ActionParser):
         ), 'self.bash_command should not be None when parse is called'
         thought = action_str.replace(self.bash_command.group(0), '').strip()
         # a command was found
-        command_group = self.bash_command.group(1).strip()
-        if command_group.strip() == 'exit':
+        command = self.bash_command.group(1).strip()
+        if 'pytest' in command:
+            command += ' --import-mode=importlib'
+        if command.strip() == 'exit':
             return AgentFinishAction(thought=thought)
-        return CmdRunAction(command=command_group, thought=thought)
+        return CmdRunAction(command=command, thought=thought)
 
 
 class CodeActActionParserIPythonRunCell(ActionParser):
@@ -125,10 +136,15 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         assert (
             self.python_code is not None
         ), 'self.python_code should not be None when parse is called'
-        code_group = self.python_code.group(1).strip()
+        code = self.python_code.group(1).strip()
+        three_single_quotes = "'''"
+        three_backticks = '```'
+        if three_backticks in code and code.count(three_single_quotes) % 2 == 1:
+            code = code.replace(three_backticks, three_single_quotes).strip()
+
         thought = action_str.replace(self.python_code.group(0), '').strip()
         return IPythonRunCellAction(
-            code=code_group,
+            code=code,
             thought=thought,
         )
 
