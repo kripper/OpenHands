@@ -18,7 +18,7 @@ if 1:
     with open(file, 'r') as f:
         data = f.readlines()
         # data = [json.loads(line) for line in data][-1]
-        data = [json.loads(line) for line in data][-1:]
+        data = [json.loads(line) for line in data]
         history = []
         for d in data:
             history.extend(d['history'])
@@ -30,7 +30,7 @@ else:
     with open(fp, 'r') as f:
         data = json.load(f)
         history = data['traj']
-if not sys.argv[1:]:
+if not sys.argv[1:] or 0:
     pprint(history)
     # exit()
 json_data = {}
