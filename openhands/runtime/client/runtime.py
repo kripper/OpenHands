@@ -356,6 +356,7 @@ class EventStreamRuntime(Runtime):
                     )
                     if self.persist_sandbox:
                         if not self.fast_boot:
+                            logger.info('Stopping container')
                             container.stop()
                     else:
                         container.remove(force=True)
