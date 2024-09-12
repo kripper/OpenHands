@@ -186,7 +186,7 @@ if LOG_TO_FILE:
     openhands_logger.addHandler(
         get_file_handler(LOG_DIR, current_log_level)
     )  # default log to project root
-    openhands_logger.info(f'Logging to file in: {LOG_DIR}')
+    # openhands_logger.info(f'Logging to file in: {LOG_DIR}')
 
 # Exclude LiteLLM from logging output
 logging.getLogger('LiteLLM').disabled = True
