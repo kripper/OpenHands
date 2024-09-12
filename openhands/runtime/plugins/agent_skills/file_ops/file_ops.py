@@ -25,7 +25,6 @@ Functions:
 """
 
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -56,7 +55,7 @@ def _is_valid_filename(file_name) -> bool:
         return False
     invalid_chars = '<>:"/\\|?*'
     if os.name == 'nt':  # Windows
-        invalid_chars = '<>:"/\\|?*'
+        invalid_chars = '<>"|?*'
     elif os.name == 'posix':  # Unix-like systems
         invalid_chars = '\0'
 
@@ -701,66 +700,74 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
         find_string: str: The content to search for and replace.
         replace_string: str: The new content to replace the old content with.
     """
-    # FIXME: support replacing *all* occurrences
-    if find_string.strip() == '':
-        raise ValueError('`find_string` must not be empty.')
-
-    if find_string == replace_string:
-        raise ValueError('`find_string` and `replace_string` must be different.')
-
-    if not os.path.isfile(file_name):
-        _output_error(f'File {file_name} not found.')
-        return None
-
-    # search for `find_string` in the file
-    # if found, replace it with `replace_string`
-    # if not found, perform a fuzzy search to find the closest match and replace it with `replace_string`
+    # simple method:
     with open(file_name, 'r') as file:
         file_content = file.read()
+    file_content = file_content.replace(find_string, replace_string)
+    with open(file_name, 'w') as file:
+        file.write(file_content)
+    print('[File updated successfully]')
+    return
+    # # FIXME: support replacing *all* occurrences
+    # if find_string.strip() == '':
+    #     raise ValueError('`find_string` must not be empty.')
 
-    if file_content.count(find_string) > 1:
-        _output_error(
-            '`find_string` appears more than once, please include enough lines to make code in `find_string` unique.'
-        )
+    # if find_string == replace_string:
+    #     raise ValueError('`find_string` and `replace_string` must be different.')
 
-        return
+    # if not os.path.isfile(file_name):
+    #     _output_error(f'File {file_name} not found.')
+    #     return None
 
-    start = file_content.find(find_string)
-    if start != -1:
-        # Convert start from index to line number
-        start_line_number = file_content[:start].count('\n') + 1
-        end_line_number = start_line_number + len(find_string.splitlines()) - 1
-    else:
+    # # search for `find_string` in the file
+    # # if found, replace it with `replace_string`
+    # # if not found, perform a fuzzy search to find the closest match and replace it with `replace_string`
+    # with open(file_name, 'r') as file:
+    #     file_content = file.read()
 
-        def _fuzzy_transform(s: str) -> str:
-            # remove all space except newline
-            return re.sub(r'[^\S\n]+', '', s)
+    # if file_content.count(find_string) > 1:
+    #     _output_error(
+    #         '`find_string` appears more than once, please include enough lines to make code in `find_string` unique.'
+    #     )
 
-        # perform a fuzzy search (remove all spaces except newlines)
-        find_string_fuzzy = _fuzzy_transform(find_string)
-        file_content_fuzzy = _fuzzy_transform(file_content)
-        # find the closest match
-        start = file_content_fuzzy.find(find_string_fuzzy)
-        if start == -1:
-            print(
-                f'[No exact match found in {file_name} for\n```\n{find_string}\n```\n]'
-            )
-            return
-        # Convert start from index to line number for fuzzy match
-        start_line_number = file_content_fuzzy[:start].count('\n') + 1
-        end_line_number = start_line_number + len(find_string.splitlines()) - 1
+    #     return
 
-    ret_str = _edit_file_impl(
-        file_name,
-        start=start_line_number,
-        end=end_line_number,
-        content=replace_string,
-        is_insert=False,
-    )
-    # lint_error = bool(LINTER_ERROR_MSG in ret_str)
-    # TODO: automatically tries to fix linter error (maybe involve some static analysis tools on the location near the edit to figure out indentation)
-    if ret_str is not None:
-        print(ret_str)
+    # start = file_content.find(find_string)
+    # if start != -1:
+    #     # Convert start from index to line number
+    #     start_line_number = file_content[:start].count('\n') + 1
+    #     end_line_number = start_line_number + len(find_string.splitlines()) - 1
+    # else:
+
+    #     def _fuzzy_transform(s: str) -> str:
+    #         # remove all space except newline
+    #         return re.sub(r'[^\S\n]+', '', s)
+
+    #     # perform a fuzzy search (remove all spaces except newlines)
+    #     find_string_fuzzy = _fuzzy_transform(find_string)
+    #     file_content_fuzzy = _fuzzy_transform(file_content)
+    #     # find the closest match
+    #     start = file_content_fuzzy.find(find_string_fuzzy)
+    #     if start == -1:
+    #         print(
+    #             f'[No exact match found in {file_name} for\n```\n{find_string}\n```\n]'
+    #         )
+    #         return
+    #     # Convert start from index to line number for fuzzy match
+    #     start_line_number = file_content_fuzzy[:start].count('\n') + 1
+    #     end_line_number = start_line_number + len(find_string.splitlines()) - 1
+
+    # ret_str = _edit_file_impl(
+    #     file_name,
+    #     start=start_line_number,
+    #     end=end_line_number,
+    #     content=replace_string,
+    #     is_insert=False,
+    # )
+    # # lint_error = bool(LINTER_ERROR_MSG in ret_str)
+    # # TODO: automatically tries to fix linter error (maybe involve some static analysis tools on the location near the edit to figure out indentation)
+    # if ret_str is not None:
+    #     print(ret_str)
 
 
 def insert_content_at_line(file_name: str, line_number: int, content: str) -> None:

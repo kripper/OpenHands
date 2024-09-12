@@ -13,6 +13,7 @@ from openhands.runtime.plugins.agent_skills.file_ops.file_ops import (
     _print_window,
     append_file,
     create_file,
+    find_and_replace,
     # edit_file_by_replace,
     find_file,
     goto_line,
@@ -1309,6 +1310,24 @@ def test_edit_lint_file_pass(tmp_path):
             + '\n'
         )
         assert result.split('\n') == expected.split('\n')
+
+
+def test_find_and_replace(tmp_path):
+    file_path = tmp_path / 'a.txt'
+    file_path.write_text('Line 1\nLine 2\n    Line 3\nLine 4\nLine 5')
+
+    with io.StringIO() as buf:
+        with contextlib.redirect_stdout(buf):
+            find_and_replace(str(file_path), 'Line 3', 'Line 3 (replaced)')
+        result = buf.getvalue()
+        assert result is not None
+        expected = '[File updated successfully]'
+        assert result.strip() == expected.strip()
+        # check the content of the file
+        assert (
+            file_path.read_text()
+            == 'Line 1\nLine 2\n    Line 3 (replaced)\nLine 4\nLine 5'
+        )
 
 
 def test_lint_file_fail_undefined_name(tmp_path, capsys):
