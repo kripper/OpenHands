@@ -73,6 +73,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             'Environment has been set up for you to start working. You may assume all necessary tools are installed.\n\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
+            f'List out your plan to fix the issue.'
         )
         if USE_HINT_TEXT and instance.hints_text:
             instruction += f'# Hints\n{instance.hints_text}\n\n'
