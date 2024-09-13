@@ -18,9 +18,8 @@ else:
 if 1:
     with open(file, 'r') as f:
         data = f.readlines()
-        ansi_color_escape = re.compile(r'\u001b\[[0-9;]*m')
+        ansi_color_escape = re.compile(r'\\u001b\[[0-9;]*m')
         data = [ansi_color_escape.sub('', line) for line in data]
-        # data = [json.loads(line) for line in data][-1]
         data = [json.loads(line) for line in data]
         history = []
         for d in data:
