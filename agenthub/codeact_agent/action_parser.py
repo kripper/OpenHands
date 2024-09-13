@@ -67,11 +67,12 @@ class CodeActActionParserFinish(ActionParser):
 
     def check_condition(self, action_str: str) -> bool:
         self.finish_command = re.search(r'<finish>.*</finish>', action_str, re.DOTALL)
-        if self.finish_command is not None:
+        if self.finish_command is None:
             self.finish_command = re.search(
                 r'<finish2>.*</finish2>', action_str, re.DOTALL
             )
-            self.is_finish2 = True
+            if self.finish_command is not None:
+                self.is_finish2 = True
         return self.finish_command is not None
 
     def parse(self, action_str: str) -> Action:
@@ -81,7 +82,6 @@ class CodeActActionParserFinish(ActionParser):
         thought = action_str.replace(self.finish_command.group(0), '').strip()
         if self.is_finish2:
             return AgentFinishAction(thought=thought)
-        print('Finish thought:', thought)
         return CmdRunAction('python /workspace/test_task.py', thought='')
 
 
