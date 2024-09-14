@@ -237,13 +237,17 @@ class LLM(CondenserMixin):
                 if self.log_prompt_once:
                     llm_prompt_logger.debug(debug_message)
                     self.log_prompt_once = False
-                resp = self.completion_unwrapped(*args, **kwargs)
+                for _ in range(3):
+                    resp = self.completion_unwrapped(*args, **kwargs)
+                    message_back = resp['choices'][0]['message']['content']
+                    if message_back:
+                        break
             else:
                 logger.debug('No completion messages!')
                 resp = {'choices': [{'message': {'content': ''}}]}
+                message_back = ''
 
             # log the response
-            message_back = resp['choices'][0]['message']['content']
             llm_response_logger.debug(message_back)
             self.log_prompt_once = True
 
