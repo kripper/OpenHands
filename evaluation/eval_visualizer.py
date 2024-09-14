@@ -1,11 +1,13 @@
 #!python
 import json
 import re
+import subprocess
 import sys
 import webbrowser
 from pprint import pprint
 
 import requests
+import toml
 
 if sys.argv[1:]:
     file = sys.argv[1]
@@ -13,6 +15,8 @@ else:
     from pyperclip import paste
 
     file = paste()
+    if 'evaluation/' not in file:
+        file = 'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActAgent/gemini-1.5-pro-latest_maxiter_25_N_v1.9-no-hint/output.jsonl'
 
 # output.json or trajectory.json
 if 1:
@@ -34,13 +38,30 @@ else:
     with open(fp, 'r') as f:
         data = json.load(f)
         history = data['traj']
-if not sys.argv[1:] or 0:
+if not sys.argv[1:] and 0:
     pprint(history)
     # exit()
 json_data = {}
+git_hash = 'git rev-parse HEAD'
+
+git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
+with open('config.toml', 'r') as f:
+    config = toml.load(f)
+model = config['llm']['eval']['model']
+agent = 'CodeActAgent'
+config = {
+    'action': 'initialize',
+    'args': {
+        'LLM_MODEL': model,
+        'AGENT': agent,
+        'LANGUAGE': 'en',
+        'CONFIRMATION_MODE': 'false',
+        'SECURITY_ANALYZER': '',
+    },
+}
 json_data.update(
     {
-        'version': '1.0',
+        'version': git_hash,
         'feedback': 'negative',
         'email': 'eval@anon.com',
         'permissions': 'public',
@@ -48,7 +69,7 @@ json_data.update(
     }
 )
 # flatten the history
-
+history = [config] + history
 json_data['trajectory'] = history
 
 # pprint(json_data);exit()
