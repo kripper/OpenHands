@@ -488,9 +488,12 @@ def _edit_file_impl(
         if enable_auto_lint:
             # Copy the original file to a temporary file (with the same ext) and lint it
             suffix = os.path.splitext(file_name)[1]
-            with tempfile.NamedTemporaryFile(suffix=suffix) as orig_file_clone:
+            with tempfile.NamedTemporaryFile(
+                suffix=suffix, mode='w', delete=False
+            ) as orig_file_clone:
                 shutil.copy2(file_name, orig_file_clone.name)
                 original_lint_error, _ = _lint_file(orig_file_clone.name)
+            os.remove(orig_file_clone.name)
 
         # Create a temporary file in the same directory as the original file
         original_dir = os.path.dirname(file_name)
@@ -648,9 +651,11 @@ def _edit_file_impl(
             CURRENT_LINE = start or n_total_lines or 1
     # ret_str += f'[File: {os.path.abspath(file_name)} ({n_total_lines} lines total after edit)]\n'
     CURRENT_FILE = file_name
+    if enable_auto_lint:
+        os.remove(original_file_backup_path)
     # ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
     # ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
-    ret_str = '[File updated successfully]'
+    ret_str += '[File updated successfully]'
     return ret_str
 
 
@@ -706,7 +711,8 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     file_content = file_content.replace(find_string, replace_string)
     with open(file_name, 'w') as file:
         file.write(file_content)
-    print('[File updated successfully]')
+    occurrences = file_content.count(find_string)
+    print(f'[File updated successfully with {occurrences} occurrences replaced]')
     return
     # # FIXME: support replacing *all* occurrences
     # if find_string.strip() == '':
@@ -1019,3 +1025,12 @@ __all__ = [
     'kill_port',
     'clean_workspace',
 ]
+
+if __name__ == '__main__':
+    full_content = """
+print("hello world")
+"""
+    from datetime import datetime
+
+    dt = datetime.now()
+    create_file(f'hello18-{dt.strftime("%Y-%m-%d-%H-%M-%S")}.py', full_content)
