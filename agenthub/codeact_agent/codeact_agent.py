@@ -335,7 +335,7 @@ class CodeActAgent(Agent):
             None,
         )
         if latest_user_message:
-            reminder_text = f'\n\nENVIRONMENT REMINDER: You have {state.max_iterations - state.iteration + 2} turns left to complete the task. When finished reply with <finish></finish>.'
+            reminder_text = f'\n\nENVIRONMENT REMINDER: You have {state.max_iterations - state.iteration + 2} turns left to complete the task. When finished, please reply with <finish></finish>.'
             latest_user_message.content.append(TextContent(text=reminder_text))
 
         return messages
