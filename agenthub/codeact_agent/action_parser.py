@@ -109,9 +109,6 @@ class CodeActActionParserCmdRun(ActionParser):
         thought = action_str.replace(self.bash_command.group(0), '').strip()
         # a command was found
         command = self.bash_command.group(1).strip()
-        import_mode_flag = ' --import-mode=importlib'
-        if 'pytest' in command and import_mode_flag not in command:
-            command += import_mode_flag
         if command.strip() == 'exit':
             return AgentFinishAction(thought=thought)
         return CmdRunAction(command=command, thought=thought)

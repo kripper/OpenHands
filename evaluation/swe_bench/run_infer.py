@@ -69,11 +69,11 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     else:
         # Testing general agents
         instruction = (
-            f'Please fix the following issue for the repository in /workspace/{workspace_dir_name}.\n'
+            f'Please fix the following issue for the repository in /testbed.\n'
             'Environment has been set up for you to start working. You may assume all necessary tools are installed.\n\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
-            f'List out your plan to fix the issue.'
+            f'List out your plans first, then fix the issue.\n'
         )
         if USE_HINT_TEXT and instance.hints_text:
             instruction += f'# Hints\n{instance.hints_text}\n\n'
@@ -151,7 +151,7 @@ def initialize_runtime(
     logger.info('-' * 30)
     logger.info('BEGIN Runtime Initialization Fn')
     logger.info('-' * 30)
-    workspace_dir_name = _get_swebench_workspace_dir_name(instance)
+    # workspace_dir_name = _get_swebench_workspace_dir_name(instance)
     obs: CmdOutputObservation
 
     # Set instance id
@@ -234,7 +234,7 @@ def initialize_runtime(
             obs.exit_code == 0
         ), f'Failed to source /swe_util/swe_entry.sh: {obs.content}'
 
-    action = CmdRunAction(command=f'cd /workspace/{workspace_dir_name}')
+    action = CmdRunAction(command='cd /testbed')
     action.timeout = 600
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
@@ -267,7 +267,7 @@ def initialize_runtime(
     test_code = '''
 FILE_CONTENT = """
 import os
-os.chdir('/workspace/astropy__astropy__4.3')
+os.chdir('/testbed')
 from astropy.modeling import models as m
 from astropy.modeling.separable import separability_matrix
 
@@ -285,7 +285,7 @@ expected_matrix = np.array([[ True,  True, False, False],
 assert np.array_equal(a, expected_matrix), "Matrix does not match expected structure"
 print('End the task with <finish2></finish2>')
 """
-create_file('/workspace/test_task.py', FILE_CONTENT)
+create_file('/testbed/test_task.py', FILE_CONTENT)
 '''
     action = IPythonRunCellAction(test_code)
     logger.info(action, extra={'msg_type': 'ACTION'})
@@ -311,9 +311,9 @@ def complete_runtime(
     logger.info('BEGIN Runtime Completion Fn')
     logger.info('-' * 30)
     obs: CmdOutputObservation
-    workspace_dir_name = _get_swebench_workspace_dir_name(instance)
+    # workspace_dir_name = _get_swebench_workspace_dir_name(instance)
 
-    action = CmdRunAction(command=f'cd /workspace/{workspace_dir_name}')
+    action = CmdRunAction(command='cd /testbed')
     action.timeout = 600
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
