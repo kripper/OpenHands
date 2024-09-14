@@ -708,10 +708,10 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     # simple method:
     with open(file_name, 'r') as file:
         file_content = file.read()
+    occurrences = file_content.count(find_string)
     file_content = file_content.replace(find_string, replace_string)
     with open(file_name, 'w') as file:
         file.write(file_content)
-    occurrences = file_content.count(find_string)
     print(f'[File updated successfully with {occurrences} occurrences replaced]')
     return
     # # FIXME: support replacing *all* occurrences
