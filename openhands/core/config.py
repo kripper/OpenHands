@@ -225,7 +225,7 @@ class SandboxConfig:
     runtime_startup_env_vars: dict[str, str] = field(default_factory=dict)
     browsergym_eval_env: str | None = None
     persist_sandbox: bool = True
-    fast_boot: bool = False
+    fast_boot: bool = True
     port: int = 63710
 
     def defaults_to_dict(self) -> dict:
