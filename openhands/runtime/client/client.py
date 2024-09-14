@@ -381,7 +381,7 @@ class RuntimeClient:
             all_output = ''
             for command in commands:
                 # suggest alternative for vim/nano
-                if re.search(r'vim|nano', command, re.IGNORECASE):
+                if re.search(r'^(vim?|nano)\s', command, re.IGNORECASE):
                     warning_msg = (
                         'vim/nano are not prohibited in the sandbox. '
                         'Please use agentskills for file operations.'
