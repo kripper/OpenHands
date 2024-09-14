@@ -195,6 +195,16 @@ class LLM(CondenserMixin):
             # Call the exponential wait function with retry_state to get the actual wait time
             return exponential_wait(retry_state)
 
+        def is_hallucination(text) -> bool:
+            lines = text.strip().split('\n')
+            if len(lines) < 2:
+                return False
+            second_last_line = lines[-2].strip()
+            repetition_count = sum(
+                1 for line in lines if line.strip() == second_last_line
+            )
+            return repetition_count >= 5
+
         @retry(
             after=attempt_on_error,
             stop=stop_after_attempt(self.config.num_retries),
@@ -240,8 +250,13 @@ class LLM(CondenserMixin):
                 for _ in range(3):
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
-                    if message_back:
+                    if message_back and message_back != 'None':
+                        if is_hallucination(message_back):
+                            logger.warning('Hallucination detected!')
+                            continue
                         break
+                    else:
+                        logger.warning('No completion messages!')
             else:
                 logger.debug('No completion messages!')
                 resp = {'choices': [{'message': {'content': ''}}]}
