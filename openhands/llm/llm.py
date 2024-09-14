@@ -2,6 +2,7 @@ import asyncio
 import copy
 import warnings
 from functools import partial
+from time import sleep
 from typing import Union
 
 from openhands.core.config import LLMConfig
@@ -199,7 +200,12 @@ class LLM(CondenserMixin):
             lines = text.strip().split('\n')
             if len(lines) < 2:
                 return False
-            second_last_line = lines[-2].strip()
+            line_index = -2
+            while line_index >= -len(lines):
+                second_last_line = lines[line_index].strip()
+                if second_last_line.strip():
+                    break
+                line_index -= 1
             repetition_count = sum(
                 1 for line in lines if line.strip() == second_last_line
             )
@@ -247,12 +253,13 @@ class LLM(CondenserMixin):
                 if self.log_prompt_once:
                     llm_prompt_logger.debug(debug_message)
                     self.log_prompt_once = False
-                for _ in range(3):
+                for _ in range(5):
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
                     if message_back and message_back != 'None':
                         if is_hallucination(message_back):
-                            logger.warning('Hallucination detected!')
+                            logger.warning(f'Hallucination detected!\n{message_back}')
+                            sleep(2)
                             continue
                         break
                     else:
