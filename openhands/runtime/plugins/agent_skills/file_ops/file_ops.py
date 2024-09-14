@@ -134,17 +134,11 @@ def _print_window(
         if ignore_window:
             # Use CURRENT_LINE as starting line (for e.g. scroll_down)
             start = max(1, CURRENT_LINE)
-            end = min(total_lines, CURRENT_LINE + window)
+            end = min(total_lines, CURRENT_LINE + window - 1)
         else:
             # Ensure at least one line above and below the targeted line
             start = max(1, CURRENT_LINE - half_window)
-            end = min(total_lines, CURRENT_LINE + half_window)
-
-        # Adjust start and end to ensure at least one line above and below
-        if start == 1:
-            end = min(total_lines, start + window - 1)
-        if end == total_lines:
-            start = max(1, end - window + 1)
+            end = min(total_lines, CURRENT_LINE + half_window - 1)
 
         output = ''
 
