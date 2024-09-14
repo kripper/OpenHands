@@ -20,6 +20,8 @@ if 1:
         data = f.readlines()
         ansi_color_escape = re.compile(r'\\u001b\[[0-9;]*m')
         data = [ansi_color_escape.sub('', line) for line in data]
+        null_observation = ', {"message": "No observation", "observation": "null", "content": "", "extras": {}}'
+        data = [line.replace(null_observation, '') for line in data]
         data = [json.loads(line) for line in data]
         history = []
         for d in data:
