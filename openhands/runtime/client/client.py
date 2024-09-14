@@ -380,6 +380,18 @@ class RuntimeClient:
             commands = split_bash_commands(action.command)
             all_output = ''
             for command in commands:
+                # suggest alternative for vim/nano
+                if re.search(r'vim|nano', command, re.IGNORECASE):
+                    warning_msg = (
+                        'vim/nano are not prohibited in the sandbox. '
+                        'Please use agentskills for file operations.'
+                    )
+                    return CmdOutputObservation(
+                        command_id=-1,
+                        content=warning_msg,
+                        command=action.command,
+                        exit_code=0,
+                    )
                 if command == '':
                     output, exit_code = self._continue_bash(
                         timeout=SOFT_TIMEOUT_SECONDS,
