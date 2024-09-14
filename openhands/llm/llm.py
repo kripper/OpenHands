@@ -72,6 +72,7 @@ class LLM(CondenserMixin):
         self.metrics = metrics if metrics is not None else Metrics()
         self.cost_metric_supported = True
         self.config = copy.deepcopy(config)
+        self.log_prompt_once = True
 
         if self.config.enable_cache:
             litellm.cache = Cache()
@@ -233,7 +234,9 @@ class LLM(CondenserMixin):
 
             # skip if messages is empty (thus debug_message is empty)
             if debug_message:
-                llm_prompt_logger.debug(debug_message)
+                if self.log_prompt_once:
+                    llm_prompt_logger.debug(debug_message)
+                    self.log_prompt_once = False
                 resp = self.completion_unwrapped(*args, **kwargs)
             else:
                 logger.debug('No completion messages!')
@@ -242,6 +245,7 @@ class LLM(CondenserMixin):
             # log the response
             message_back = resp['choices'][0]['message']['content']
             llm_response_logger.debug(message_back)
+            self.log_prompt_once = True
 
             # post-process to log costs
             self._post_completion(resp)
