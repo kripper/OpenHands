@@ -241,8 +241,7 @@ class LLM(CondenserMixin):
 
             # log the response
             message_back = resp['choices'][0]['message']['content']
-            if message_back:
-                llm_response_logger.debug(message_back)
+            llm_response_logger.debug(message_back)
 
             # post-process to log costs
             self._post_completion(resp)
@@ -640,8 +639,10 @@ class LLM(CondenserMixin):
         if not self.config.max_input_tokens:
             return False
         token_count = self.get_token_count(messages=messages) + MAX_TOKEN_COUNT_PADDING
-        logger.debug(f'Token count: {token_count}')
-        return token_count >= self.config.max_input_tokens
+        output = token_count >= self.config.max_input_tokens
+        if output:
+            logger.info(f'Token count: {token_count}')
+        return output
 
     def get_text_messages(self, messages: list[Message]) -> list[dict]:
         text_messages = []
