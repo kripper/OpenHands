@@ -7,6 +7,15 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
  1) Create an application in flask that can convert AWS cloudformation stack format from json to yaml and use curl to test ; don't do anything extra please.
  [Event history link](https://www.all-hands.dev/share?share_id=870d002486313bbbff706d62376412930ab6c95384dbb3d5c35205acdc946c3f)
 
+
+### SWE-Bench Verified Results:
+ ID: `astropy__astropy-12907`
+
+ [gemini-1.5-pro-latest event history link](https://www.all-hands.dev/share?share_id=691fd73f531ecbd8162ad1fc6c286d33dfbb94d0b955f37f4b69d77f4aaff80a)
+
+ [gemini-1.5-flash-latest event history link](https://www.all-hands.dev/share?share_id=d5b2d7fd7b4eab01aac2281218b031ca819df68ac9ee01675fb5c2a2db8d60f5)
+
+
 ### Kevin Changelogs:
 
   1) [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782) 🔥🔥🔥
