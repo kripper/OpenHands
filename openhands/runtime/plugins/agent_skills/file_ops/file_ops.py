@@ -398,6 +398,8 @@ def _edit_impl(lines, start, end, content):
         start = 1  # Default to the beginning
     if end is None:
         end = len(lines)  # Default to the end
+        if end == 0:
+            end = 1
     # Check arguments
     if not (1 <= start <= len(lines)):
         raise LineNumberError(
