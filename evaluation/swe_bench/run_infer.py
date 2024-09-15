@@ -11,6 +11,7 @@ from datasets import load_dataset
 
 import agenthub
 from evaluation.swe_bench.prompt import CODEACT_SWE_PROMPT
+from evaluation.swe_bench.swe_bench2 import update_issue_description
 from evaluation.utils.shared import (
     EvalMetadata,
     EvalOutput,
@@ -53,6 +54,9 @@ def _get_swebench_workspace_dir_name(instance: pd.Series) -> str:
 
 def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     workspace_dir_name = _get_swebench_workspace_dir_name(instance)
+    instance.problem_statement = update_issue_description(
+        instance.problem_statement, instance.instance_id
+    )
     # Prepare instruction
     if metadata.agent_class == 'CodeActSWEAgent':
         instruction = (
@@ -69,11 +73,11 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     else:
         # Testing general agents
         instruction = (
-            f'Please fix the following issue for the repository in /testbed.\n'
-            'Environment has been set up for you to start working. You may assume all necessary tools are installed.\n\n'
+            f'Please fix the following issue.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
-            f'List out your plans first, then fix the issue.\n'
+            f'List out your plans first before fixing the issue.\n'
+            'Environment has been set up for you to start working. pwd is /testbed.\n'
         )
         if USE_HINT_TEXT and instance.hints_text:
             instruction += f'# Hints\n{instance.hints_text}\n\n'
