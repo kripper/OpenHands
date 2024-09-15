@@ -954,7 +954,7 @@ original_import = __import__
 
 # Monkey-patch the import function
 def custom_import(name, *args, **kwargs):
-    module = original_import(name, *args, **kwargs)
+    """Custom import function to prevent running Flask app in Jupyter Notebook."""
     if name in [
         'flask',
     ]:
@@ -962,7 +962,12 @@ def custom_import(name, *args, **kwargs):
             "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
         )
         sys.exit(1)
-    return module
+    if name in ['astropy', 'erfa']:
+        print(
+            f"Don't use {name} in Jupyter Notebook. Save the code to a Python file and test it in the terminal"
+        )
+        sys.exit(1)
+    return original_import(name, *args, **kwargs)
 
 
 sys.modules['builtins'].__import__ = custom_import  # type: ignore
