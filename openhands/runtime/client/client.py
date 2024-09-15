@@ -325,7 +325,10 @@ class RuntimeClient:
         logger.debug(f'Executing command: {command}')
         self.shell.sendline(command)
         return self._continue_bash(
-            timeout=timeout, keep_prompt=keep_prompt, kill_on_timeout=kill_on_timeout
+            command=command,
+            timeout=timeout,
+            keep_prompt=keep_prompt,
+            kill_on_timeout=kill_on_timeout,
         )
 
     def _interrupt_bash(
@@ -343,6 +346,7 @@ class RuntimeClient:
 
     def _continue_bash(
         self,
+        command: str,
         timeout: int | None,
         keep_prompt: bool = True,
         kill_on_timeout: bool = True,
@@ -402,7 +406,10 @@ class RuntimeClient:
 
         if not seeking_input:
             if not output.strip():
-                output = '[Command executed successfully with no output]\r\n'
+                if 'grep' in command:
+                    output = '[No matching lines were found. Why did you execute this command?]\r\n'
+                else:
+                    output = '[Command executed successfully with no output]\r\n'
             bash_prompt = self._get_bash_prompt_and_update_pwd()
             if keep_prompt:
                 output += '\r\n' + bash_prompt
@@ -453,6 +460,7 @@ class RuntimeClient:
                     )
                 if command == '':
                     output, exit_code = self._continue_bash(
+                        command,
                         timeout=SOFT_TIMEOUT_SECONDS,
                         keep_prompt=action.keep_prompt,
                         kill_on_timeout=False,
