@@ -19,7 +19,7 @@ else:
         file = 'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActAgent/gemini-1.5-pro-latest_maxiter_25_N_v1.9-no-hint/output.jsonl'
 
 # output.json or trajectory.json
-if 1:
+if 0:
     with open(file, 'r') as f:
         data = f.readlines()
         ansi_color_escape = re.compile(r'\\u001b\[[0-9;]*m')
@@ -34,10 +34,12 @@ if 1:
         # history = history[3:]
 
 else:
-    fp = r'evaluation\evaluation_outputs\astropy__astropy-12907.json'
+    fp = r'evaluation\evaluation_outputs\instance.json'
     with open(fp, 'r') as f:
         data = json.load(f)
         history = data['traj']
+    history = [i for sublist in history for i in sublist]
+
 if not sys.argv[1:] and 0:
     pprint(history)
     # exit()

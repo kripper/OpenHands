@@ -38,8 +38,7 @@ from openhands.runtime.utils.runtime_build import build_runtime_image
 
 
 class LogBuffer:
-    """
-    Synchronous buffer for Docker container logs.
+    """Synchronous buffer for Docker container logs.
 
     This class provides a thread-safe way to collect, store, and retrieve logs
     from a Docker container. It uses a list to store log lines and provides methods
@@ -94,7 +93,7 @@ class LogBuffer:
             )
             self.close(timeout=5)
 
-    def close(self, timeout: float = 10.0):
+    def close(self, timeout: float = 5.0):
         self._stop_event.set()
         self.log_stream_thread.join(timeout)
 
@@ -102,6 +101,14 @@ class LogBuffer:
 class EventStreamRuntime(Runtime):
     """This runtime will subscribe the event stream.
     When receive an event, it will send the event to runtime-client which run inside the docker environment.
+    From the sid also an instance_id is generated in combination with a UID.
+
+    Args:
+        config (AppConfig): The application configuration.
+        event_stream (EventStream): The event stream to subscribe to.
+        sid (str, optional): The session ID. Defaults to 'default'.
+        plugins (list[PluginRequirement] | None, optional): List of plugin requirements. Defaults to None.
+        env_vars (dict[str, str] | None, optional): Environment variables to set. Defaults to None.
     """
 
     container_name_prefix = 'openhands-sandbox-'
@@ -120,17 +127,19 @@ class EventStreamRuntime(Runtime):
         if self.persist_sandbox:
             if self.config.run_as_openhands:
                 user = 'oh'
-                self._port = self.config.sandbox.port
+                self._container_port = self.config.sandbox.port
             else:
                 user = 'root'
-                self._port = 63711
+                self._container_port = 63711
             path = config.workspace_mount_path or ''
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
         else:
             self.instance_id = (sid or '') + str(uuid.uuid4())
-            self._port = find_available_tcp_port()
-        self.api_url = f'http://{self.config.sandbox.api_hostname}:{self._port}'
+            self._container_port = find_available_tcp_port()
+        self.api_url = (
+            f'http://{self.config.sandbox.api_hostname}:{self._container_port}'
+        )
         self.session = requests.Session()
 
         self.docker_client: docker.DockerClient = self._init_docker_client()
@@ -142,7 +151,7 @@ class EventStreamRuntime(Runtime):
         self.action_semaphore = threading.Semaphore(1)  # Ensure one action at a time
 
         self.runtime_builder = DockerRuntimeBuilder(self.docker_client)
-        logger.debug(f'EventStreamRuntime `{sid}`')
+        logger.debug(f'EventStreamRuntime `{self.instance_id}`')
 
         # Buffer for container logs
         self.log_buffer: LogBuffer | None = None
@@ -157,6 +166,9 @@ class EventStreamRuntime(Runtime):
         except docker.errors.NotFound:
             self.is_initial_session = True
 
+        self.skip_container_logs = (
+            os.environ.get('SKIP_CONTAINER_LOGS', 'true').lower() == 'true'
+        )
         if self.is_initial_session:
             logger.info('Creating new Docker container')
             if self.runtime_container_image is None:
@@ -170,7 +182,7 @@ class EventStreamRuntime(Runtime):
                     extra_deps=self.config.sandbox.runtime_extra_deps,
                 )
             self.container = self._init_container(
-                self.sandbox_workspace_dir,
+                sandbox_workspace_dir=self.config.workspace_mount_path_in_sandbox,
                 mount_dir=self.config.workspace_mount_path,
                 plugins=plugins,
             )
@@ -211,7 +223,7 @@ class EventStreamRuntime(Runtime):
     ):
         try:
             logger.info(
-                f'Starting container with image: {self.runtime_container_image} and name: {self.container_name}  with port: {self._port}'
+                f'Starting container with image: {self.runtime_container_image} and name: {self.container_name}  with port: {self._container_port}'
             )
             plugin_arg = ''
             if plugins is not None and len(plugins) > 0:
@@ -219,29 +231,53 @@ class EventStreamRuntime(Runtime):
                     f'--plugins {" ".join([plugin.name for plugin in plugins])} '
                 )
 
-            network_mode: str | None = None
-            port_mapping: dict[str, int] | None = None
-            if self.config.sandbox.use_host_network:
-                network_mode = 'host'
+            self._host_port = self._find_available_port()
+            self._container_port = (
+                self._host_port
+            )  # in future this might differ from host port
+            self.api_url = (
+                f'http://{self.config.sandbox.api_hostname}:{self._container_port}'
+            )
+
+            use_host_network = self.config.sandbox.use_host_network
+            network_mode: str | None = 'host' if use_host_network else None
+            port_mapping: dict[str, list[dict[str, str]]] | None = (
+                None
+                if use_host_network
+                else {
+                    f'{self._container_port}/tcp': [{'HostPort': str(self._host_port)}]
+                }
+            )
+
+            if use_host_network:
                 logger.warn(
                     'Using host network mode. If you are using MacOS, please make sure you have the latest version of Docker Desktop and enabled host network feature: https://docs.docker.com/network/drivers/host/#docker-desktop'
                 )
-            else:
-                port_mapping = {f'{self._port}/tcp': self._port}
 
-            if mount_dir is not None:
+            # Combine environment variables
+            environment = {
+                'port': str(self._container_port),
+                'PYTHONUNBUFFERED': 1,
+            }
+            if self.config.debug:
+                environment['DEBUG'] = 'true'
+
+            logger.info(f'Workspace Base: {self.config.workspace_base}')
+            if mount_dir is not None and sandbox_workspace_dir is not None:
+                # e.g. result would be: {"/home/user/openhands/workspace": {'bind': "/workspace", 'mode': 'rw'}}
                 volumes = {mount_dir: {'bind': sandbox_workspace_dir, 'mode': 'rw'}}
                 # mount sock
                 volumes['/var/run/docker.sock'] = {
                     'bind': '/var/run/docker.sock',
                     'mode': 'rw',
                 }
-                logger.info(f'Mount dir: {sandbox_workspace_dir}')
+                logger.info(f'Mount dir: {mount_dir}')
             else:
                 logger.warn(
-                    'Mount dir is not set, will not mount the workspace directory to the container.'
+                    'Warning: Mount dir is not set, will not mount the workspace directory to the container!\n'
                 )
                 volumes = None
+            logger.info(f'Sandbox workspace: {sandbox_workspace_dir}')
 
             if self.config.sandbox.browsergym_eval_env is not None:
                 browsergym_arg = (
@@ -253,9 +289,9 @@ class EventStreamRuntime(Runtime):
                 self.runtime_container_image,
                 command=(
                     f'/openhands/miniforge3/bin/mamba run --no-capture-output -n base '
-                    'PYTHONUNBUFFERED=1 poetry run '
-                    f'python -u -m openhands.runtime.client.client {self._port} '
-                    f'--working-dir {sandbox_workspace_dir} '
+                    f'poetry run '
+                    f'python -u -m openhands.runtime.client.client {self._container_port} '
+                    f'--working-dir "{sandbox_workspace_dir}" '
                     f'{plugin_arg}'
                     f'--username {"openhands" if self.config.run_as_openhands else "root"} '
                     f'--user-id {self.config.sandbox.user_id} '
@@ -263,16 +299,18 @@ class EventStreamRuntime(Runtime):
                 ),
                 network_mode=network_mode,
                 ports=port_mapping,
-                working_dir='/openhands/code/',
+                working_dir='/openhands/code/',  # do not change this!
                 name=self.container_name,
                 detach=True,
-                environment={'DEBUG': 'true'} if self.config.debug else None,
+                environment=environment,
                 volumes=volumes,
             )
             logger.info(f'Container started. Server url: {self.api_url}')
             return container
         except Exception as e:
-            logger.error('Failed to start container')
+            logger.error(
+                f'Error: Instance {self.instance_id} FAILED to start container!\n'
+            )
             logger.exception(e)
             self.close(close_client=False)
             raise e
@@ -294,7 +332,7 @@ class EventStreamRuntime(Runtime):
 
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
-        wait=tenacity.wait_exponential(multiplier=2, min=10, max=60),
+        wait=tenacity.wait_exponential(multiplier=2, min=1, max=20),
         reraise=(ConnectionRefusedError,),
     )
     def _wait_until_alive(self):
@@ -306,10 +344,6 @@ class EventStreamRuntime(Runtime):
             logger.error(msg)
             self.log_container_logs()
             raise RuntimeError(msg)
-
-    @property
-    def sandbox_workspace_dir(self):
-        return self.config.workspace_mount_path_in_sandbox
 
     def start_docker_container(self):
         try:
@@ -329,8 +363,7 @@ class EventStreamRuntime(Runtime):
             logger.exception('Failed to start container')
 
     def close(self, close_client: bool = True, rm_all_containers: bool = True):
-        """
-        Closes the EventStreamRuntime and associated objects
+        """Closes the EventStreamRuntime and associated objects
 
         Parameters:
         - close_client (bool): Whether to close the DockerClient
@@ -517,3 +550,20 @@ class EventStreamRuntime(Runtime):
             raise TimeoutError('List files operation timed out')
         except Exception as e:
             raise RuntimeError(f'List files operation failed: {str(e)}')
+
+    def _is_port_in_use_docker(self, port):
+        containers = self.docker_client.containers.list()
+        for container in containers:
+            container_ports = container.ports
+            if str(port) in str(container_ports):
+                return True
+        return False
+
+    def _find_available_port(self, max_attempts=5):
+        port = 39999
+        for _ in range(max_attempts):
+            port = find_available_tcp_port(30000, 39999)
+            if not self._is_port_in_use_docker(port):
+                return port
+        # If no port is found after max_attempts, return the last tried port
+        return port
