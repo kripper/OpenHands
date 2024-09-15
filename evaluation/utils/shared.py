@@ -351,7 +351,7 @@ def run_evaluation(
         cleanup()
 
     output_fp.close()
-    cmd = f'python evaluation/eval_visualizer.py {output_file}'
+    cmd = f'python evaluation/eval_visualizer.py {output_file} {metadata.llm_config.model}'
     logger.info(f'Run the following command to visualize the results:\n{cmd}')
     os.system(cmd)
     logger.info('\nEvaluation finished.\n')

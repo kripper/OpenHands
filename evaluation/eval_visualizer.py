@@ -7,7 +7,6 @@ import webbrowser
 from pprint import pprint
 
 import requests
-import toml
 
 if sys.argv[1:]:
     file = sys.argv[1]
@@ -47,9 +46,8 @@ json_data = {}
 git_hash = 'git rev-parse HEAD'
 
 git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
-with open('config.toml', 'r') as f:
-    config = toml.load(f)
-model = config['llm']['eval']['model']
+
+model = sys.argv[2] if len(sys.argv) > 2 else 'Unknown Model'
 agent = 'CodeActAgent'
 config = {
     'action': 'initialize',
