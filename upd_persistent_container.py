@@ -16,6 +16,8 @@ for c in client.containers.list():
         print(cmd)
         os.system(cmd)
 
-# restart the container
-# print('Restarting the container')
-# c.restart()
+        if 'root' in c.name:
+            break
+        # restart the container
+print('Restarting the container')
+c.restart()
