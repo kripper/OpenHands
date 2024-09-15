@@ -1,8 +1,9 @@
 import litellm
 import toml
 
-prompt = r'logs/llm/default/011_prompt.log'
-response = r'logs/llm/default/011_response.log'
+number = 16
+prompt = f'logs/llm/default/{number:03d}_prompt.log'
+response = f'logs/llm/default/{number:03d}_response.log'
 
 with open(prompt, 'r') as file:
     prompt_content = file.read()
@@ -22,7 +23,8 @@ with open(config, 'r') as file:
 model = config_content['model']
 api_key = config_content['api_key']
 
-question = 'In which line super is called? How do you say so?'
+question = 'Why did you generate this response?'
+question = 'Where insert_content_at_line will insert the content?'
 new_prompt = f"""
 INITIAL PROMPT:
 {prompt_content}
@@ -30,14 +32,17 @@ INITIAL PROMPT:
 INITIAL RESPONSE:
 {response_content}
 
-USER:
+DEBUGGER:
 {question}
 """
 while True:
     response = litellm.completion(
         model=model,
         messages=[
-            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {
+                'role': 'system',
+                'content': "Don't give codes. Just answer the question.",
+            },
             {'role': 'user', 'content': new_prompt},
         ],
         api_key=api_key,
@@ -48,11 +53,12 @@ while True:
     if question == 'q':
         break
     new_prompt = f"""
-    {new_prompt}
+{new_prompt}
 
-    ASSISTANT:
-    {resp}
+ASSISTANT:
+{resp}
 
-    USER:
-    {question}
+DEBUGGER:
+{question}
+Don\'t give codes. Just answer the question.
     """
