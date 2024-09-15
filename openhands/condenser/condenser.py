@@ -107,6 +107,9 @@ class CondenserMixin:
         if context_window is None:
             raise ValueError('context_window should not be None')
         if summary_input_tkns > MESSAGE_SUMMARY_WARNING_FRAC * context_window:
+            print(
+                f'{summary_input_tkns = } > {MESSAGE_SUMMARY_WARNING_FRAC * context_window = }'
+            )
             trunc_ratio = (
                 MESSAGE_SUMMARY_WARNING_FRAC * context_window / summary_input_tkns
             ) * 0.8  # For good measure...
