@@ -160,9 +160,9 @@ class CodeActAgent(Agent):
             ansi_color_escape = re.compile(r'\x1b\[[0-9;]*m')
             obs.content = ansi_color_escape.sub('', obs.content)
             text = obs_prefix + truncate_content(obs.content, max_message_chars)
-            text += (
-                f'\n[Command {obs.command_id} finished with exit code {obs.exit_code}]'
-            )
+            # text += (
+            #     f'\n[Command finished with exit code {obs.exit_code}]'
+            # )
         elif isinstance(obs, IPythonRunCellObservation):
             text = obs_prefix + obs.content
             # replace base64 images with a placeholder
