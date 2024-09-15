@@ -949,31 +949,19 @@ def clean_workspace():
                 shutil.rmtree(dir_path)
 
 
-# Check if running inside Jupyter
-def in_jupyter_notebook():
-    try:
-        shell = globals()['get_ipython']().__class__.__name__
-        if shell == 'ZMQInteractiveShell':
-            return True  # Running in Jupyter Notebook
-        else:
-            return False  # Running in other environments
-    except Exception:
-        return False  # Not in Jupyter Notebook
-
-
-# Original Flask import
 original_import = __import__
 
 
 # Monkey-patch the import function
 def custom_import(name, *args, **kwargs):
     module = original_import(name, *args, **kwargs)
-    if name == 'flask':
-        if in_jupyter_notebook():
-            print(
-                "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
-            )
-            sys.exit(1)
+    if name in [
+        'flask',
+    ]:
+        print(
+            "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
+        )
+        sys.exit(1)
     return module
 
 
@@ -996,6 +984,7 @@ __all__ = [
     'find_file',
     'kill_port',
     'clean_workspace',
+    'custom_import',
 ]
 
 if __name__ == '__main__':

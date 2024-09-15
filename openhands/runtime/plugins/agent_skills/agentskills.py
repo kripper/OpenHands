@@ -14,7 +14,7 @@ __all__ = file_ops.__all__
 
 DOCUMENTATION = ''
 for func_name in __all__:
-    if func_name == 'clean_workspace':
+    if func_name in ['clean_workspace', 'custom_import']:
         continue
     func = globals()[func_name]
 
