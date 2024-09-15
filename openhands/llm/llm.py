@@ -263,6 +263,8 @@ class LLM(CondenserMixin):
                             continue
                         break
                     else:
+                        msg = 'Why are you not responding to the user?'
+                        kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
             else:
                 logger.debug('No completion messages!')
