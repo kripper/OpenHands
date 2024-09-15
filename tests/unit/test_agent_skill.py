@@ -18,7 +18,7 @@ from openhands.runtime.plugins.agent_skills.file_ops.file_ops import (
     # edit_file_by_replace,
     find_file,
     goto_line,
-    insert_content_at_line,
+    insert_content_before_line,
     open_file,
     scroll_down,
     scroll_up,
@@ -776,7 +776,7 @@ def test_edit_file_by_replace_unknown_file():
     )
 
 
-def test_insert_content_at_line(tmp_path):
+def test_insert_content_before_line(tmp_path):
     temp_file_path = tmp_path / 'b.txt'
     content = 'Line 1\nLine 2\nLine 3'
     temp_file_path.write_text(content)
@@ -784,7 +784,7 @@ def test_insert_content_at_line(tmp_path):
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 file_name=str(temp_file_path),
                 line_number=2,
                 content='Inserted Line',
@@ -829,14 +829,14 @@ def test_delete_line(tmp_path):
     assert lines[1].rstrip() == 'Line 3'
 
 
-def test_insert_content_at_line_from_scratch(tmp_path):
+def test_insert_content_before_line_from_scratch(tmp_path):
     temp_file_path = tmp_path / 'a.txt'
     create_file(str(temp_file_path))
     open_file(str(temp_file_path))
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 file_name=str(temp_file_path),
                 line_number=1,
                 content='REPLACE TEXT',
@@ -858,7 +858,7 @@ def test_insert_content_at_line_from_scratch(tmp_path):
     assert lines[0].rstrip() == 'REPLACE TEXT'
 
 
-def test_insert_content_at_line_from_scratch_emptyfile(tmp_path):
+def test_insert_content_before_line_from_scratch_emptyfile(tmp_path):
     temp_file_path = tmp_path / 'a.txt'
     with open(temp_file_path, 'w') as file:
         file.write('')
@@ -866,7 +866,7 @@ def test_insert_content_at_line_from_scratch_emptyfile(tmp_path):
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 file_name=str(temp_file_path),
                 line_number=1,
                 content='REPLACE TEXT',
@@ -888,7 +888,7 @@ def test_insert_content_at_line_from_scratch_emptyfile(tmp_path):
     assert lines[0].rstrip() == 'REPLACE TEXT'
 
 
-def test_insert_content_at_line_emptyline(tmp_path):
+def test_insert_content_before_line_emptyline(tmp_path):
     temp_file_path = tmp_path / 'b.txt'
     content = 'Line 1\n\n'
     temp_file_path.write_text(content)
@@ -896,7 +896,7 @@ def test_insert_content_at_line_emptyline(tmp_path):
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 file_name=str(temp_file_path),
                 line_number=2,
                 content='Inserted Line',
@@ -921,7 +921,7 @@ def test_insert_content_at_line_emptyline(tmp_path):
     assert lines[1].rstrip() == 'Inserted Line'
 
 
-def test_insert_content_at_line_from_scratch_multiline_with_backticks_and_second_edit(
+def test_insert_content_before_line_from_scratch_multiline_with_backticks_and_second_edit(
     tmp_path,
 ):
     temp_file_path = tmp_path / 'a.txt'
@@ -930,7 +930,7 @@ def test_insert_content_at_line_from_scratch_multiline_with_backticks_and_second
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 str(temp_file_path),
                 1,
                 '`REPLACE TEXT1`\n`REPLACE TEXT2`\n`REPLACE TEXT3`',
@@ -990,14 +990,14 @@ def test_insert_content_at_line_from_scratch_multiline_with_backticks_and_second
     assert '\\`' not in second_result
 
 
-def test_insert_content_at_line_from_scratch_multiline(tmp_path):
+def test_insert_content_before_line_from_scratch_multiline(tmp_path):
     temp_file_path = tmp_path / 'a.txt'
     create_file(str(temp_file_path))
     open_file(temp_file_path)
 
     with io.StringIO() as buf:
         with contextlib.redirect_stdout(buf):
-            insert_content_at_line(
+            insert_content_before_line(
                 str(temp_file_path),
                 1,
                 content='REPLACE TEXT1\nREPLACE TEXT2\nREPLACE TEXT3',
@@ -1023,9 +1023,9 @@ def test_insert_content_at_line_from_scratch_multiline(tmp_path):
     assert lines[2].rstrip() == 'REPLACE TEXT3'
 
 
-def test_insert_content_at_line_not_opened():
+def test_insert_content_before_line_not_opened():
     _capture_file_operation_error(
-        lambda: insert_content_at_line(
+        lambda: insert_content_before_line(
             str('unknown file'),
             1,
             'REPLACE TEXT',
@@ -1312,7 +1312,7 @@ def test_edit_lint_file_pass(tmp_path):
         with io.StringIO() as buf:
             with contextlib.redirect_stdout(buf):
                 open_file(str(file_path))
-                insert_content_at_line(str(file_path), 1, "print('hello')\n")
+                insert_content_before_line(str(file_path), 1, "print('hello')\n")
             result = buf.getvalue()
         assert result is not None
         expected = (
@@ -1355,7 +1355,7 @@ def test_lint_file_fail_undefined_name(tmp_path, capsys):
         file_path = _generate_test_file_with_lines(tmp_path, 1)
 
         open_file(str(file_path), current_line)
-        insert_content_at_line(str(file_path), 1, 'undefined_name()\n')
+        insert_content_before_line(str(file_path), 1, 'undefined_name()\n')
 
         result = capsys.readouterr().out
         assert result is not None
@@ -1399,7 +1399,7 @@ def test_lint_file_fail_undefined_name_long(tmp_path, capsys):
         )
 
         open_file(str(file_path))
-        insert_content_at_line(str(file_path), error_line, 'undefined_name()\n')
+        insert_content_before_line(str(file_path), error_line, 'undefined_name()\n')
 
         result = capsys.readouterr().out
         assert result is not None
@@ -1439,7 +1439,7 @@ def test_lint_file_disabled_undefined_name(tmp_path, capsys):
         file_path = _generate_test_file_with_lines(tmp_path, 1)
 
         open_file(str(file_path))
-        insert_content_at_line(str(file_path), 1, 'undefined_name()\n')
+        insert_content_before_line(str(file_path), 1, 'undefined_name()\n')
 
         result = capsys.readouterr().out
         assert result is not None
@@ -1583,7 +1583,7 @@ def test_lint_file_fail_non_python(tmp_path, capsys):
         file_path = _generate_ruby_test_file_with_lines(tmp_path, 1)
 
         open_file(str(file_path), current_line)
-        insert_content_at_line(
+        insert_content_before_line(
             str(file_path), 1, "def print_hello_world()\n    puts 'Hello World'"
         )
         result = capsys.readouterr().out
@@ -1624,7 +1624,7 @@ def test_lint_file_fail_typescript(tmp_path, capsys):
         file_path.write_text('')
 
         open_file(str(file_path), current_line)
-        insert_content_at_line(
+        insert_content_before_line(
             str(file_path),
             1,
             "function greet(name: string) {\n    console.log('Hello, ' + name)",

@@ -415,7 +415,7 @@ def _edit_impl(lines, start, end, content):
             f'Invalid line range: {start}-{end}. Start must be less than or equal to end.'
         )
 
-    if not content.endswith('\n'):
+    if content and not content.endswith('\n'):
         content += '\n'
     content_lines = content.splitlines(True)
     n_added_lines = len(content_lines)
@@ -762,23 +762,16 @@ def delete_line(file_name: str, line_number: int) -> None:
     """Delete the line at the given line number in a file.
     This will NOT modify the content of the lines before OR after the given line number.
     """
-    # ret_str = _edit_file_impl(
-    #     file_name,
-    #     start=line_number,
-    #     end=line_number,
-    #     content='',
-    #     is_insert=False,
-    #     is_append=False,
-    # )
-    # the above replaces it with empty string
-    with open(file_name, 'r') as file:
-        lines = file.readlines()
-    if line_number < 1 or line_number > len(lines):
-        _output_error(f'Invalid line number: {line_number}')
-        return
-    lines.pop(line_number - 1)
-    with open(file_name, 'w') as file:
-        file.writelines(lines)
+    ret_str = _edit_file_impl(
+        file_name,
+        start=line_number,
+        end=line_number,
+        content='',
+        is_insert=False,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
 
 
 def replace_full_file_content(file_name: str, new_content: str) -> None:
