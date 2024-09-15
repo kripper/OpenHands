@@ -1,7 +1,7 @@
 import litellm
 import toml
 
-number = 16
+number = 4
 prompt = f'logs/llm/default/{number:03d}_prompt.log'
 response = f'logs/llm/default/{number:03d}_response.log'
 
@@ -23,8 +23,9 @@ with open(config, 'r') as file:
 model = config_content['model']
 api_key = config_content['api_key']
 
-question = 'Why did you generate this response?'
-question = 'Where insert_content_at_line will insert the content?'
+question = 'Why did you use insert content before line 60?'
+question = 'Why are you searching for header_rows?'
+question = 'Why did you search for header_rows in ui.py?'
 new_prompt = f"""
 INITIAL PROMPT:
 {prompt_content}
@@ -41,7 +42,7 @@ while True:
         messages=[
             {
                 'role': 'system',
-                'content': "Don't give codes. Just answer the question.",
+                'content': 'You are the assistant. Your responses are wrong. The debugger will ask you questions and provide you with the initial prompt abd initial response. Answer the questions and provide the corrected response.',
             },
             {'role': 'user', 'content': new_prompt},
         ],
