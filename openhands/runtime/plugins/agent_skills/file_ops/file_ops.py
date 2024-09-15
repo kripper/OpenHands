@@ -657,49 +657,10 @@ def _edit_file_impl(
 
 def find_and_replace(file_name: str, find_string: str, replace_string: str) -> None:
     """Edit a file. This will search for `find_string` in the given file and replace it with `replace_string`.
-
-    Every *find_string* must *EXACTLY MATCH* the existing source code, character for character, including all comments, docstrings, etc.
-
-    Include enough lines to make code in `find_string` unique. `find_string` should NOT be empty.
-
-    For example, given a file "/workspace/example.txt" with the following content:
-    ```
-    line 1
-    line 2
-    line 2
-    line 3
-    ```
-
-    EDITING: If you want to replace the second occurrence of "line 2", you can make `find_string` unique:
-
-    find_and_replace(
-        '/workspace/example.txt',
-        find_string='line 2\nline 3',
-        replace_string='new line\nline 3',
-    )
-
-    This will replace only the second "line 2" with "new line". The first "line 2" will remain unchanged.
-
-    The resulting file will be:
-    ```
-    line 1
-    line 2
-    new line
-    line 3
-    ```
-
-    REMOVAL: If you want to remove "line 2" and "line 3", you can set `replace_string` to an empty string:
-
-    find_and_replace(
-        '/workspace/example.txt',
-        find_string='line 2\nline 3',
-        replace_string='',
-    )
-
     Args:
         file_name: str: The name of the file to edit.
-        find_string: str: The content to search for and replace.
-        replace_string: str: The new content to replace the old content with.
+        find_string: str: The content to search for and replace. (wrap in triple single quotes)
+        replace_string: str: The new content to replace the old content with. (wrap in triple single quotes)
     """
     # simple method:
     with open(file_name, 'r') as file:
