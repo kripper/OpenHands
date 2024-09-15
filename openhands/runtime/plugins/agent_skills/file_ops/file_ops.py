@@ -40,7 +40,7 @@ WINDOW = 100
 
 # This is also used in unit tests!
 MSG_FILE_UPDATED = '[File updated (edited at line {line_number}). Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.]'
-LINTER_ERROR_MSG = '[Your proposed edit has introduced new syntax error(s). Please understand the errors and retry your edit command.]\n'
+LINTER_ERROR_MSG = '[Your proposed edit has introduced new error(s). Please understand the errors and retry your edit command.]\n'
 
 
 # ==================================================================================================
@@ -657,12 +657,7 @@ def _edit_file_impl(
 
 
 def find_and_replace(file_name: str, find_string: str, replace_string: str) -> None:
-    """Edit a file. This will search for `find_string` in the given file and replace it with `replace_string`.
-    Args:
-        file_name: str: The name of the file to edit.
-        find_string: str: The content to search for and replace. (wrap in triple single quotes)
-        replace_string: str: The new content to replace the old content with. (wrap in triple single quotes)
-    """
+    """Find and replace a string in a file."""
     # simple method:
     with open(file_name, 'r') as file:
         file_content = file.read()
@@ -736,6 +731,21 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
 
 def insert_content_before_line(file_name: str, line_number: int, content: str) -> None:
     """Insert content before the given line number in a file. Remeber line number start from 1."""
+    ret_str = _edit_file_impl(
+        file_name,
+        start=line_number,
+        end=line_number,
+        content=content,
+        is_insert=True,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
+
+
+def insert_content_after_line(file_name: str, line_number: int, content: str) -> None:
+    """Insert content after the given line number in a file. Remeber line number start from 1."""
+    line_number += 1
     ret_str = _edit_file_impl(
         file_name,
         start=line_number,
@@ -979,6 +989,7 @@ __all__ = [
     'delete_line',
     'replace_full_file_content',
     'insert_content_before_line',
+    'insert_content_after_line',
     'append_file',
     'search_dir',
     'search_file',
