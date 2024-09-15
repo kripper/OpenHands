@@ -231,10 +231,6 @@ class EventStreamRuntime(Runtime):
                     f'--plugins {" ".join([plugin.name for plugin in plugins])} '
                 )
 
-            self._host_port = self._find_available_port()
-            self._container_port = (
-                self._host_port
-            )  # in future this might differ from host port
             self.api_url = (
                 f'http://{self.config.sandbox.api_hostname}:{self._container_port}'
             )
@@ -245,7 +241,9 @@ class EventStreamRuntime(Runtime):
                 None
                 if use_host_network
                 else {
-                    f'{self._container_port}/tcp': [{'HostPort': str(self._host_port)}]
+                    f'{self._container_port}/tcp': [
+                        {'HostPort': str(self._container_port)}
+                    ]
                 }
             )
 
