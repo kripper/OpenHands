@@ -401,6 +401,8 @@ class RuntimeClient:
         full_output += output
 
         if not seeking_input:
+            if not output.strip():
+                output = '[Command executed successfully with no output]\r\n'
             bash_prompt = self._get_bash_prompt_and_update_pwd()
             if keep_prompt:
                 output += '\r\n' + bash_prompt
