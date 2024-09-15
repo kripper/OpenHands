@@ -13,6 +13,7 @@ from openhands.runtime.plugins.agent_skills.file_ops.file_ops import (
     _print_window,
     append_file,
     create_file,
+    delete_line,
     find_and_replace,
     # edit_file_by_replace,
     find_file,
@@ -809,6 +810,23 @@ def test_insert_content_at_line(tmp_path):
     assert lines[1].rstrip() == 'Inserted Line'
     assert lines[2].rstrip() == 'Line 2'
     assert lines[3].rstrip() == 'Line 3'
+
+
+def test_delete_line(tmp_path):
+    temp_file_path = tmp_path / 'a.txt'
+    content = 'Line 1\nLine 2\nLine 3'
+    temp_file_path.write_text(content)
+    open_file(str(temp_file_path))
+
+    with io.StringIO() as buf:
+        with contextlib.redirect_stdout(buf):
+            delete_line(str(temp_file_path), 2)
+
+    with open(temp_file_path, 'r') as file:
+        lines = file.readlines()
+    assert len(lines) == 2
+    assert lines[0].rstrip() == 'Line 1'
+    assert lines[1].rstrip() == 'Line 3'
 
 
 def test_insert_content_at_line_from_scratch(tmp_path):

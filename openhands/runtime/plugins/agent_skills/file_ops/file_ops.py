@@ -18,6 +18,7 @@ Functions:
 
 - find_and_replace(file_name: str, find_string: str, replace_string: str): Replaces specific content in a file with new content.
 - insert_content_at_line(file_name: str, line_number: int, content: str): Inserts given content at the specified line number in a file.
+- delete_line(file_name: str, line_number: int): Deletes the line at the given line number in a file.
 - replace_file_content(file_name: str, new_content: str): Replaces the content of the specified file with the given content.
 - append_file(file_name: str, content: str): Appends the given content to the end of the specified file.
 
@@ -768,6 +769,29 @@ def insert_content_at_line(file_name: str, line_number: int, content: str) -> No
         print(ret_str)
 
 
+def delete_line(file_name: str, line_number: int) -> None:
+    """Delete the line at the given line number in a file.
+    This will NOT modify the content of the lines before OR after the given line number.
+    """
+    # ret_str = _edit_file_impl(
+    #     file_name,
+    #     start=line_number,
+    #     end=line_number,
+    #     content='',
+    #     is_insert=False,
+    #     is_append=False,
+    # )
+    # the above replaces it with empty string
+    with open(file_name, 'r') as file:
+        lines = file.readlines()
+    if line_number < 1 or line_number > len(lines):
+        _output_error(f'Invalid line number: {line_number}')
+        return
+    lines.pop(line_number - 1)
+    with open(file_name, 'w') as file:
+        file.writelines(lines)
+
+
 def replace_file_content(file_name: str, new_content: str) -> None:
     """Replace the content of the specified file with the given new content."""
     ret_str = _edit_file_impl(
@@ -973,6 +997,7 @@ __all__ = [
     'scroll_up',
     'create_file',
     'find_and_replace',
+    'delete_line',
     'replace_file_content',
     'insert_content_at_line',
     'append_file',
