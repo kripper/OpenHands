@@ -77,7 +77,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
             f'List out your plans first before fixing the issue.\n'
-            'Environment has been set up for you to start working. pwd is /testbed.\n'
+            'Environment has been set up for you to start working. The current working directory is /testbed.\n'
         )
         if USE_HINT_TEXT and instance.hints_text:
             instruction += f'# Hints\n{instance.hints_text}\n\n'
