@@ -292,7 +292,7 @@ def create_file(filename: str, content: str = '', overwrite: bool = False) -> No
             with open(filename, 'w') as file:
                 file.write('')
             if content:
-                insert_content_at_line(filename, 1, content)
+                insert_content_before_line(filename, 1, content)
             else:
                 print(f'[File {filename} created.]')
         except FileNotFoundError:
@@ -734,8 +734,8 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     #     print(ret_str)
 
 
-def insert_content_at_line(file_name: str, line_number: int, content: str) -> None:
-    """Insert content at the given line number in a file. Remeber line number start from 1."""
+def insert_content_before_line(file_name: str, line_number: int, content: str) -> None:
+    """Insert content before the given line number in a file. Remeber line number start from 1."""
     ret_str = _edit_file_impl(
         file_name,
         start=line_number,
@@ -978,7 +978,7 @@ __all__ = [
     'find_and_replace',
     'delete_line',
     'replace_full_file_content',
-    'insert_content_at_line',
+    'insert_content_before_line',
     'append_file',
     'search_dir',
     'search_file',
