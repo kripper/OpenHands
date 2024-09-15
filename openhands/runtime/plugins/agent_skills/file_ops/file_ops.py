@@ -735,28 +735,7 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
 
 
 def insert_content_at_line(file_name: str, line_number: int, content: str) -> None:
-    """Insert content at the given line number in a file.
-    This will NOT modify the content of the lines before OR after the given line number.
-
-    For example, if the file has the following content:
-    ```
-    line 1
-    line 2
-    line 3
-    ```
-    and you call `insert_content_at_line('file.txt', 2, 'new line')`, the file will be updated to:
-    ```
-    line 1
-    new line
-    line 2
-    line 3
-    ```
-
-    Args:
-        file_name: str: The name of the file to edit.
-        line_number: int: The line number (starting from 1) to insert the content after.
-        content: str: The content to insert.
-    """
+    """Insert content at the given line number in a file. Remeber line number start from 1."""
     ret_str = _edit_file_impl(
         file_name,
         start=line_number,
