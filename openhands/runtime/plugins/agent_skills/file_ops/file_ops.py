@@ -771,11 +771,11 @@ def delete_line(file_name: str, line_number: int) -> None:
         file.writelines(lines)
 
 
-def replace_file_content(file_name: str, new_content: str) -> None:
-    """Replace the content of the specified file with the given new content."""
+def replace_full_file_content(file_name: str, new_content: str) -> None:
+    """Replace the full content of the specified file with the given new content."""
     ret_str = _edit_file_impl(
         file_name,
-        start=None,
+        start=1,
         end=None,
         content=new_content,
         is_insert=False,
@@ -977,7 +977,7 @@ __all__ = [
     'create_file',
     'find_and_replace',
     'delete_line',
-    'replace_file_content',
+    'replace_full_file_content',
     'insert_content_at_line',
     'append_file',
     'search_dir',
