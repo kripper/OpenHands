@@ -19,7 +19,7 @@ else:
         file = 'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActAgent/gemini-1.5-pro-latest_maxiter_25_N_v1.9-no-hint/output.jsonl'
 
 # output.json or trajectory.json
-if 0:
+if 1 or sys.argv[1:]:
     with open(file, 'r') as f:
         data = f.readlines()
         ansi_color_escape = re.compile(r'\\u001b\[[0-9;]*m')
@@ -72,6 +72,15 @@ json_data.update(
 )
 # flatten the history
 history = [config] + history
+for idx, item in enumerate(history):
+    if item.get('action') == 'message' and item.get('source') == 'user':
+        msg = item.get('message')
+        if (
+            msg
+            == 'Please continue working on the task on whatever approach you think is suitable.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
+        ):
+            msg = 'Auto reply 🤖'
+        history[idx] = {'user': msg}
 json_data['trajectory'] = history
 
 # pprint(json_data);exit()
