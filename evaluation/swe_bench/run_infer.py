@@ -73,7 +73,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     else:
         # Testing general agents
         instruction = (
-            f'Please fix the following issue.\n'
+            f'Please fix the following issue for the repository in /testbed.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
             f'List out your plans first before fixing the issue.\n'
