@@ -5,6 +5,7 @@ from itertools import islice
 from agenthub.codeact_agent.action_parser import CodeActResponseParser
 from openhands.controller.agent import Agent
 from openhands.controller.state.state import State
+from openhands.core import config2
 from openhands.core.config import AgentConfig, load_app_config
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.message import ImageContent, Message, TextContent
@@ -250,9 +251,10 @@ class CodeActAgent(Agent):
         return self.action_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
+        system_role = 'user' if 'o1-' in config2.model else 'system'
         messages: list[Message] = [
             Message(
-                role='system',
+                role=system_role,
                 content=[
                     TextContent(
                         text=self.prompt_manager.system_message,
