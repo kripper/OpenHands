@@ -251,7 +251,7 @@ class CodeActAgent(Agent):
         return self.action_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
-        system_role = 'user' if 'o1-' in config2.model else 'system'
+        system_role = 'user' if config2.model.startswith('o1-') else 'system'
         messages: list[Message] = [
             Message(
                 role=system_role,
