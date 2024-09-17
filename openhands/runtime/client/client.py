@@ -407,7 +407,7 @@ class RuntimeClient:
         if not seeking_input:
             if not output.strip():
                 if 'grep' in command:
-                    output = '[No matching lines were found. Why did you execute this command?]\r\n'
+                    output = '[No matching lines were found. Why did you search this term?]\r\n'
                 else:
                     output = '[Command executed successfully with no output]\r\n'
             bash_prompt = self._get_bash_prompt_and_update_pwd()
