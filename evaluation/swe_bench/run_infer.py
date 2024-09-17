@@ -12,6 +12,7 @@ from datasets import load_dataset
 import agenthub
 from evaluation.swe_bench.prompt import CODEACT_SWE_PROMPT
 from evaluation.swe_bench.swe_bench2 import update_issue_description
+from evaluation.swe_bench.test_codes import get_test_code
 from evaluation.utils.shared import (
     EvalMetadata,
     EvalOutput,
@@ -268,33 +269,19 @@ def initialize_runtime(
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert obs.exit_code == 0
 
-    test_code = '''
+    test_code = get_test_code(instance['instance_id'])
+    if test_code:
+        test_code = f'''
 FILE_CONTENT = """
-import os
-os.chdir('/testbed')
-from astropy.modeling import models as m
-from astropy.modeling.separable import separability_matrix
-
-cm = m.Linear1D(10) & m.Linear1D(5)
-
-a= separability_matrix(m.Pix2Sky_TAN() & cm)
-
-import numpy as np
-
-expected_matrix = np.array([[ True,  True, False, False],
-                            [ True,  True, False, False],
-                            [False, False,  True,  False],
-                            [False, False,  False,  True]])
-
-assert np.array_equal(a, expected_matrix), "Matrix does not match expected structure"
+{test_code}
 print('End the task with <finish2></finish2>')
 """
 create_file('/testbed/test_task.py', FILE_CONTENT)
 '''
-    action = IPythonRunCellAction(test_code)
-    logger.info(action, extra={'msg_type': 'ACTION'})
-    obs = runtime.run_action(action)
-    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
+        action = IPythonRunCellAction(test_code)
+        logger.info(action, extra={'msg_type': 'ACTION'})
+        obs = runtime.run_action(action)
+        logger.info(obs, extra={'msg_type': 'OBSERVATION'})
 
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
