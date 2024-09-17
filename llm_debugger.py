@@ -1,7 +1,7 @@
 import litellm
 import toml
 
-number = 4
+number = 19
 prompt = f'logs/llm/default/{number:03d}_prompt.log'
 response = f'logs/llm/default/{number:03d}_response.log'
 
@@ -17,7 +17,8 @@ with open(config, 'r') as file:
     config_content = toml.load(file)['llm']
     eval = 1
     if eval:
-        config_content = config_content['eval']
+        key = 'gemini'
+        config_content = config_content[key]
 
 
 model = config_content['model']
@@ -26,6 +27,8 @@ api_key = config_content['api_key']
 question = 'Why did you use insert content before line 60?'
 question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
+question = 'Why are you not responding to the user?'
+question = 'Why did you give this response?'
 new_prompt = f"""
 INITIAL PROMPT:
 {prompt_content}
