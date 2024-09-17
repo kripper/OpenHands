@@ -77,10 +77,11 @@ function ChatInterface() {
     dispatchContent: string = "",
     imageUrls: string[] = [],
   ) => {
+    const timestamp = new Date().toISOString();
     dispatch(
-      addUserMessage({ content: dispatchContent || content, imageUrls }),
+      addUserMessage({ content: dispatchContent || content, imageUrls, timestamp }),
     );
-    sendChatMessage(content, imageUrls);
+    sendChatMessage(content, imageUrls, timestamp);
   };
 
   const { t } = useTranslation();
@@ -150,6 +151,7 @@ function ChatInterface() {
           ref={scrollRef}
           className="overflow-y-auto p-3"
           onScroll={(e) => onChatBodyScroll(e.currentTarget)}
+          aria-label={t(I18nKey.CHAT_INTERFACE$CHAT_CONVERSATION)}
         >
           <Chat messages={messages} curAgentState={curAgentState} />
         </div>

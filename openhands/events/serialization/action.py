@@ -55,10 +55,18 @@ def action_from_dict(action: dict) -> Action:
             f"'{action['action']=}' is not defined. Available actions: {ACTION_TYPE_TO_CLASS.keys()}"
         )
     args = action.get('args', {})
+    # Remove timestamp from args if present
+    timestamp = args.pop('timestamp', None)
+
     try:
         decoded_action = action_class(**args)
         if 'timeout' in action:
             decoded_action.timeout = action['timeout']
+
+        # Set timestamp if it was provided
+        if timestamp:
+            decoded_action._timestamp = timestamp
+
     except TypeError as e:
         raise LLMMalformedActionError(
             f'Error creating {action_class} from {action=}: {e}'
