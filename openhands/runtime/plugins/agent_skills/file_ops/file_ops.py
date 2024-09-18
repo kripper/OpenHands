@@ -40,7 +40,7 @@ WINDOW = 100
 
 # This is also used in unit tests!
 MSG_FILE_UPDATED = '[File updated (edited at line {line_number}). Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.]'
-LINTER_ERROR_MSG = '[Your proposed edit has introduced new error(s). Please understand the errors and retry your edit command.]\n'
+LINTER_ERROR_MSG = '[Your proposed edit has introduced new error(s). Please explain why you thought it would work and fix the errors.]\n'
 
 
 # ==================================================================================================
