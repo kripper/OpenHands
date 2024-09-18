@@ -461,7 +461,9 @@ class RuntimeClient:
                 # cd rst.py
                 # should not cd into a file
                 if re.search(r'cd .*\.py$', command, re.IGNORECASE):
-                    warning_msg = '[Why did you cd into a file?]'
+                    warning_msg = (
+                        '[Invalid usage of cd command. Use open_file skill instead.]'
+                    )
                     return CmdOutputObservation(
                         command_id=-1,
                         content=warning_msg,
