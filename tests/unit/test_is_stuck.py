@@ -157,7 +157,6 @@ class TestStuckDetector:
         # 8 events
 
         assert stuck_detector.is_stuck() is False
-        assert stuck_detector.state.almost_stuck == 2
 
         cmd_action_3 = CmdRunAction(command='ls')
         event_stream.add_event(cmd_action_3, EventSource.AGENT)
@@ -173,7 +172,6 @@ class TestStuckDetector:
         assert len(stuck_detector.state.history.get_pairs()) == 5
 
         assert stuck_detector.is_stuck() is False
-        assert stuck_detector.state.almost_stuck == 1
 
         cmd_action_4 = CmdRunAction(command='ls')
         event_stream.add_event(cmd_action_4, EventSource.AGENT)
@@ -190,7 +188,6 @@ class TestStuckDetector:
 
         with patch('logging.Logger.warning') as mock_warning:
             assert stuck_detector.is_stuck() is True
-            assert stuck_detector.state.almost_stuck == 0
             mock_warning.assert_called_once_with('Action, Observation loop detected')
 
     def test_is_stuck_repeating_action_error(

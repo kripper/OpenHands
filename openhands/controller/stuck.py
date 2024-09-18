@@ -90,9 +90,9 @@ class StuckDetector:
             )
         ]
 
-        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 4)
+        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 3)
 
-        if not last_actions:
+        if not len(last_actions) == len(last_observations) == 3:
             return False, None
 
         # scenario 1: same action, same observation
@@ -111,7 +111,7 @@ class StuckDetector:
         last_six_actions, last_six_observations = self.get_last_event_pairs(
             filtered_history, 6
         )
-        if not last_six_actions:
+        if not len(last_six_actions) == len(last_six_observations) == 6:
             return False, None
         if self._is_stuck_action_observation_pattern(
             last_six_actions, last_six_observations
@@ -125,56 +125,23 @@ class StuckDetector:
 
     def _is_stuck_repeating_action_observation(self, last_actions, last_observations):
         # scenario 1: same action, same observation
-        # it takes 4 actions and 4 observations to detect a loop
-        # assert len(last_actions) == 4 and len(last_observations) == 4
 
-        # reset almost_stuck reminder
-        self.state.almost_stuck = 0
+        actions_equal = all(
+            self._eq_no_pid(last_actions[0], action) for action in last_actions
+        )
+        observations_equal = all(
+            self._eq_no_pid(last_observations[0], observation)
+            for observation in last_observations
+        )
 
-        # almost stuck? if two actions, obs are the same, we're almost stuck
-        if len(last_actions) >= 2 and len(last_observations) >= 2:
-            actions_equal = all(
-                self._eq_no_pid(last_actions[0], action) for action in last_actions[:2]
-            )
-            observations_equal = all(
-                self._eq_no_pid(last_observations[0], observation)
-                for observation in last_observations[:2]
-            )
-
-            # the last two actions and obs are the same?
-            if actions_equal and observations_equal:
-                self.state.almost_stuck = 2
-
-            # the last three actions and observations are the same?
-            if len(last_actions) >= 3 and len(last_observations) >= 3:
-                if (
-                    actions_equal
-                    and observations_equal
-                    and self._eq_no_pid(last_actions[0], last_actions[2])
-                    and self._eq_no_pid(last_observations[0], last_observations[2])
-                ):
-                    self.state.almost_stuck = 1
-
-            if len(last_actions) == 4 and len(last_observations) == 4:
-                if (
-                    actions_equal
-                    and observations_equal
-                    and self._eq_no_pid(last_actions[0], last_actions[3])
-                    and self._eq_no_pid(last_observations[0], last_observations[3])
-                ):
-                    logger.warning('Action, Observation loop detected')
-                    self.state.almost_stuck = 0
-                    return True
+        if actions_equal and observations_equal:
+            logger.warning('Action, Observation loop detected')
+            return True
 
         return False
 
     def _is_stuck_repeating_action_error(self, last_actions, last_observations):
         # scenario 2: same action, errors
-        # it takes 3 actions and 3 observations to detect a loop
-        # check if the last three actions are the same and result in errors
-
-        if len(last_actions) < 4 or len(last_observations) < 4:
-            return False
 
         # are the last three actions the "same"?
         if all(self._eq_no_pid(last_actions[0], action) for action in last_actions[:3]):

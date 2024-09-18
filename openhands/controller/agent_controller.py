@@ -269,7 +269,6 @@ class AgentController:
     def reset_task(self):
         """Resets the agent's task."""
 
-        self.almost_stuck = 0
         self.agent.reset()
 
     async def set_agent_state_to(self, new_state: AgentState):
