@@ -78,8 +78,12 @@ export const getExtension = (code: string) => {
 
 export const formatTimestamp = (timestamp: string) => {
   const date = new Date(timestamp);
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "short",
-    timeStyle: "short",
+  const timeWithAmPm = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true, // 12-hour format
   }).format(date);
+  const timeWithoutAmPm = timeWithAmPm.replace(/ AM| PM/, "");
+  return timeWithoutAmPm;
 };
