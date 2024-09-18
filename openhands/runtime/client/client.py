@@ -478,7 +478,7 @@ class RuntimeClient:
                             command=action.command,
                             exit_code=0,
                         )
-                elif command.lower() == 'ctrl+c':
+                if command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         timeout=SOFT_TIMEOUT_SECONDS
                     )
