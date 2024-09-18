@@ -1,7 +1,7 @@
 import litellm
 import toml
 
-number = 19
+number = 1
 prompt = f'logs/llm/default/{number:03d}_prompt.log'
 response = f'logs/llm/default/{number:03d}_response.log'
 
@@ -29,8 +29,10 @@ question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
 question = 'Why are you not responding to the user?'
 question = 'Why did you give this response?'
+question = 'Why did not give the plan?'
 new_prompt = f"""
 INITIAL PROMPT:
+
 {prompt_content}
 
 INITIAL RESPONSE:
@@ -39,16 +41,18 @@ INITIAL RESPONSE:
 DEBUGGER:
 {question}
 """
+messages = [
+    {
+        'role': 'system',
+        'content': 'You are the assistant. Your responses are wrong. The debugger will ask you questions and provide you with the initial prompt abd initial response. Answer the questions and provide the corrected response.',
+    },
+    {'role': 'user', 'content': new_prompt},
+]
+
 while True:
     response = litellm.completion(
         model=model,
-        messages=[
-            {
-                'role': 'system',
-                'content': 'You are the assistant. Your responses are wrong. The debugger will ask you questions and provide you with the initial prompt abd initial response. Answer the questions and provide the corrected response.',
-            },
-            {'role': 'user', 'content': new_prompt},
-        ],
+        messages=messages,
         api_key=api_key,
     )
     resp = response['choices'][0]['message']['content']
@@ -56,13 +60,6 @@ while True:
     question = input('> ')
     if question == 'q':
         break
-    new_prompt = f"""
-{new_prompt}
-
-ASSISTANT:
-{resp}
-
-DEBUGGER:
-{question}
-Don\'t give codes. Just answer the question.
-    """
+    messages.append({'role': 'assistant', 'content': resp})
+    inst = "Don't give codes. Just answer the question."
+    messages.append({'role': 'user', 'content': question + '\n\n' + inst})
