@@ -446,11 +446,7 @@ def _edit_file_impl(
     global CURRENT_FILE, CURRENT_LINE, WINDOW
 
     ERROR_MSG = f'[Error editing file {file_name}. Please confirm the file is correct.]'
-    ERROR_MSG_SUFFIX = (
-        'Your changes have NOT been applied. Please fix your edit command and try again.\n'
-        'You either need to 1) Open the correct file and try again or 2) Specify the correct line number arguments.\n'
-        'DO NOT re-run the same failed edit command. Running it again will lead to the same error.'
-    )
+    ERROR_MSG_SUFFIX = 'Your changes have NOT been applied.\n'
 
     if not _is_valid_filename(file_name):
         _output_error('Invalid file name.')
