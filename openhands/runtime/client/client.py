@@ -458,12 +458,15 @@ class RuntimeClient:
                         command=action.command,
                         exit_code=0,
                     )
-                if command == '':
-                    output, exit_code = self._continue_bash(
-                        command,
-                        timeout=SOFT_TIMEOUT_SECONDS,
-                        keep_prompt=action.keep_prompt,
-                        kill_on_timeout=False,
+                # cd rst.py
+                # should not cd into a file
+                if re.search(r'cd .*\.py$', command, re.IGNORECASE):
+                    warning_msg = '[Why did you cd into a file?]'
+                    return CmdOutputObservation(
+                        command_id=-1,
+                        content=warning_msg,
+                        command=action.command,
+                        exit_code=0,
                     )
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
