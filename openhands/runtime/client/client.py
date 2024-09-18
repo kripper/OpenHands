@@ -468,6 +468,16 @@ class RuntimeClient:
                         command=action.command,
                         exit_code=0,
                     )
+                if command.startswith('cd'):
+                    path = command[3:].strip()
+                    if self.pwd == path:
+                        warning_msg = '[You are already in this directory.]\r\n'
+                        return CmdOutputObservation(
+                            command_id=-1,
+                            content=warning_msg,
+                            command=action.command,
+                            exit_code=0,
+                        )
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         timeout=SOFT_TIMEOUT_SECONDS
