@@ -2,8 +2,9 @@ SHELL=/bin/bash
 # Makefile for OpenHands project
 
 # Variables
+BACKEND_HOST ?= "127.0.0.1"
 BACKEND_PORT = 3000
-BACKEND_HOST = "127.0.0.1:$(BACKEND_PORT)"
+BACKEND_HOST_PORT = "$(BACKEND_HOST):$(BACKEND_PORT)"
 FRONTEND_PORT = 3001
 DEFAULT_WORKSPACE_DIR = "./workspace"
 DEFAULT_MODEL = "gpt-4o"
@@ -189,7 +190,7 @@ build-frontend:
 # Start backend server with auto-reload
 start-backend:
 	@echo "$(YELLOW)Starting backend...$(RESET)"
-	@poetry run uvicorn openhands.server.listen:app --port $(BACKEND_PORT) --reload --reload-exclude "workspace/*"
+	@poetry run uvicorn openhands.server.listen:app --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload --reload-exclude "workspace/*"
 
 ifeq ($(WSL_DISTRO_NAME),"")
 mode=start
@@ -199,7 +200,7 @@ endif
 # Start frontend server
 start-frontend:
 	@echo "$(YELLOW)Starting frontend...$(RESET)"
-	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $(mode)
+	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST_PORT) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $(mode)
 
 # check for Windows (non-callable)
 _run_check:
@@ -214,7 +215,7 @@ run:
 	@$(MAKE) -s kill
 	@echo "$(YELLOW)Running the app...$(RESET)"
 	@$(MAKE) -s _run_check
-	@poetry run uvicorn openhands.server.listen:app --port $(BACKEND_PORT) &
+	@poetry run uvicorn openhands.server.listen:app --host $(BACKEND_HOST) --port $(BACKEND_PORT) &
 	@echo "$(YELLOW)Waiting for the app to start...$(RESET)"
 	@until nc -z localhost $(BACKEND_PORT); do sleep 0.1; done
 	@echo "$(GREEN)Application started successfully.$(RESET)"
@@ -225,6 +226,21 @@ start:
 	@$(MAKE) -s start-backend
 	@$(MAKE) -s start-frontend
 	@echo "$(GREEN)Application started successfully.$(RESET)"
+
+# Run the app (in docker)
+docker-run: WORKSPACE_BASE ?= $(PWD)/workspace
+docker-run:
+	@if [ -f /.dockerenv ]; then \
+		echo "Running inside a Docker container. Exiting..."; \
+		exit 0; \
+	else \
+		echo "$(YELLOW)Running the app in Docker $(OPTIONS)...$(RESET)"; \
+		export WORKSPACE_BASE=${WORKSPACE_BASE}; \
+		export SANDBOX_USER_ID=$(shell id -u); \
+		export DATE=$(shell date +%Y%m%d%H%M%S); \
+		docker compose up $(OPTIONS); \
+	fi
+
 
 
 # Setup config.toml
@@ -284,6 +300,16 @@ setup-config-prompts:
 		fi
 
 
+# Develop in container
+docker-dev:
+	@if [ -f /.dockerenv ]; then \
+		echo "Running inside a Docker container. Exiting..."; \
+		exit 0; \
+	else \
+		echo "$(YELLOW)Build and run in Docker $(OPTIONS)...$(RESET)"; \
+		./containers/dev/dev.sh $(OPTIONS); \
+	fi
+
 # Clean up all caches
 clean:
 	@echo "$(YELLOW)Cleaning up caches...$(RESET)"
@@ -312,7 +338,10 @@ help:
 	@echo "  $(GREEN)run$(RESET)                 - Run the OpenHands application for end-users."
 	@echo "  $(GREEN)kill$(RESET)                - Kill all processes on port 3000 and 3001."
 	@echo "                        Backend Log file will be stored in the 'logs' directory."
+	@echo "  $(GREEN)docker-dev$(RESET)          - Build and run the OpenHands application in Docker."
+	@echo "  $(GREEN)docker-run$(RESET)          - Run the OpenHands application, starting both backend and frontend servers in Docker."
 	@echo "  $(GREEN)help$(RESET)                - Display this help message, providing information on available targets."
 
 # Phony targets
 .PHONY: build check-dependencies check-python check-npm check-docker check-poetry install-python-dependencies install-frontend-dependencies install-pre-commit-hooks lint start-backend start-frontend start run setup-config setup-config-prompts kill help
+.PHONY: docker-dev docker-run
