@@ -113,18 +113,23 @@ class LLM(CondenserMixin):
             ):
                 self.config.max_input_tokens = self.model_info['max_input_tokens']
             else:
-                # Max input tokens for gpt3.5, so this is a safe fallback for any potentially viable model
+                # Safe fallback for any potentially viable model
                 self.config.max_input_tokens = 4096
-        if config.max_output_tokens is None:
-            if (
-                self.model_info is not None
-                and 'max_output_tokens' in self.model_info
-                and isinstance(self.model_info['max_output_tokens'], int)
-            ):
-                self.config.max_output_tokens = self.model_info['max_output_tokens']
-            else:
-                # Max output tokens for gpt3.5, so this is a safe fallback for any potentially viable model
-                self.config.max_output_tokens = 1024
+
+        if self.config.max_output_tokens is None:
+            # Safe default for any potentially viable model
+            self.config.max_output_tokens = 4096
+            if self.model_info is not None:
+                # max_output_tokens has precedence over max_tokens, if either exists.
+                # litellm has models with both, one or none of these 2 parameters!
+                if 'max_output_tokens' in self.model_info and isinstance(
+                    self.model_info['max_output_tokens'], int
+                ):
+                    self.config.max_output_tokens = self.model_info['max_output_tokens']
+                elif 'max_tokens' in self.model_info and isinstance(
+                    self.model_info['max_tokens'], int
+                ):
+                    self.config.max_output_tokens = self.model_info['max_tokens']
 
         if self.config.drop_params:
             litellm.drop_params = self.config.drop_params
@@ -138,6 +143,30 @@ class LLM(CondenserMixin):
                 litellm.OllamaConfig.num_ctx = total
                 logger.info(f'Setting OllamaConfig.num_ctx to {total}')
 
+        # This only seems to work with Google as the provider, not with OpenRouter!
+        gemini_safety_settings = (
+            [
+                {
+                    'category': 'HARM_CATEGORY_HARASSMENT',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_HATE_SPEECH',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    'threshold': 'BLOCK_NONE',
+                },
+            ]
+            if self.config.model.lower().startswith('gemini')
+            else None
+        )
+
         self.completion_unwrapped = partial(
             litellm_completion,
             model=self.config.model,
@@ -150,6 +179,7 @@ class LLM(CondenserMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             caching=self.config.enable_cache,
+            safety_settings=gemini_safety_settings,
         )
 
         if self.vision_is_active():
@@ -294,6 +324,7 @@ class LLM(CondenserMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             drop_params=True,
+            safety_settings=gemini_safety_settings,
         )
 
         @retry(
