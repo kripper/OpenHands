@@ -398,7 +398,10 @@ class AgentController:
 
         if self.delegate is not None:
             assert self.delegate != self
-            await self._delegate_step()
+            if self.delegate.get_agent_state() == AgentState.PAUSED:
+                await asyncio.sleep(1)
+            else:
+                await self._delegate_step()
             return
 
         step_log = f'{self.agent.name} LEVEL {self.state.delegate_level} LOCAL STEP {self.state.local_iteration} GLOBAL STEP {self.state.iteration}'
@@ -477,7 +480,7 @@ class AgentController:
             self.delegate = None
             self.delegateAction = None
 
-            await self.report_error('Delegator agent encounters an error')
+            await self.report_error('Delegator agent encountered an error')
         elif delegate_state in (AgentState.FINISHED, AgentState.REJECTED):
             logger.info(
                 f'[Agent Controller {self.id}] Delegate agent has finished execution'
