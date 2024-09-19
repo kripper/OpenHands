@@ -37,6 +37,7 @@ lines = [
     "======= ======== ====",
 ]
 tbl = QTable.read(lines, format="ascii.rst", header_rows=["name", "unit", "dtype"])
+print(tbl)
 assert tbl["wave"].unit == u.nm
 assert tbl["response"].unit == u.ct
 assert tbl["wave"].dtype == np.float64
@@ -45,6 +46,7 @@ assert tbl["ints"].dtype == np.int8
 
 out = StringIO()
 tbl.write(out, format="ascii.rst", header_rows=["name", "unit", "dtype"])
+print(out.getvalue().splitlines())
 assert out.getvalue().splitlines() == lines
 """,
     }
