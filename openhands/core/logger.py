@@ -226,7 +226,11 @@ class LlmFileHandler(logging.FileHandler):
         if DEBUG:
             self.session = datetime.now().strftime('%y-%m-%d_%H-%M')
         else:
-            self.session = 'default'
+            model_config = os.getenv('model_config')
+            if model_config is None:
+                self.session = 'default'
+            else:
+                self.session = model_config.split('.')[-1]
         self.log_directory = os.path.join(LOG_DIR, 'llm', self.session)
         os.makedirs(self.log_directory, exist_ok=True)
         # Clear the log directory if not in debug mode
