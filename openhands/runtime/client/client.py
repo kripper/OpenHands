@@ -447,40 +447,27 @@ class RuntimeClient:
             all_output = ''
             for command in commands:
                 # suggest alternative for vim/nano
-                if re.search(r'^(vim?|nano)\s', command, re.IGNORECASE):
-                    warning_msg = (
-                        'vim/nano are not prohibited in the sandbox. '
-                        'Please use agentskills for file operations.'
-                    )
-                    return CmdOutputObservation(
-                        command_id=-1,
-                        content=warning_msg,
-                        command=action.command,
-                        exit_code=0,
-                    )
-                # cd rst.py
-                # should not cd into a file
-                if re.search(r'cd .*\.py$', command, re.IGNORECASE):
-                    warning_msg = (
-                        '[Invalid usage of cd command. Use open_file skill instead.]'
-                    )
-                    return CmdOutputObservation(
-                        command_id=-1,
-                        content=warning_msg,
-                        command=action.command,
-                        exit_code=0,
-                    )
+
+                output = None
+                exit_code = 0
                 if command.startswith('cd'):
                     path = command[3:].strip()
                     if self.pwd == path:
-                        warning_msg = '[You are already in this directory.]\r\n'
-                        return CmdOutputObservation(
-                            command_id=-1,
-                            content=warning_msg,
-                            command=action.command,
-                            exit_code=0,
-                        )
-                if command.lower() == 'ctrl+c':
+                        output = '[You are already in this directory.]'
+                if output is not None:
+                    pass
+                elif re.search(r'cd .*\.py$', command, re.IGNORECASE):
+                    output = (
+                        '[Invalid usage of cd command. Use open_file skill instead.]'
+                    )
+                elif re.search(r'^(vim?|nano)\s', command, re.IGNORECASE):
+                    output = (
+                        'vim/nano are not prohibited in the sandbox. '
+                        'Please use agentskills for file operations.'
+                    )
+                elif command.startswith('python -m unittest'):
+                    output = '[Please use pytest.]'
+                elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         timeout=SOFT_TIMEOUT_SECONDS
                     )
