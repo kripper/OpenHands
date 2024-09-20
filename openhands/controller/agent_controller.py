@@ -34,12 +34,10 @@ from openhands.events.event import Event, LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
     AgentStateChangedObservation,
-    CmdOutputObservation,
     ErrorObservation,
-    IPythonRunCellObservation,
     Observation,
 )
-from openhands.events.observation.browse import BrowserOutputObservation
+from openhands.events.observation.empty import NullObservation
 from openhands.llm.llm import LLM
 from openhands.runtime.utils.shutdown_listener import should_continue
 
@@ -226,7 +224,8 @@ class AgentController:
         ):
             return
 
-        logger.info(observation, extra={'msg_type': 'OBSERVATION'})
+        if not isinstance(observation, NullObservation):
+            logger.info(observation, extra={'msg_type': 'OBSERVATION'})
         if self._pending_action and self._pending_action.id == observation.cause:
             self._pending_action = None
             if self.state.agent_state == AgentState.USER_CONFIRMED:
@@ -235,17 +234,6 @@ class AgentController:
                 await self.set_agent_state_to(AgentState.AWAITING_USER_INPUT)
             return
 
-        if isinstance(
-            observation,
-            (
-                CmdOutputObservation,
-                IPythonRunCellObservation,
-                BrowserOutputObservation,
-                ErrorObservation,
-                AgentDelegateObservation,
-            ),
-        ):
-            logger.info(observation, extra={'msg_type': 'OBSERVATION'})
         if isinstance(observation, AgentDelegateObservation):
             self.state.history.on_event(observation)
         elif isinstance(observation, ErrorObservation):
