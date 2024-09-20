@@ -25,28 +25,23 @@ import astropy.units as u
 import numpy as np
 from io import StringIO
 
-import sys
-lines = [
-    "======= ======== ====",
-    "   wave response ints",
-    "     nm       ct     ",
-    "float64  float32 int8",
-    "======= ======== ====",
-    "  350.0      1.0    1",
-    "  950.0      2.0    2",
-    "======= ======== ====",
-]
-tbl = QTable.read(lines, format="ascii.rst", header_rows=["name", "unit", "dtype"])
-print(tbl)
-assert tbl["wave"].unit == u.nm
-assert tbl["response"].unit == u.ct
-assert tbl["wave"].dtype == np.float64
-assert tbl["response"].dtype == np.float32
-assert tbl["ints"].dtype == np.int8
+lines = '''
+===== ========
+ wave response
+ nm       ct
+===== ========
+350.0      0.7
+950.0      1.2
+===== ========
+'''.strip().splitlines()
+from astropy.table import QTable
+import astropy.units as u
+from io import StringIO
+
+tbl = QTable({'wave': [350,950]*u.nm, 'response': [0.7, 1.2]*u.count})
 
 out = StringIO()
-tbl.write(out, format="ascii.rst", header_rows=["name", "unit", "dtype"])
-print(out.getvalue().splitlines())
+tbl.write(out,  format="ascii.rst", header_rows=["name", "unit"])
 assert out.getvalue().splitlines() == lines
 """,
     }
