@@ -128,8 +128,7 @@ def get_console_handler(log_level=logging.INFO):
 def get_file_handler(log_dir, log_level=logging.INFO):
     """Returns a file handler for logging."""
     os.makedirs(log_dir, exist_ok=True)
-    timestamp = datetime.now().strftime('%Y-%m-%d')
-    file_name = f'openhands_{timestamp}.log'
+    file_name = 'console.log'
     full_path = os.path.join(log_dir, file_name)
     # clear the log file
     with open(full_path, 'w') as f:
