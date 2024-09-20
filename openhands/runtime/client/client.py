@@ -465,7 +465,7 @@ class RuntimeClient:
                         'vim/nano are not prohibited in the sandbox. '
                         'Please use agentskills for file operations.'
                     )
-                elif command.startswith('python -m unittest'):
+                elif ' -m unittest' in command:
                     output = '[Please use pytest.]'
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
