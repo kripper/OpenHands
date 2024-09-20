@@ -23,3 +23,10 @@ else:
 
 print(ins['base_commit'])
 print(ins['hints_text'])
+
+
+print(['problem_statement'])
+print(ins['problem_statement'][0])
+print('-' * 100)
+print(['test_patch'])
+print(ins['test_patch'][0])
