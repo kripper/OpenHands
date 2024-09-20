@@ -772,6 +772,10 @@ def delete_line(file_name: str, line_number: int) -> None:
 
 def replace_full_file_content(file_name: str, new_content: str) -> None:
     """Replace the full content of the specified file with the given new content."""
+    current_content = open(file_name, 'r').read()
+    if current_content == new_content:
+        print('[File content is already the same as the new content]')
+        return
     ret_str = _edit_file_impl(
         file_name,
         start=1,
