@@ -166,9 +166,6 @@ class EventStreamRuntime(Runtime):
         except docker.errors.NotFound:
             self.is_initial_session = True
 
-        self.skip_container_logs = (
-            os.environ.get('SKIP_CONTAINER_LOGS', 'true').lower() == 'true'
-        )
         if self.is_initial_session:
             logger.info('Creating new Docker container')
             if self.runtime_container_image is None:
@@ -187,9 +184,7 @@ class EventStreamRuntime(Runtime):
                 plugins=plugins,
             )
             if plugins:
-                logger.info(
-                    f'Container initialized with plugins: {[plugin.name for plugin in plugins]}'
-                )
+                logger.info(f': {[plugin.name for plugin in plugins]}')
             logger.info(f'Container initialized with env vars: {env_vars}')
 
         else:
