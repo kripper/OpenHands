@@ -289,21 +289,15 @@ def create_file(filename: str, content: str = '', overwrite: bool = False) -> No
         _output_error(f"File '{filename}' already exists.")
     else:
         try:
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
             with open(filename, 'w') as file:
                 file.write('')
             if content:
                 insert_content_before_line(filename, 1, content)
             else:
                 print(f'[File {filename} created.]')
-        except FileNotFoundError:
-            print('Weird case where the file is not found when creating it')
-            cwd = os.getcwd()
-            print(f'cwd: {cwd}')
-            print(f'filename: {filename}')
-            print(f'os.path.exists(filename): {os.path.exists(filename)}')
-            print(f'os.path.isfile(filename): {os.path.isfile(filename)}')
-            print(f'os.path.abspath(filename): {os.path.abspath(filename)}')
-            raise
         except Exception as e:
             print(f'Error creating file {filename}: {e}')
             raise
