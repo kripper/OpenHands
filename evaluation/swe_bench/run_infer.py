@@ -392,9 +392,6 @@ def process_instance(
     # Get git patch
     return_val = complete_runtime(runtime, instance)
     git_patch = return_val['git_patch']
-    logger.info(
-        f'Got git diff for instance {instance.instance_id}:\n--------\n{git_patch}\n--------'
-    )
 
     runtime.close()
     # ==========================================
