@@ -142,6 +142,10 @@ class CodeActActionParserIPythonRunCell(ActionParser):
             code = code.replace(three_backticks, three_single_quotes).strip()
 
         thought = action_str.replace(self.python_code.group(0), '').strip()
+
+        # escape "\n"
+        code = code.replace('"\n"', '"\\n"')
+
         return IPythonRunCellAction(
             code=code,
             thought=thought,
