@@ -388,13 +388,15 @@ def _edit_impl(lines, start, end, content):
         content: str: The new content of the file.
         n_added_lines: int: The number of lines added to the file.
     """
+    # for empty file
+    if lines == []:
+        lines = ['']
+
     # Handle cases where start or end are None
     if start is None:
         start = 1  # Default to the beginning
     if end is None:
         end = len(lines)  # Default to the end
-        if end == 0:
-            end = 1
     # Check arguments
     if not (1 <= start <= len(lines)):
         raise LineNumberError(
