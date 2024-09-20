@@ -89,10 +89,12 @@ class StuckDetector:
                 or isinstance(event, NullObservation)
             )
         ]
+        step_count = 2
+        last_actions, last_observations = self.get_last_event_pairs(
+            filtered_history, step_count
+        )
 
-        last_actions, last_observations = self.get_last_event_pairs(filtered_history, 3)
-
-        if not len(last_actions) == len(last_observations) == 3:
+        if not len(last_actions) == len(last_observations) == step_count:
             return False, None
 
         # scenario 1: same action, same observation
@@ -107,19 +109,16 @@ class StuckDetector:
         if self._is_stuck_monologue(filtered_history):
             return True, 'You repeated the same message three times'
 
-        # scenario 4: action, observation pattern on the last six steps
-        last_six_actions, last_six_observations = self.get_last_event_pairs(
-            filtered_history, 6
+        # scenario 4: action, observation pattern on the last four steps
+        step_count = 4
+        last_actions, last_observations = self.get_last_event_pairs(
+            filtered_history, step_count
         )
-        if not len(last_six_actions) == len(last_six_observations) == 6:
+        if not len(last_actions) == len(last_observations) == step_count:
             return False, None
-        if self._is_stuck_action_observation_pattern(
-            last_six_actions, last_six_observations
-        ):
+        if self._is_stuck_action_observation_pattern(last_actions, last_observations):
             # (action_1, obs_1), (action_2, obs_2), (action_1, obs_1), (action_2, obs_2)
-            return True, self.generate_resolution(
-                last_six_actions, last_six_observations
-            )
+            return True, self.generate_resolution(last_actions, last_observations)
 
         return False, None
 
