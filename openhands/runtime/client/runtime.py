@@ -313,24 +313,7 @@ class EventStreamRuntime(Runtime):
             raise e
 
     def _refresh_logs(self):
-        logger.debug('Getting container logs...')
-
-        assert (
-            self.log_buffer is not None
-        ), 'Log buffer is expected to be initialized when container is started'
-
-        logs = self.log_buffer.get_and_clear()
-        if logs:
-            formatted_logs = '\n'.join([f'    |{log}' for log in logs])
-            logger.info(
-                '\n'
-                + '-' * 35
-                + 'Container logs:'
-                + '-' * 35
-                + f'\n{formatted_logs}'
-                + '\n'
-                + '-' * 80
-            )
+        return
 
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
@@ -430,7 +413,7 @@ class EventStreamRuntime(Runtime):
                     'Action has been rejected by the user! Waiting for further user input.'
                 )
 
-            self._refresh_logs()
+            # self._refresh_logs()
 
             assert action.timeout is not None
 
