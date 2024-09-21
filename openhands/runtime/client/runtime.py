@@ -195,6 +195,10 @@ class EventStreamRuntime(Runtime):
         self.log_buffer = LogBuffer(self.container)
         super().__init__(config, event_stream, sid, plugins, env_vars)
         self._wait_until_alive()
+        self.setup_initial_env()
+        logger.info(
+            f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}'
+        )
 
     @staticmethod
     def _init_docker_client() -> docker.DockerClient:
@@ -308,20 +312,25 @@ class EventStreamRuntime(Runtime):
             self.close(close_client=False)
             raise e
 
-    def log_container_logs(self):
-        if self.log_buffer:
-            logs = self.log_buffer.get_and_clear()
-            if logs:
-                formatted_logs = '\n'.join([f'    |{log}' for log in logs])
-                logger.info(
-                    '\n'
-                    + '-' * 30
-                    + 'Container logs:'
-                    + '-' * 30
-                    + f'\n{formatted_logs}'
-                    + '\n'
-                    + '-' * 90
-                )
+    def _refresh_logs(self):
+        logger.debug('Getting container logs...')
+
+        assert (
+            self.log_buffer is not None
+        ), 'Log buffer is expected to be initialized when container is started'
+
+        logs = self.log_buffer.get_and_clear()
+        if logs:
+            formatted_logs = '\n'.join([f'    |{log}' for log in logs])
+            logger.info(
+                '\n'
+                + '-' * 35
+                + 'Container logs:'
+                + '-' * 35
+                + f'\n{formatted_logs}'
+                + '\n'
+                + '-' * 80
+            )
 
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(10),
@@ -335,7 +344,7 @@ class EventStreamRuntime(Runtime):
         else:
             msg = f'Action execution API is not alive. Response: {response}'
             logger.error(msg)
-            self.log_container_logs()
+            # self.log_container_logs()
             raise RuntimeError(msg)
 
     def start_docker_container(self):
@@ -421,8 +430,7 @@ class EventStreamRuntime(Runtime):
                     'Action has been rejected by the user! Waiting for further user input.'
                 )
 
-            logger.info('Awaiting session')
-            self._wait_until_alive()
+            self._refresh_logs()
 
             assert action.timeout is not None
 
@@ -448,8 +456,7 @@ class EventStreamRuntime(Runtime):
             except Exception as e:
                 logger.error(f'Error during command execution: {e}')
                 obs = ErrorObservation(f'Command execution failed: {str(e)}')
-            # TODO Refresh docker logs or not?
-            # self._wait_until_alive()
+            self._refresh_logs()
             return obs
 
     def run(self, action: CmdRunAction) -> Observation:
@@ -480,7 +487,7 @@ class EventStreamRuntime(Runtime):
         if not os.path.exists(host_src):
             raise FileNotFoundError(f'Source file {host_src} does not exist')
 
-        self._wait_until_alive()
+        self._refresh_logs()
         try:
             if recursive:
                 # For recursive copy, create a zip file
@@ -522,15 +529,14 @@ class EventStreamRuntime(Runtime):
             if recursive:
                 os.unlink(temp_zip_path)
             logger.info(f'Copy completed: host:{host_src} -> runtime:{sandbox_dest}')
-            # Refresh docker logs
-            self._wait_until_alive()
+            self._refresh_logs()
 
     def list_files(self, path: str | None = None) -> list[str]:
         """List files in the sandbox.
 
         If path is None, list files in the sandbox's initial working directory (e.g., /workspace).
         """
-        self._wait_until_alive()
+        self._refresh_logs()
         try:
             data = {}
             if path is not None:

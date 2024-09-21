@@ -7,6 +7,7 @@ from openhands.controller.agent import Agent
 from openhands.controller.state.state import State
 from openhands.core import config2
 from openhands.core.config import AgentConfig, load_app_config
+from openhands.core.exceptions import OperationCancelled
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.message import ImageContent, Message, TextContent
 from openhands.events.action import (
@@ -178,9 +179,13 @@ class CodeActAgent(Agent):
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
         elif isinstance(obs, AgentDelegateObservation):
-            text = obs_prefix + truncate_content(str(obs.outputs), max_message_chars)
+            text = obs_prefix + truncate_content(
+                obs.outputs['content'] if 'content' in obs.outputs else '',
+                max_message_chars,
+            )
         elif isinstance(obs, BrowserOutputObservation):
             text = obs_prefix + truncate_content(obs.content, max_message_chars)
+            return Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, ErrorObservation):
             text = obs_prefix + truncate_content(obs.content, max_message_chars)
             text += '\n[Error occurred in processing last action]'
@@ -239,8 +244,11 @@ class CodeActAgent(Agent):
                 'anthropic-beta': 'prompt-caching-2024-07-31',
             }
 
+        # TODO: move exception handling to agent_controller
         try:
             response = self.llm.completion(**params)
+        except OperationCancelled as e:
+            raise e
         except Exception as e:
             logger.error(f'{e}')
             error_message = '{}: {}'.format(type(e).__name__, str(e).split('\n')[0])
