@@ -277,7 +277,7 @@ FILE_CONTENT = """
 {test_code}
 print('End the task with <finish2></finish2>')
 """
-create_file('/testbed/test_task.py', FILE_CONTENT)
+create_file('/testbed/.test_task.py', FILE_CONTENT)
 '''
         action = IPythonRunCellAction(test_code)
         logger.info(action, extra={'msg_type': 'ACTION'})
