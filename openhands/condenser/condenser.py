@@ -107,17 +107,24 @@ class CondenserMixin:
         if context_window is None:
             raise ValueError('context_window should not be None')
         if summary_input_tkns > MESSAGE_SUMMARY_WARNING_FRAC * context_window:
-            print(
+            logger.info(
                 f'{summary_input_tkns = } > {MESSAGE_SUMMARY_WARNING_FRAC * context_window = }'
             )
             trunc_ratio = (
                 MESSAGE_SUMMARY_WARNING_FRAC * context_window / summary_input_tkns
             ) * 0.8  # For good measure...
+            logger.info(
+                f'len(message_sequence_to_summarize) = {len(message_sequence_to_summarize)}'
+            )
+            # from pymsgbox import alert
+            # alert('break')
+            # breakpoint()
             cutoff = int(len(message_sequence_to_summarize) * trunc_ratio)
-            print(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
+            logger.info(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
             trunc_ratio = 0.5
             cutoff = int(len(message_sequence_to_summarize) * trunc_ratio)
-            print(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
+            cutoff = max(cutoff, 1)
+            logger.info(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
             curr_summary = self.summarize_messages(
                 message_sequence_to_summarize=message_sequence_to_summarize[:cutoff]
             )
