@@ -114,6 +114,10 @@ class CondenserMixin:
                 MESSAGE_SUMMARY_WARNING_FRAC * context_window / summary_input_tkns
             ) * 0.8  # For good measure...
             cutoff = int(len(message_sequence_to_summarize) * trunc_ratio)
+            print(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
+            trunc_ratio = 0.5
+            cutoff = int(len(message_sequence_to_summarize) * trunc_ratio)
+            print(f'cutoff = {cutoff}, trunc_ratio = {trunc_ratio}')
             curr_summary = self.summarize_messages(
                 message_sequence_to_summarize=message_sequence_to_summarize[:cutoff]
             )
