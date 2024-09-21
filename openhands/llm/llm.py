@@ -131,6 +131,8 @@ class LLM(CondenserMixin):
                 ):
                     self.config.max_output_tokens = self.model_info['max_tokens']
 
+        logger.info(f'{self.config.max_input_tokens=}')
+        logger.info(f'{self.config.max_output_tokens=}')
         if self.config.drop_params:
             litellm.drop_params = self.config.drop_params
 
