@@ -1,9 +1,10 @@
 import asyncio
 import copy
+import time
 import warnings
 from functools import partial
 from time import sleep
-from typing import Union
+from typing import Any, Union
 
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
@@ -80,6 +81,11 @@ class LLM(CondenserMixin):
 
         if self.config.enable_cache:
             litellm.cache = Cache()
+
+        # list of LLM completions (for logging purposes). Each completion is a dict with the following keys:
+        # - 'messages': list of messages
+        # - 'response': response from the LLM
+        self.llm_completions: list[dict[str, Any]] = []
 
         # Set up config attributes with default values to prevent AttributeError
         LLMConfig.set_missing_attributes(self.config)
@@ -319,6 +325,16 @@ class LLM(CondenserMixin):
                 logger.debug('No completion messages!')
                 resp = {'choices': [{'message': {'content': ''}}]}
                 message_back = ''
+
+            if self.config.log_completions:
+                self.llm_completions.append(
+                    {
+                        'messages': messages,
+                        'response': resp,
+                        'timestamp': time.time(),
+                        'cost': self.completion_cost(resp),
+                    }
+                )
 
             # log the response
             llm_response_logger.debug(message_back)
@@ -722,6 +738,7 @@ class LLM(CondenserMixin):
 
     def reset(self):
         self.metrics = Metrics()
+        self.llm_completions = []
 
     def is_over_token_limit(self, messages: list[Message]) -> bool:
         """
