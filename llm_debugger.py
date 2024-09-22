@@ -30,7 +30,10 @@ question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
 question = 'Why are you not responding to the user?'
 question = 'Why did you give this response?'
-question = 'Why did you missed the file name for insert_content_after_line()? reply in one line.'
+question = 'Why are you inserting existing lines?'
+
+inst = '\n\nJust tell the reason for the wrong action.'
+question += inst
 new_prompt = f"""
 INITIAL PROMPT:
 
@@ -59,8 +62,10 @@ while True:
     resp = response['choices'][0]['message']['content']
     print(resp)
     question = input('> ')
+
     if question == 'q':
         break
+    question += inst
     messages.append({'role': 'assistant', 'content': resp})
     inst = "Don't give codes. Just answer the question."
     messages.append({'role': 'user', 'content': question + '\n\n' + inst})
