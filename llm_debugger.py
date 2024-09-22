@@ -1,9 +1,10 @@
 import litellm
 import toml
 
-number = 1
-prompt = f'logs/llm/default/{number:03d}_prompt.log'
-response = f'logs/llm/default/{number:03d}_response.log'
+number = 7
+model = 'gemini'
+prompt = f'logs/llm/{model}/{number:03d}_prompt.log'
+response = f'logs/llm/{model}/{number:03d}_response.log'
 
 with open(prompt, 'r') as file:
     prompt_content = file.read()
@@ -29,7 +30,7 @@ question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
 question = 'Why are you not responding to the user?'
 question = 'Why did you give this response?'
-question = 'Why did not give the plan?'
+question = 'Why did you missed the file name for insert_content_after_line()? reply in one line.'
 new_prompt = f"""
 INITIAL PROMPT:
 
