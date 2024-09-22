@@ -37,7 +37,6 @@ from openhands.events.observation import (
     ErrorObservation,
     FileReadObservation,
     FileWriteObservation,
-    IPythonRunCellObservation,
     Observation,
 )
 from openhands.events.serialization import event_from_dict, event_to_dict
@@ -88,6 +87,9 @@ class RuntimeClient:
         self.lock = asyncio.Lock()
         self.plugins: dict[str, Plugin] = {}
         self.browser = BrowserEnv(browsergym_eval_env)
+        self.last_command = ''
+        self.last_code = ''
+        self.is_last_code_error = False
 
     @property
     def initial_pwd(self):
@@ -441,11 +443,11 @@ class RuntimeClient:
             commands = split_bash_commands(action.command)
             all_output = ''
             for command in commands:
-                # suggest alternative for vim/nano
-
                 output = None
                 exit_code = 0
-                if command.startswith('cd'):
+                if command == self.last_command and command in ['ls -l', 'ls -la']:
+                    output = "[Why are you executing the same command twice? What's wrong with you? Please focus 🙏]"
+                elif command.startswith('cd'):
                     path = command[3:].strip()
                     if self.pwd == path:
                         output = '[You are already in this directory.]'
@@ -475,6 +477,7 @@ class RuntimeClient:
                         keep_prompt=action.keep_prompt,
                         kill_on_timeout=False if not action.blocking else True,
                     )
+                self.last_command = command
                 if command.startswith('pip install'):
                     output = await self.parse_pip_output(command, output)
                 if all_output:
@@ -571,12 +574,19 @@ class RuntimeClient:
             # current working directory in Bash
             if self.pwd != getattr(self, '_jupyter_pwd', None):
                 await self.chdir()
-
-            action.code = action.code.replace('!pip', '%pip')
-            obs: IPythonRunCellObservation = await _jupyter_plugin.run(action)
-            if 'pip install' in action.code:
-                obs.content = await self.parse_pip_output(action.code, obs.content)
-            obs.content = obs.content.rstrip()
+            if action.code == self.last_code and self.is_last_code_error:
+                obs: Observation = ErrorObservation(
+                    '[You are trying to run the same code cell twice. '
+                    'Please focus and run a correct code cell.]'
+                )
+            else:
+                action.code = action.code.replace('!pip', '%pip')
+                obs = await _jupyter_plugin.run(action)
+                if 'pip install' in action.code:
+                    obs.content = await self.parse_pip_output(action.code, obs.content)
+                obs.content = obs.content.rstrip()
+                self.last_code = action.code
+                self.is_last_code_error = 'error' in obs.content
             # obs.content += f'\n[Jupyter current working directory: {self.pwd}]'
             # obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
             return obs
