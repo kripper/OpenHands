@@ -576,8 +576,7 @@ class RuntimeClient:
                 await self.chdir()
             if action.code == self.last_code and self.is_last_code_error:
                 obs: Observation = ErrorObservation(
-                    '[You are trying to run the same code cell twice. '
-                    'Please focus and run a correct code cell.]'
+                    '[You are trying to run the same code twice. Please focus and run the correct code.]'
                 )
             else:
                 action.code = action.code.replace('!pip', '%pip')
