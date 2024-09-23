@@ -14,8 +14,8 @@ else:
     from pyperclip import paste
 
     file = paste()
-    if 'evaluation/' not in file:
-        file = 'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActAgent/gemini-1.5-pro-latest_maxiter_25_N_v1.9-no-hint/output.jsonl'
+    if 'evaluation/' not in file or 1:
+        file = r'evaluation/evaluation_outputs/outputs/swe-bench-lite/CodeActAgent/gemini-1.5-flash-latest_maxiter_20_N_v1.9/output.jsonl'
 
 # output.json or trajectory.json
 if 1 or sys.argv[1:]:
@@ -29,7 +29,7 @@ if 1 or sys.argv[1:]:
         history = []
         for d in data:
             history.extend(d['history'])
-        history = [i for sublist in history for i in sublist]
+        # history = [i for sublist in history for i in sublist]
         # history = history[3:]
 
 else:
@@ -70,15 +70,21 @@ json_data.update(
 )
 # flatten the history
 history = [config] + history
+
 for idx, item in enumerate(history):
-    if item.get('action') == 'message' and item.get('source') == 'user':
-        msg = item.get('message')
-        if (
-            msg
-            == 'Please continue working on the task on whatever approach you think is suitable.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
-        ):
-            msg = 'Auto reply 🤖'
-        history[idx] = {'user': msg}
+    try:
+        if item.get('action') == 'message' and item.get('source') == 'user':
+            msg = item.get('message')
+            if (
+                msg
+                == 'Please continue working on the task on whatever approach you think is suitable.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
+            ):
+                msg = 'Auto reply 🤖'
+            history[idx] = {'user': msg}
+    except Exception as e:
+        print(f'{item}')
+        pprint((history))
+        raise e
 
 # insert step count after each action, observation pair
 step_count = 0
