@@ -1,5 +1,6 @@
 import asyncio
 import copy
+import os
 import time
 import warnings
 from functools import partial
@@ -41,7 +42,7 @@ from openhands.core.exceptions import (
     OperationCancelled,
     UserCancelledError,
 )
-from openhands.core.logger import llm_prompt_logger, llm_response_logger
+from openhands.core.logger import LOG_DIR, llm_prompt_logger, llm_response_logger
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.metrics import Metrics
 from openhands.runtime.utils.shutdown_listener import should_exit
@@ -78,6 +79,7 @@ class LLM(CondenserMixin):
         self.cost_metric_supported = True
         self.config = copy.deepcopy(config)
         self.log_prompt_once = True
+        self.reload_counter = 0
 
         if self.config.enable_cache:
             litellm.cache = Cache()
@@ -302,12 +304,34 @@ class LLM(CondenserMixin):
                     kwargs['extra_headers'] = {
                         'anthropic-beta': 'prompt-caching-2024-07-31',
                     }
-
-            # skip if messages is empty (thus debug_message is empty)
-            if debug_message:
-                if self.log_prompt_once:
-                    llm_prompt_logger.debug(debug_message)
-                    self.log_prompt_once = False
+            resp = {}
+            if continue_on_step_env := os.environ.get('CONTINUE_ON_STEP'):
+                # int
+                continue_on_step = int(continue_on_step_env)
+                # logger.info(f'{self.reload_counter=} {continue_on_step=}')
+                if self.reload_counter < continue_on_step:
+                    model_config = os.getenv('model_config')
+                    if model_config:
+                        session = model_config.split('.')[-1]
+                    else:
+                        session = 'default'
+                    log_directory = os.path.join(LOG_DIR, 'llm', session)
+                    self.reload_counter += 1
+                    filename = f'{self.reload_counter:03}_response.log'
+                    file_name = os.path.join(log_directory, filename)
+                    if os.path.exists(file_name):
+                        logger.info('Using cached response')
+                        with open(file_name, 'r') as f:
+                            message_back = f.read()
+                        with open(file_name, 'w') as f:
+                            f.write('')
+                        resp = {'choices': [{'message': {'content': message_back}}]}
+            if self.log_prompt_once:
+                llm_prompt_logger.debug(debug_message)
+                self.log_prompt_once = False
+            if resp:
+                pass
+            elif debug_message:
                 for _ in range(5):
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
@@ -332,7 +356,9 @@ class LLM(CondenserMixin):
                         'messages': messages,
                         'response': resp,
                         'timestamp': time.time(),
-                        'cost': self.completion_cost(resp),
+                        'cost': self.completion_cost(resp)
+                        if not isinstance(resp, dict)
+                        else 0,
                     }
                 )
 

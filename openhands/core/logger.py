@@ -200,7 +200,14 @@ def clear_llm_logs(dir: str):
         dir (str): The directory to clear.
     """
     openhands_logger.debug(f'Clearing LLM logs in: {dir}')
+
+    if continue_on_step_env := os.getenv('CONTINUE_ON_STEP'):
+        continue_on_step = int(continue_on_step_env)
+    else:
+        continue_on_step = 0
     for file in os.listdir(dir):
+        if f'{continue_on_step:03}' in file:
+            continue
         file_path = os.path.join(dir, file)
         try:
             os.unlink(file_path)
@@ -234,6 +241,7 @@ class LlmFileHandler(logging.FileHandler):
         os.makedirs(self.log_directory, exist_ok=True)
         # Clear the log directory if not in debug mode
         clear_llm_logs(self.log_directory)
+        # TODO: baseFilename is assigned in emit() too.
         filename = f'{self.filename}_{self.message_counter:03}.log'
         self.baseFilename = os.path.join(self.log_directory, filename)
         super().__init__(self.baseFilename, mode, encoding, delay)

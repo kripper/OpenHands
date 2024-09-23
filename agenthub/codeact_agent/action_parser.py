@@ -40,7 +40,8 @@ class CodeActResponseParser(ResponseParser):
         return self.parse_action(action_str)
 
     def parse_response(self, response) -> str:
-        action = response.choices[0].message.content
+        # action = response.choices[0].message.content
+        action = response['choices'][0]['message']['content']
         if action is None:
             return ''
         for lang in ['bash', 'ipython', 'browse']:

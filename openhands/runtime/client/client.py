@@ -419,7 +419,7 @@ class RuntimeClient:
             logger.debug(f'Exit code Output: {_exit_code_output}')
             try:
                 exit_code = int(_exit_code_output.strip().split()[0])
-            except ValueError:
+            except Exception:
                 logger.warning(f'Failed to get exit code: {_exit_code_output}')
                 exit_code = -1
         else:
