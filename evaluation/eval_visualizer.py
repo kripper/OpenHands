@@ -86,13 +86,11 @@ for idx, item in enumerate(history):
         pprint((history))
         raise e
 
-# insert step count after each action, observation pair
 step_count = 0
 for idx, item in enumerate(history[:-1]):
-    if history[idx + 1].get('observation') and not history[idx - 1].get('step'):
-        step_count += 1
-        # pprint(history[idx])
-        history.insert(idx, {'step': step_count})
+    if item.get('log'):
+        item = {'step': item['log'].split()[-1]}
+        history[idx] = item
 
 
 json_data['trajectory'] = history
