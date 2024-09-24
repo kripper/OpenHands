@@ -308,8 +308,12 @@ class LLM(CondenserMixin):
                     kwargs['extra_headers'] = {
                         'anthropic-beta': 'prompt-caching-2024-07-31',
                     }
+            source = kwargs.pop('origin', None)
             resp = {}
-            if continue_on_step_env := os.environ.get('CONTINUE_ON_STEP'):
+            if (
+                continue_on_step_env := os.environ.get('CONTINUE_ON_STEP')
+                and source == 'Agent'
+            ):
                 # int
                 continue_on_step = int(continue_on_step_env)
                 # logger.info(f'{self.reload_counter=} {continue_on_step=}')

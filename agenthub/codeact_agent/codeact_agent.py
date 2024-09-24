@@ -236,6 +236,7 @@ class CodeActAgent(Agent):
                 '</execute_browse>',
             ],
             'condense': True,
+            'origin': 'Agent',
         }
 
         if self.llm.is_caching_prompt_active():
