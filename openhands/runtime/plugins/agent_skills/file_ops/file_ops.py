@@ -290,7 +290,9 @@ def create_file(filename: str, content: str = '', overwrite: bool = False) -> No
     else:
         try:
             # Ensure directory exists
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            dirname = os.path.dirname(filename)
+            if dirname:
+                os.makedirs(dirname, exist_ok=True)
 
             with open(filename, 'w') as file:
                 file.write('')
