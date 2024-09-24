@@ -125,7 +125,7 @@ function ChatInterface() {
       curAgentState === AgentState.INIT ||
       curAgentState === AgentState.FINISHED
     ) {
-      if (document.cookie.indexOf("audio") !== -1) beep();
+      if (document.cookie.indexOf("mute") === -1) beep();
     }
   }, [curAgentState]);
 
