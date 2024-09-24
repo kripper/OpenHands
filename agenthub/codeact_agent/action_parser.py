@@ -152,10 +152,10 @@ class CodeActActionParserIPythonRunCell(ActionParser):
 
         def convert_to_raw_string(input_code: str) -> str:
             # Regex pattern to find triple quotes and add 'r' before them if not already present
-            pattern1 = r"r?('''.*?''')"
-            pattern2 = r'r?(""".*?""")'
+            pattern1 = r"r?('''.*?\\n.*?''')"
+            pattern2 = r'r?(""".*?\\n.*?""")'
 
-            # Use re.sub to replace both start and end quotes with r'''
+            # replace only if \n inside the string
             output_code = re.sub(pattern1, r'r\1', input_code, flags=re.DOTALL)
             output_code = re.sub(pattern2, r'r\1', output_code, flags=re.DOTALL)
 
