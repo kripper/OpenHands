@@ -20,11 +20,6 @@ expected_matrix = np.array([[ True,  True, False, False],
 assert np.array_equal(a, expected_matrix), "Matrix does not match expected structure"
 """,
         'astropy__astropy-14182': """
-from astropy.table import QTable
-import astropy.units as u
-import numpy as np
-from io import StringIO
-
 lines = '''
 ===== ========
  wave response
@@ -42,7 +37,12 @@ tbl = QTable({'wave': [350, 950] * u.nm, 'response': [0.7, 1.2]*u.count})
 
 out = StringIO()
 tbl.write(out,  format="ascii.rst", header_rows=["name", "unit"])
-assert out.getvalue().splitlines() == lines
+if out.getvalue().splitlines() != lines:
+    print("Table does not match expected structure")
+    print("Expected:")
+    print('\\n'.join(lines))
+    print("Got:")
+    print('\\n'.join(out.getvalue().splitlines()))
 """,
     }
     return test_codes.get(instance_id, '')
