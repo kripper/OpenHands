@@ -774,7 +774,9 @@ def replace_full_file_content(file_name: str, new_content: str) -> None:
     """Replace the full content of the specified file with the given new content."""
     current_content = open(file_name, 'r').read()
     if current_content == new_content:
-        print("[The file's content is already identical to the proposed changes.]")
+        print(
+            "[The file's content is already identical to the proposed changes. What did you exactly expect to change in the file?]"
+        )
         return
     ret_str = _edit_file_impl(
         file_name,
