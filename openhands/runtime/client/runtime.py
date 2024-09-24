@@ -282,6 +282,9 @@ class EventStreamRuntime(Runtime):
                 )
             else:
                 browsergym_arg = ''
+            logger.info(
+                f'Starting container {self.container_name}. It may take ~3 minutes (depends on your computer)'
+            )
             container = self.docker_client.containers.run(
                 self.runtime_container_image,
                 command=(
