@@ -312,8 +312,7 @@ class LLM(CondenserMixin):
             resp = {}
             if (
                 continue_on_step_env := os.environ.get('CONTINUE_ON_STEP')
-                and source == 'Agent'
-            ):
+            ) and source == 'Agent':
                 # int
                 continue_on_step = int(continue_on_step_env)
                 # logger.info(f'{self.reload_counter=} {continue_on_step=}')
