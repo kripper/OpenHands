@@ -315,7 +315,6 @@ class LLM(CondenserMixin):
             ) and source == 'Agent':
                 # int
                 continue_on_step = int(continue_on_step_env)
-                # logger.info(f'{self.reload_counter=} {continue_on_step=}')
                 if self.reload_counter < continue_on_step:
                     model_config = os.getenv('model_config')
                     if model_config:

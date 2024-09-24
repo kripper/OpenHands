@@ -463,7 +463,7 @@ class RuntimeClient:
                         'Please use agentskills for file operations.'
                     )
                 elif ' -m unittest' in command:
-                    output = '[Please use pytest.]'
+                    output = '[Please run the tests using pytest.]'
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         timeout=SOFT_TIMEOUT_SECONDS
