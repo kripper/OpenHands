@@ -1,7 +1,7 @@
 import litellm
 import toml
 
-number = 7
+number = 4
 model = 'gemini'
 prompt = f'logs/llm/{model}/{number:03d}_prompt.log'
 response = f'logs/llm/{model}/{number:03d}_response.log'
@@ -30,7 +30,7 @@ question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
 question = 'Why are you not responding to the user?'
 question = 'Why did you give this response?'
-question = 'Why are you inserting existing lines?'
+question = 'you should pass header_rows to the super init.'
 
 inst = '\n\nJust tell the reason for the wrong action.'
 question += inst
@@ -65,7 +65,7 @@ while True:
 
     if question == 'q':
         break
-    question += inst
     messages.append({'role': 'assistant', 'content': resp})
-    inst = "Don't give codes. Just answer the question."
-    messages.append({'role': 'user', 'content': question + '\n\n' + inst})
+    messages.append({'role': 'user', 'content': question})
+    inst = 'Reply in one line.'
+    messages.append({'role': 'system', 'content': inst})
