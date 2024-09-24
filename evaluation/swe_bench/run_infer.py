@@ -278,12 +278,13 @@ FILE_CONTENT = """
 {test_code}
 print('End the task with <finish2></finish2>')
 """
-create_file('/tmp/.test_task.py', FILE_CONTENT)
+create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
 '''
         action = IPythonRunCellAction(test_code)
         logger.info(action, extra={'msg_type': 'ACTION'})
         obs = runtime.run_action(action)
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
+        assert 'File created' in obs.content
 
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
