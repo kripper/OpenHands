@@ -205,10 +205,16 @@ def clear_llm_logs(dir: str):
         continue_on_step = int(continue_on_step_env)
     else:
         continue_on_step = 0
-    for file in os.listdir(dir):
-        if f'{continue_on_step:03}' in file:
-            continue
-        file_path = os.path.join(dir, file)
+    for file_name in os.listdir(dir):
+        try:
+            if (
+                int(file_name.split('_')[0]) <= continue_on_step
+                and 'response' in file_name
+            ):
+                continue
+        except Exception:
+            pass
+        file_path = os.path.join(dir, file_name)
         try:
             os.unlink(file_path)
         except Exception as e:
