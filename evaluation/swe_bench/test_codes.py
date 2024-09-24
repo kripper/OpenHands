@@ -38,7 +38,7 @@ from astropy.table import QTable
 import astropy.units as u
 from io import StringIO
 
-tbl = QTable({'wave': [350,950]*u.nm, 'response': [0.7, 1.2]*u.count})
+tbl = QTable({'wave': [350, 950] * u.nm, 'response': [0.7, 1.2]*u.count})
 
 out = StringIO()
 tbl.write(out,  format="ascii.rst", header_rows=["name", "unit"])
