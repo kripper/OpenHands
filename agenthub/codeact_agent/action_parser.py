@@ -83,7 +83,7 @@ class CodeActActionParserFinish(ActionParser):
         ), 'self.finish_command should not be None when parse is called'
         thought = action_str.replace(self.finish_command.group(0), '').strip()
         if not self.is_finish2 and os.getenv('SWE_BENCH') == '1':
-            return CmdRunAction('pytest /tmp/.test_task.py', thought='')
+            return CmdRunAction('python /tmp/test_task.py', thought='')
         return AgentFinishAction(thought=thought)
 
 
@@ -149,6 +149,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         triple_double_quotes = '"""'
         if triple_single_quotes not in code and triple_double_quotes not in code:
             code = code.replace('"\n"', '"\\n"')
+            code = code.replace("'\n'", "'\\n'")
 
         def convert_to_raw_string(input_code: str) -> str:
             # Regex pattern to find triple quotes and add 'r' before them if not already present
