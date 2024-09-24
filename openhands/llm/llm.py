@@ -84,6 +84,9 @@ class LLM(CondenserMixin):
         if self.config.enable_cache:
             litellm.cache = Cache()
 
+        os.environ['OR_SITE_URL'] = self.config.openrouter_site_url
+        os.environ['OR_APP_NAME'] = self.config.openrouter_app_name
+
         # list of LLM completions (for logging purposes). Each completion is a dict with the following keys:
         # - 'messages': list of messages
         # - 'response': response from the LLM
@@ -156,33 +159,29 @@ class LLM(CondenserMixin):
                 total = max_input_tokens + max_output_tokens
                 litellm.OllamaConfig.num_ctx = total
                 logger.info(f'Setting OllamaConfig.num_ctx to {total}')
-
         # This only seems to work with Google as the provider, not with OpenRouter!
-        gemini_safety_settings = [
-            {
-                'category': 'HARM_CATEGORY_HARASSMENT',
-                'threshold': 'BLOCK_NONE',
-            },
-            {
-                'category': 'HARM_CATEGORY_HATE_SPEECH',
-                'threshold': 'BLOCK_NONE',
-            },
-            {
-                'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-                'threshold': 'BLOCK_NONE',
-            },
-            {
-                'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                'threshold': 'BLOCK_NONE',
-            },
-        ]
-
-        if self.config.model.lower().startswith('gemini'):
-            kwargs = {
-                'safety_settings': gemini_safety_settings,
-            }
-        else:
-            kwargs = {}
+        gemini_safety_settings = (
+            [
+                {
+                    'category': 'HARM_CATEGORY_HARASSMENT',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_HATE_SPEECH',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                    'threshold': 'BLOCK_NONE',
+                },
+                {
+                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    'threshold': 'BLOCK_NONE',
+                },
+            ]
+            if self.config.model.lower().startswith('gemini')
+            else None
+        )
 
         self.completion_unwrapped = partial(
             litellm_completion,
@@ -196,7 +195,12 @@ class LLM(CondenserMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             caching=self.config.enable_cache,
-            **kwargs,
+            drop_params=self.config.drop_params,
+            **(
+                {'safety_settings': gemini_safety_settings}
+                if gemini_safety_settings is not None
+                else {}
+            ),
         )
 
         if self.vision_is_active():
@@ -384,7 +388,7 @@ class LLM(CondenserMixin):
             timeout=self.config.timeout,
             temperature=self.config.temperature,
             top_p=self.config.top_p,
-            drop_params=True,
+            drop_params=self.config.drop_params,
             **(
                 {'safety_settings': gemini_safety_settings}
                 if gemini_safety_settings is not None
