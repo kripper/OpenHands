@@ -145,8 +145,23 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         thought = action_str.replace(self.python_code.group(0), '').strip()
 
         # escape "\n"
-        code = code.replace('"\n"', '"\\n"')
+        triple_single_quotes = "'''"
+        triple_double_quotes = '"""'
+        if triple_single_quotes not in code and triple_double_quotes not in code:
+            code = code.replace('"\n"', '"\\n"')
 
+        def convert_to_raw_string(input_code: str) -> str:
+            # Regex pattern to find triple quotes and add 'r' before them if not already present
+            pattern1 = r"r?('''.*?''')"
+            pattern2 = r'r?(""".*?""")'
+
+            # Use re.sub to replace both start and end quotes with r'''
+            output_code = re.sub(pattern1, r'r\1', input_code, flags=re.DOTALL)
+            output_code = re.sub(pattern2, r'r\1', output_code, flags=re.DOTALL)
+
+            return output_code
+
+        code = convert_to_raw_string(code)
         return IPythonRunCellAction(
             code=code,
             thought=thought,
