@@ -19,6 +19,7 @@ function AgentStatusBar() {
   const { curAgentState, currentStep } = useSelector(
     (state: RootState) => state.agent,
   );
+  const { curStatusMessage } = useSelector((state: RootState) => state.status);
 
   const AgentStatusMap: {
     [k: string]: { message: string; indicator: IndicatorColor };
@@ -81,17 +82,38 @@ function AgentStatusBar() {
   // - Agent is thinking
   // - Agent is ready
   // - Agent is not available
+  useEffect(() => {
+    if (
+      curAgentState === AgentState.AWAITING_USER_INPUT ||
+      curAgentState === AgentState.ERROR ||
+      curAgentState === AgentState.INIT
+    ) {
+      if (document.cookie.indexOf("audio") !== -1) beep();
+    }
+  }, [curAgentState]);
+
+  const [statusMessage, setStatusMessage] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const trimmedCustomMessage = curStatusMessage.message.trim();
+    if (trimmedCustomMessage) {
+      setStatusMessage(t(trimmedCustomMessage));
+    } else {
+      setStatusMessage(AgentStatusMap[curAgentState].message);
+    }
+  }, [curAgentState, curStatusMessage.message]);
+
   return (
-    <div className="flex items-center">
-      <div
-        className={`w-3 h-3 mr-2 rounded-full animate-pulse ${AgentStatusMap[curAgentState].indicator}`}
-      />
-      <span className="text-sm text-stone-400">
-        {AgentStatusMap[curAgentState].message}
-      </span>
-      {currentStep && (
-        <span className="text-sm text-stone-400 ml-2">{currentStep}</span>
-      )}
+    <div className="flex flex-col items-center">
+      <div className="flex items-center">
+        <div
+          className={`w-3 h-3 mr-2 rounded-full animate-pulse ${AgentStatusMap[curAgentState].indicator}`}
+        />
+        <span className="text-sm text-stone-400">{statusMessage}</span>
+        {currentStep && (
+          <span className="text-sm text-stone-400 ml-2">{currentStep}</span>
+        )}
+      </div>
     </div>
   );
 }
