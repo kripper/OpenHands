@@ -208,7 +208,7 @@ def clear_llm_logs(dir: str):
     for file_name in os.listdir(dir):
         try:
             if (
-                int(file_name.split('_')[0]) <= continue_on_step
+                int(file_name.split('_')[0]) < continue_on_step
                 and 'response' in file_name
             ):
                 continue

@@ -315,6 +315,7 @@ class LLM(CondenserMixin):
             ) and source == 'Agent':
                 # int
                 continue_on_step = int(continue_on_step_env)
+                self.reload_counter += 1
                 if self.reload_counter < continue_on_step:
                     model_config = os.getenv('model_config')
                     if model_config:
@@ -322,7 +323,6 @@ class LLM(CondenserMixin):
                     else:
                         session = 'default'
                     log_directory = os.path.join(LOG_DIR, 'llm', session)
-                    self.reload_counter += 1
                     filename = f'{self.reload_counter:03}_response.log'
                     file_name = os.path.join(log_directory, filename)
                     if os.path.exists(file_name):
