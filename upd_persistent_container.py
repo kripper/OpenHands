@@ -4,6 +4,7 @@ import docker
 
 full_file_names = [
     'openhands/runtime/plugins/agent_skills/file_ops/file_ops.py',
+    'openhands/runtime/plugins/agent_skills/file_ops/ast_ops.py',
     r'openhands/runtime/client/client.py',
 ]
 client = docker.from_env()
@@ -16,7 +17,7 @@ for c in client.containers.list():
         print(container_id)
         for full_file_name in full_file_names:
             cmd = f'docker cp {full_file_name} {container_id}:/openhands/code/{full_file_name}'
-            print(cmd)
+            # print(cmd)
             os.system(cmd)
 
         if 'root' in c.name:
