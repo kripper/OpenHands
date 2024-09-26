@@ -133,7 +133,8 @@ class EventStreamRuntime(Runtime):
             else:
                 user = 'root'
                 self._container_port = 63711
-            path = config.workspace_mount_path or ''
+            path = config.workspace_mount_path or sid
+            os.environ['selection_id'] = path
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
         else:
