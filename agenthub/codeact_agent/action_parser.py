@@ -83,7 +83,7 @@ class CodeActActionParserFinish(ActionParser):
         ), 'self.finish_command should not be None when parse is called'
         thought = action_str.replace(self.finish_command.group(0), '').strip()
         if not self.is_finish2 and os.getenv('SWE_BENCH') == '1':
-            return CmdRunAction('python3 /tmp/test_task.py', thought='')
+            return CmdRunAction('pytest /tmp/test_task.py', thought='')
         return AgentFinishAction(thought=thought)
 
 
