@@ -102,7 +102,7 @@ class Runtime:
         if not cmd:
             return
         cmd = cmd.strip()
-        logger.debug(f'Adding env var: {cmd}')
+        logger.info(f'Adding env var: {cmd}')
         obs = self.run(CmdRunAction(cmd))
         if not isinstance(obs, CmdOutputObservation) or obs.exit_code != 0:
             raise RuntimeError(

@@ -281,7 +281,6 @@ def _process_instance_wrapper(
                     + '-' * 10
                 )
                 # Raise an error after all retries & stop the evaluation
-                logger.exception(e)
                 raise RuntimeError(
                     f'Maximum error retries reached for instance {instance.instance_id}'
                 ) from e
