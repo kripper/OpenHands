@@ -82,7 +82,11 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             'The current working directory is /testbed.\n'
             "Please don't blabber\n"
         )
-        if USE_HINT_TEXT and instance.hints_text:
+        if (
+            USE_HINT_TEXT
+            and instance.hints_text
+            and instance.instance_id != 'astropy__astropy-14365'
+        ):
             instruction += f'# Hints\n{instance.hints_text}\n\n'
         instruction += (
             'IMPORTANT: You should ONLY interact with the environment provided to you AND NEVER ASK FOR HUMAN HELP.\n'
