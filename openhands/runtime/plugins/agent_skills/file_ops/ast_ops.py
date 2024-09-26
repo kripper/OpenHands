@@ -50,7 +50,7 @@ def find_base_class_file(file_path, base_class_module):
     return None
 
 
-def get_base_class_init_signature_from_code(code, class_name):
+def get_class_init_signature_from_code(code, class_name):
     tree = ast.parse(code)
     finder = BaseClassInitFinder()
 
@@ -65,7 +65,7 @@ def get_base_class_init_signature_from_code(code, class_name):
 
 def process_file_for_base_class_init(file_path, base_class_name):
     code = read_file(file_path)
-    return get_base_class_init_signature_from_code(code, base_class_name)
+    return get_class_init_signature_from_code(code, base_class_name)
 
 
 # Example usage
@@ -123,12 +123,6 @@ class InitMethodModifier(cst.CSTTransformer):
         self.param_name = param_name
         self.inside_target_class = False
 
-    def readable_params(self, params):
-        return [param.name.value for param in params]
-
-    def readable_args(self, args):
-        return [arg.keyword.value for arg in args]
-
     def leave_FunctionDef(
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
@@ -136,18 +130,33 @@ class InitMethodModifier(cst.CSTTransformer):
         if self.inside_target_class and original_node.name.value == '__init__':
             # Add the new parameter to the __init__ method
             new_param = cst.Param(cst.Name(self.param_name))
-            if self.param_name not in self.readable_params(updated_node.params.params):
-                new_params = updated_node.params.with_changes(
-                    params=[*updated_node.params.params, new_param]
-                )
+            new_params = updated_node.params.with_changes(
+                params=[*updated_node.params.params, new_param]
+            )
 
-                # Update the __init__ function with the new parameter
-                return updated_node.with_changes(params=new_params)
-            else:
-                print(
-                    f'{self.param_name} already present in the __init__ method of the {self.class_name} class in the {self.file_path} file.'
-                )
-                self.already_added = True
+            # Add the assignment self.param_name = param_name
+            new_assignment = cst.SimpleStatementLine(
+                body=[
+                    cst.Assign(
+                        targets=[
+                            cst.AssignTarget(
+                                cst.Attribute(
+                                    cst.Name('self'), cst.Name(self.param_name)
+                                )
+                            )
+                        ],
+                        value=cst.Name(self.param_name),
+                    )
+                ]
+            )
+
+            # Insert the assignment at the end of the body
+            new_body = list(updated_node.body.body) + [new_assignment]
+
+            # Update the __init__ function with the new parameter and assignment
+            return updated_node.with_changes(
+                params=new_params, body=cst.IndentedBlock(body=new_body)
+            )
 
         return updated_node
 
@@ -162,14 +171,13 @@ class InitMethodModifier(cst.CSTTransformer):
             self.inside_target_class = True
 
     def leave_Expr(self, original_node: cst.Expr, updated_node: cst.Expr) -> cst.Expr:
-        # if self.already_added:
-        # return updated_node
-        if self.param_name not in (
+        self.relevant_base_param = self.param_name in (
             get_base_class_init_signature(
                 self.file_path, get_base_class_name(self.file_path, self.class_name)
             )
             or []
-        ):
+        )
+        if not self.relevant_base_param:
             return updated_node
         # Modify the super().__init__ call to include the new parameter
         if self.inside_target_class and isinstance(original_node.value, cst.Call):
@@ -180,9 +188,7 @@ class InitMethodModifier(cst.CSTTransformer):
                         isinstance(arg, cst.Arg) and arg.keyword
                         for arg in original_node.value.args
                     )
-                    # if the param is already present, do not add it again
-                    if self.param_name in self.readable_args(original_node.value.args):
-                        return updated_node
+
                     if has_keyword_args:
                         # Add the new parameter as a keyword argument to avoid positional after keyword error
                         new_arg = cst.Arg(
@@ -213,7 +219,13 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
     code = read_file(file_path)
     # Parse the code into a CST tree
     tree = cst.parse_module(code)
-
+    if param_name in format_signature(
+        get_class_init_signature_from_code(code, class_name)
+    ):
+        print(
+            f"Parameter '{param_name}' already exists in the base class __init__ method."
+        )
+        return
     # Create the transformer to modify the __init__ method
     transformer = InitMethodModifier(file_path, class_name, param_name)
 
@@ -223,9 +235,14 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
     if new_code != code:
         with open(file_path, 'w') as f:
             f.write(modified_tree.code)
-        print(
-            f'{param_name} added to the __init__ method of the {class_name} class in the {file_path} file.'
-        )
+        if transformer.relevant_base_param:
+            print(
+                f"Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment"
+            )
+        else:
+            print(
+                f"Modified {class_name} class to include '{param_name}' in __init__ and added self assignment"
+            )
 
 
 if __name__ == '__main__':

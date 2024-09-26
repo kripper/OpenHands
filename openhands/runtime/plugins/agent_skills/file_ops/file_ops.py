@@ -983,17 +983,17 @@ __all__ = [
     'create_file',
     'find_and_replace',
     'delete_line',
-    'replace_full_file_content',
+    'add_param_to_init_in_subclass',
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
+    'replace_full_file_content',
     'search_dir',
     'search_file',
     'find_file',
     'kill_port',
     'clean_workspace',
     'custom_import',
-    'add_param_to_init_in_subclass',
 ]
 
 if __name__ == '__main__':
