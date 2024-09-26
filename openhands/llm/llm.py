@@ -319,7 +319,17 @@ class LLM(CondenserMixin):
                 if self.reload_counter < continue_on_step:
                     model_config = os.getenv('model_config')
                     if model_config:
-                        session = model_config.split('.')[-1]
+                        with open('evaluation/swe_bench/config.toml', 'r') as f:
+                            environ = f.read()
+                            import toml
+
+                            config = toml.loads(environ)
+                            selection_id = config['selected_ids'][0]
+                        session = (
+                            model_config.split('.')[-1]
+                            + '_'
+                            + selection_id.split('-')[-1]
+                        )
                     else:
                         session = 'default'
                     log_directory = os.path.join(LOG_DIR, 'llm', session)
@@ -338,9 +348,32 @@ class LLM(CondenserMixin):
             if resp:
                 pass
             elif debug_message:
+                kwargs2 = kwargs.copy()
                 for _ in range(5):
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
+                    self_analyse = os.environ.get('SELF_ANALYSE')
+                    if self_analyse:
+                        kwargs2['messages'].append(
+                            {'role': 'assistant', 'content': message_back}
+                        )
+                        self_analyse_question = (
+                            'If the above approach is not wrong, just reply yes.'
+                        )
+                        kwargs2['messages'].append(
+                            {'role': 'user', 'content': self_analyse_question}
+                        )
+                        self_analyse_response = self.completion_unwrapped(
+                            *args, **kwargs2
+                        )
+                        self_analyse_response_content = self_analyse_response[
+                            'choices'
+                        ][0]['message']['content'].strip()
+                        if self_analyse_response_content != 'yes':
+                            logger.info(
+                                f'Response is incorrect. {self_analyse_response_content}'
+                            )
+                            continue
                     if message_back and message_back != 'None':
                         if is_hallucination(message_back):
                             logger.warning(f'Hallucination detected!\n{message_back}')
@@ -731,6 +764,8 @@ class LLM(CondenserMixin):
         Returns:
             number: The cost of the response.
         """
+        if os.getenv('IGNORE_COST'):
+            return 0.0
         if not self.cost_metric_supported:
             return 0.0
 
