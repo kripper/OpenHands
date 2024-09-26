@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import traceback
 from typing import Type
 
@@ -38,6 +39,7 @@ from openhands.events.observation import (
     Observation,
 )
 from openhands.events.observation.empty import NullObservation
+from openhands.events.serialization.event import truncate_content
 from openhands.llm.llm import LLM
 from openhands.runtime.utils.shutdown_listener import should_continue
 
@@ -225,6 +227,12 @@ class AgentController:
         ):
             return
 
+        # Make sure we print the observation in the same way as the LLM sees it
+        observation_to_print = copy.deepcopy(observation)
+        if len(observation_to_print.content) > self.agent.llm.config.max_message_chars:
+            observation_to_print.content = truncate_content(
+                observation_to_print.content, self.agent.llm.config.max_message_chars
+            )
         if not isinstance(observation, NullObservation):
             logger.info(observation, extra={'msg_type': 'OBSERVATION'})
         if self._pending_action and self._pending_action.id == observation.cause:
