@@ -34,6 +34,8 @@ import uuid
 
 from openhands.runtime.plugins.agent_skills.utils.aider import Linter
 
+from .ast_ops import add_param_to_init_in_subclass
+
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
 WINDOW = 100
@@ -772,6 +774,11 @@ def delete_line(file_name: str, line_number: int) -> None:
 
 def replace_full_file_content(file_name: str, new_content: str) -> None:
     """Replace the full content of the specified file with the given new content."""
+    if file_name == '/tmp/test_task.py':
+        print(
+            "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
+        )
+        return
     current_content = open(file_name, 'r').read()
     if current_content == new_content:
         print(
@@ -967,6 +974,7 @@ def custom_import(name, *args, **kwargs):
 
 sys.modules['builtins'].__import__ = custom_import  # type: ignore
 
+
 __all__ = [
     'open_file',
     'goto_line',
@@ -985,6 +993,7 @@ __all__ = [
     'kill_port',
     'clean_workspace',
     'custom_import',
+    'add_param_to_init_in_subclass',
 ]
 
 if __name__ == '__main__':
