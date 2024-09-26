@@ -42,7 +42,7 @@ if out.getvalue().splitlines() != lines:
     print('\\n'.join(lines))
     print("Got:")
     print('\\n'.join(out.getvalue().splitlines()))
-    assert False, "Table does not match expected structure"
+    assert False, "Output does not match expected structure"
 """,
     }
     return test_codes.get(instance_id, '')
