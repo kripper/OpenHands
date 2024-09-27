@@ -27,7 +27,7 @@ uvicorn = "*"
 types-toml = "*"
 numpy = "*"
 json-repair = "*"
-browsergym = "0.7.0" # integrate browsergym as the browsing interface
+browsergym = "0.7.1" # integrate browsergym as the browsing interface
 html2text = "*"
 e2b = "^0.17.1"
 pexpect = "*"
@@ -55,7 +55,6 @@ pylatexenc = "*"
 tornado = "*"
 python-dotenv = "*"
 
-libcst = "^1.4.0"
 [tool.poetry.group.llama-index.dependencies]
 llama-index = "*"
 llama-index-vector-stores-chroma = "*"
