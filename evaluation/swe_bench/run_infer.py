@@ -78,6 +78,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             f'Please fix the following issue for the repository which is already SETUP in /testbed.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
+            f'THE CODEBASE MAY BE NOT CLEAR. Use your judgement by analyzing the output of the code to fix the issue.\n'
             f'List out your plans first before fixing the issue.\n'
             'The current working directory is /testbed.\n'
             "Please don't blabber\n"
@@ -280,7 +281,7 @@ def initialize_runtime(
         test_code = f'''
 FILE_CONTENT = """
 {test_code}
-print('End the task with <finish2></finish2>')
+print('End the task with <end></end>')
 """
 create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
 '''

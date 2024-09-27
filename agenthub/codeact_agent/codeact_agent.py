@@ -226,6 +226,8 @@ class CodeActAgent(Agent):
         response = None
         # prepare what we want to send to the LLM
         messages = self._get_messages(state)
+        if '<end></end>' in messages[-1].content[0].text.strip():
+            return AgentFinishAction(thought=os.getenv('finish_thought', ''))
         params = {
             'messages': messages,
             'stop': [
