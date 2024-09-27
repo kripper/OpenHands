@@ -23,7 +23,7 @@ assert np.array_equal(a, expected_matrix), "Matrix does not match expected struc
 lines = '''
 ===== ========
  wave response
- nm       ct
+   nm       ct
 ===== ========
 350.0      0.7
 950.0      1.2
@@ -37,12 +37,18 @@ tbl = QTable({'wave': [350, 950] * u.nm, 'response': [0.7, 1.2]*u.count})
 
 out = StringIO()
 tbl.write(out,  format="ascii.rst", header_rows=["name", "unit"])
-if out.getvalue().splitlines() != lines:
+actual,expected=out.getvalue().splitlines(),lines
+if actual != expected:
     print("Expected:")
-    print('\\n'.join(lines))
+    print('\\n'.join(expected))
     print("Got:")
-    print('\\n'.join(out.getvalue().splitlines()))
-    assert out.getvalue().splitlines() == lines, "Output does not match expected structure"
+    print('\\n'.join(actual))
+    import difflib
+    print('Diff:')
+    for line in difflib.unified_diff(actual, expected, fromfile='actual output', tofile='expected output', lineterm=''):
+        print(line)
+
+    assert actual == expected, "Output does not match expected structure"
 """,
     }
     return test_codes.get(instance_id, '')
