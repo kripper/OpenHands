@@ -107,6 +107,7 @@ response = requests.post(
 rj = response.json()
 try:
     f_id = rj['body']['feedback_id']
+    print(f'Feedback ID: {f_id}')
 except Exception:
     print(rj)
     exit()
