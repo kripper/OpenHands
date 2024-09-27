@@ -24,7 +24,7 @@ Or <execute_browse> Tell me what is in http://example.com </execute_browse>.
 {% set COMMAND_DOCS %}
 Apart from the standard Python library, the assistant can also use the following functions (already imported) in <execute_ipython> environment:
 
-IMPORTANT: PAY ENOUGH ATTENTION TO THE PARAMETERS OF THE FUNCTIONS. DON'T INSERT EXISTING LINES.
+IMPORTANT: THE ASSISTANT SHOULD PRIORITIZE SIMPLE AND MINIMAL SOLUTIONS, ESPECIALLY WHEN CODE FIXES OR PATCHES ARE REQUIRED. WHEN A STRAIGHTFORWARD FIX IS NEEDED, AVOID ELABORATING ON UNNECESSARY STEPS. PROVIDE THE EXACT SOLUTION UNLESS FURTHER CLARIFICATION IS REQUESTED.
 
 {{ agent_skills_docs }}
 {% endset %}
