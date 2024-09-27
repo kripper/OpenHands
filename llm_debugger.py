@@ -1,7 +1,7 @@
 import litellm
 import toml
 
-number = 2
+number = 16
 model = 'gemini_pro'
 model = 'gemini'
 with open('evaluation/swe_bench/config.toml', 'r') as f:
@@ -24,6 +24,7 @@ with open(config, 'r') as file:
     eval = 1
     if eval:
         key = 'gemini'
+        # key = 'gemini_pro'
         config_content = config_content[key]
 
 
@@ -35,19 +36,10 @@ question = 'Why are you searching for header_rows?'
 question = 'Why did you search for header_rows in ui.py?'
 question = 'Why are you not responding to the user?'
 question = 'Why did you give this response?'
-question = """
-========
-KNOWLEDGE LINES:
-When editing a subclass, ensure that all parameters and attributes of the superclass's `__init__` method are thoroughly examined and understood. Always pass necessary attributes or arguments to the superclass to maintain proper initialization, while handling subclass-specific attributes within the subclass itself.
-Don't overlook the need to pass arguments to `super().__init__`
-========
-
-The `RST` class's `__init__` method doesn't accept `header_rows`.
-> But it does accept `header_rows` in `FixedWidth` class. Why wrong?
-"""
-question = 'What made you to use browse to search for astropy code on github?'
+question = 'Why lines.append(lines[1]) instead of lines.append(lines[2]) because there are two header rows?'
 
 inst = '\n\nJust tell the reason for the wrong action.'
+inst = ''
 question += inst
 new_prompt = f"""
 INITIAL PROMPT:
