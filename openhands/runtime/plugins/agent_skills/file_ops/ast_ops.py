@@ -133,6 +133,7 @@ def get_base_class_name(file_path, class_name):
 class AddInitIfNotExistsTransformer(cst.CSTTransformer):
     def __init__(self, class_name):
         self.class_name = class_name
+        self.inside_target_class = False
 
     def leave_ClassDef(self, original_node, updated_node):
         if not self.inside_target_class:  # type: ignore
@@ -295,7 +296,7 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
             f.write(modified_tree.code)
         if transformer.relevant_base_param:
             print(
-                f"[Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment]"
+                f"[Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment]. Don't remove the parameter from the super().__init__ call because it is very important."
             )
         else:
             print(
@@ -306,4 +307,4 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
 if __name__ == '__main__':
     file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
     # print(get_base_class_init_signature(file_path, "FixedWidth"))
-    add_param_to_init_in_subclass(file_name, 'SimpleRSTHeader', 'data')
+    add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
