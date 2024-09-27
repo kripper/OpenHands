@@ -648,9 +648,9 @@ def _edit_file_impl(
     CURRENT_FILE = file_name
     if enable_auto_lint:
         os.remove(original_file_backup_path)
-    # ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
-    # ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
-    ret_str += '[File updated successfully]'
+    ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
+    ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
+    # ret_str += '[File updated successfully]'
     return ret_str
 
 
