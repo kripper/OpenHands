@@ -216,7 +216,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 )
 
             # log the entire LLM prompt
-            # self.log_prompt(messages)
+            self.log_prompt(messages)
 
             if self.is_caching_prompt_active():
                 # Anthropic-specific prompt caching
@@ -312,6 +312,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     }
                 )
 
+            self.log_response(message_back)
             # post-process to log costs
             self._post_completion(resp)
             return resp

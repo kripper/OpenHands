@@ -25,7 +25,7 @@ class DebugMixin:
     def log_response(self, message_back):
         if message_back:
             llm_response_logger.debug(message_back)
-        self.log_response_once = True
+        self.log_prompt_once = True
 
     def _format_message_content(self, message):
         content = message['content']
