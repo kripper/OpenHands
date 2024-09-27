@@ -2,10 +2,20 @@ import ast
 import os
 
 import libcst as cst
+from libcst import FunctionDef, Name, Param, Parameters
+
+
+def has_init_method(class_node):
+    return any(
+        isinstance(elem, FunctionDef) and elem.name.value == '__init__'
+        for elem in class_node.body.body
+    )
 
 
 # Converting the AST 'arguments' object to a readable format
-def format_signature(args):
+def format_signature(args: ast.arguments | None) -> list[str]:
+    if args is None:
+        return []
     return [arg.arg for arg in args.args]
 
 
@@ -26,7 +36,7 @@ def find_imported_base_class(code, class_name):
         if isinstance(node, ast.ImportFrom):
             for alias in node.names:
                 if alias.name == class_name:
-                    return node.module
+                    return node.module or alias.name
     return None
 
 
@@ -71,7 +81,10 @@ def process_file_for_base_class_init(file_path, base_class_name):
 # Example usage
 def get_base_class_init_signature(file_path, base_class_name):
     current_code = read_file(file_path)
-    base_class_module = find_imported_base_class(current_code, base_class_name)
+    base_class_module = find_imported_base_class(
+        current_code, base_class_name.split('.')[0]
+    )
+
     if base_class_module:
         base_class_file = find_base_class_file(file_path, base_class_module)
         if base_class_file:
@@ -96,9 +109,10 @@ class BaseClassFinder(ast.NodeVisitor):
     def visit_ClassDef(self, node):
         # Check if the class has a base class
         if node.bases:
-            self.base_class_name = node.bases[
-                0
-            ].id  # Assume the first base class is the one we want
+            if isinstance(node.bases[0], ast.Attribute):
+                self.base_class_name = node.bases[0].value.id + '.' + node.bases[0].attr  # type: ignore
+            else:
+                self.base_class_name = node.bases[0].id
         return node
 
 
@@ -114,6 +128,37 @@ def get_base_class_name(file_path, class_name):
             break
 
     return finder.base_class_name
+
+
+class AddInitIfNotExistsTransformer(cst.CSTTransformer):
+    def __init__(self, class_name):
+        self.class_name = class_name
+
+    def leave_ClassDef(self, original_node, updated_node):
+        if not self.inside_target_class:  # type: ignore
+            return updated_node
+        # Check if the class already has an __init__ method
+        if has_init_method(updated_node):
+            return updated_node
+
+        # Define the parameters for the __init__ function
+        params = Parameters(params=[Param(name=Name('self'))])
+
+        # Define the body of the __init__ function
+        body = cst.IndentedBlock(body=[])
+
+        # Create the __init__ method
+        init_method = FunctionDef(name=Name('__init__'), params=params, body=body)
+
+        # Add the __init__ method to the class body
+        new_body = list(updated_node.body.body) + [init_method]
+        self.inside_target_class = False
+        # Return the class with the added __init__ method
+        return updated_node.with_changes(body=cst.IndentedBlock(body=new_body))
+
+    def visit_ClassDef(self, node: cst.ClassDef):
+        if node.name.value == self.class_name:
+            self.inside_target_class = True
 
 
 class InitMethodModifier(cst.CSTTransformer):
@@ -151,7 +196,15 @@ class InitMethodModifier(cst.CSTTransformer):
             )
 
             # Insert the assignment at the end of the body
-            new_body = list(updated_node.body.body) + [new_assignment]
+            # ignore pass
+            is_pass = all(
+                isinstance(elem.body[0], cst.Pass) for elem in updated_node.body.body
+            )
+
+            if not is_pass:
+                new_body = list(updated_node.body.body) + [new_assignment]
+            else:
+                new_body = [new_assignment]
 
             # Update the __init__ function with the new parameter and assignment
             return updated_node.with_changes(
@@ -171,11 +224,9 @@ class InitMethodModifier(cst.CSTTransformer):
             self.inside_target_class = True
 
     def leave_Expr(self, original_node: cst.Expr, updated_node: cst.Expr) -> cst.Expr:
-        self.relevant_base_param = self.param_name in (
-            get_base_class_init_signature(
-                self.file_path, get_base_class_name(self.file_path, self.class_name)
-            )
-            or []
+        base_class_name = get_base_class_name(self.file_path, self.class_name)
+        self.relevant_base_param = base_class_name and self.param_name in (
+            get_base_class_init_signature(self.file_path, base_class_name) or []
         )
         if not self.relevant_base_param:
             return updated_node
@@ -218,12 +269,19 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
     """
     code = read_file(file_path)
     # Parse the code into a CST tree
+    # Apply the transformer to add the __init__ method if it doesn't exist
+    module = cst.parse_module(code)
+    transformer = AddInitIfNotExistsTransformer(class_name)
+    new_module = module.visit(transformer)
+    code = new_module.code
+
     tree = cst.parse_module(code)
+
     if param_name in format_signature(
         get_class_init_signature_from_code(code, class_name)
     ):
         print(
-            f"Parameter '{param_name}' already exists in the base class __init__ method."
+            f"Parameter '{param_name}' already exists in {class_name} class __init__ method."
         )
         return
     # Create the transformer to modify the __init__ method
@@ -237,16 +295,15 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
             f.write(modified_tree.code)
         if transformer.relevant_base_param:
             print(
-                f"Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment"
+                f"[Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment]"
             )
         else:
             print(
-                f"Modified {class_name} class to include '{param_name}' in __init__ and added self assignment"
+                f"[Modified {class_name} class to include '{param_name}' in __init__ and added self assignment]"
             )
 
 
 if __name__ == '__main__':
     file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
     # print(get_base_class_init_signature(file_path, "FixedWidth"))
-
-    add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
+    add_param_to_init_in_subclass(file_name, 'SimpleRSTHeader', 'data')
