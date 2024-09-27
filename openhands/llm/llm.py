@@ -351,8 +351,9 @@ class LLM(CondenserMixin):
                 for _ in range(5):
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
-                    self_analyse = os.environ.get('SELF_ANALYSE')
+                    self_analyse = int(os.environ.get('SELF_ANALYSE', '0'))
                     if self_analyse:
+                        logger.info(f'{self_analyse=}')
                         kwargs2['messages'].append(
                             {'role': 'assistant', 'content': message_back}
                         )
