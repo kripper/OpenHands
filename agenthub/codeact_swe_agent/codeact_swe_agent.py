@@ -178,7 +178,6 @@ class CodeActSWEAgent(Agent):
                 '</execute_ipython>',
                 '</execute_bash>',
             ],
-            temperature=0.0,
             condense=True,
         )
 

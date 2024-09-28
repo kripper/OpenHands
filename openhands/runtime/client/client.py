@@ -12,6 +12,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -92,6 +93,8 @@ class RuntimeClient:
         self.last_command = ''
         self.last_code = ''
         self.is_last_code_error = False
+        self.start_time = time.time()
+        self.last_execution_time = self.start_time
 
     @property
     def initial_pwd(self):
@@ -418,12 +421,15 @@ class RuntimeClient:
             logger.debug('Requesting exit code...')
             self.shell.expect(self.__bash_expect_regex, timeout=timeout)
             _exit_code_output = self.shell.before
-            logger.debug(f'Exit code Output: {_exit_code_output}')
             try:
                 exit_code = int(_exit_code_output.strip().split()[0])
-            except Exception:
-                logger.warning(f'Failed to get exit code: {_exit_code_output}')
-                exit_code = -1
+            except Exception as e:
+                logger.error(
+                    f'{e} getting exit code from bash script {_exit_code_output} '
+                )
+                # If we try to run an invalid shell script the output sometimes includes error text
+                # rather than the error code - we assume this is an error
+                exit_code = 2
         else:
             exit_code = 1  # command is asking for input
 
@@ -778,6 +784,14 @@ if __name__ == '__main__':
             response = await call_next(request)
         return response
 
+    @app.get('/server_info')
+    async def get_server_info():
+        assert client is not None
+        current_time = time.time()
+        uptime = current_time - client.start_time
+        idle_time = current_time - client.last_execution_time
+        return {'uptime': uptime, 'idle_time': idle_time}
+
     @app.post('/execute_action')
     async def execute_action(action_request: ActionRequest):
         assert client is not None
@@ -785,11 +799,13 @@ if __name__ == '__main__':
             action = event_from_dict(action_request.action)
             if not isinstance(action, Action):
                 raise HTTPException(status_code=400, detail='Invalid action type')
+            client.last_execution_time = time.time()
             observation = await client.run_action(action)
             return event_to_dict(observation)
         except Exception as e:
-            logger.error(f'Error processing command: {e}')
-            logger.exception(e)
+            logger.error(
+                f'Error processing command: {str(e)}', exc_info=True, stack_info=True
+            )
             raise HTTPException(status_code=500, detail=str(e))
 
     @app.post('/upload_file')
