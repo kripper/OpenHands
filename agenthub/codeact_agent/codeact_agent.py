@@ -239,11 +239,6 @@ class CodeActAgent(Agent):
             'origin': 'Agent',
         }
 
-        if self.llm.is_caching_prompt_active():
-            params['extra_headers'] = {
-                'anthropic-beta': 'prompt-caching-2024-07-31',
-            }
-
         response = self.llm.completion(**params)
 
         return self.action_parser.parse(response)
