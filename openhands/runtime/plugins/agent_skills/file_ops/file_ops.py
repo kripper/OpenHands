@@ -785,6 +785,18 @@ def replace_full_file_content(file_name: str, new_content: str) -> None:
             "[The file's content is already identical to the proposed changes. What did you exactly expect to change in the file?]"
         )
         return
+    if super_check := os.environ.get(file_name, ''):
+        for expr in super_check.split(';'):
+            if expr:
+                class_name, expr = expr.split('=', 1)
+                if (
+                    expr not in new_content
+                    and expr.replace(' = ', '=') not in new_content
+                ):
+                    print(
+                        f'Error: {expr} from {class_name} not found in the new content'
+                    )
+                    return
     ret_str = _edit_file_impl(
         file_name,
         start=1,
@@ -1002,4 +1014,7 @@ print("hello world")
     from datetime import datetime
 
     dt = datetime.now()
-    create_file(f'hello18-{dt.strftime("%Y-%m-%d-%H-%M-%S")}.py', full_content)
+    file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
+    add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
+    new_content = 'dummy'
+    replace_full_file_content(file_name, new_content)
