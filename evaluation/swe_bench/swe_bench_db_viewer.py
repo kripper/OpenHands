@@ -5,7 +5,7 @@ from datasets import load_dataset
 
 from evaluation.swe_bench.swe_bench2 import update_issue_description
 
-instance_id = 'astropy__astropy-13236'
+instance_id = 'astropy__astropy-14539'
 
 if not os.path.exists('./cache/filtered_data.pkl') or 0:
     dataset = load_dataset(
@@ -24,6 +24,7 @@ else:
         ins = pickle.load(f)
 
 print(ins['base_commit'])
+print(ins['environment_setup_commit'])
 # print(ins['hints_text'])
 
 print(['problem_statement'])
