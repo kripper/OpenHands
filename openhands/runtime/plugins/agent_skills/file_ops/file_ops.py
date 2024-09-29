@@ -34,7 +34,7 @@ import uuid
 
 from openhands.runtime.plugins.agent_skills.utils.aider import Linter
 
-from .ast_ops import add_param_to_init_in_subclass
+# from .cst_ops import add_param_to_init_in_subclass
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
@@ -994,7 +994,7 @@ __all__ = [
     'create_file',
     'find_and_replace',
     'delete_line',
-    'add_param_to_init_in_subclass',
+    # 'add_param_to_init_in_subclass',
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
@@ -1015,6 +1015,6 @@ print("hello world")
 
     dt = datetime.now()
     file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
-    add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
+    # add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
     new_content = 'dummy'
     replace_full_file_content(file_name, new_content)
