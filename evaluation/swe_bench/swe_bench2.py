@@ -1,5 +1,7 @@
 def update_issue_description(description: str, instance_id: str) -> str:
-    actual = """Traceback (most recent call last):
+    description = description.replace('\r\n', '\n')
+    if instance_id == 'astropy__astropy-14182':
+        actual = """Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
   File "/usr/lib/python3/dist-packages/astropy/table/connect.py", line 129, in __call__
     self.registry.write(instance, *args, **kwargs)
@@ -14,7 +16,7 @@ def update_issue_description(description: str, instance_id: str) -> str:
   File "/usr/lib/python3/dist-packages/astropy/io/ascii/core.py", line 1719, in _get_writer
     writer = Writer(**writer_kwargs)
 TypeError: RST.__init__() got an unexpected keyword argument 'header_rows"""
-    expected = """Traceback (most recent call last):
+        expected = """Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
   File "/usr/lib/python3/dist-packages/astropy/table/connect.py", line 130, in __call__
     self.registry.write(instance, *args, **kwargs)
@@ -29,8 +31,10 @@ TypeError: RST.__init__() got an unexpected keyword argument 'header_rows"""
   File "/usr/lib/python3/dist-packages/astropy/io/ascii/core.py", line 1815, in _get_writer
     writer = Writer(**writer_kwargs)
 TypeError: RST.__init__() got an unexpected keyword argument 'header_rows"""
-    if instance_id == 'astropy__astropy-14182':
         print('Updating issue description')
-        return description.replace('\r\n', '\n').replace(actual, expected)
+        return description.replace(actual, expected)
 
+    elif instance_id == 'astropy__astropy-13236':
+        actual = '- Add a FutureWarning here telling the user to wrap `data` in `Column` and that in the future (5.2) the structured array will be added as a `Column`.\n'
+        return description.replace(actual, '')
     return description

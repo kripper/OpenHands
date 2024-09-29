@@ -3,9 +3,11 @@ import pickle
 
 from datasets import load_dataset
 
-instance_id = 'astropy__astropy-14182'
+from evaluation.swe_bench.swe_bench2 import update_issue_description
 
-if not os.path.exists('./cache/filtered_data.pkl'):
+instance_id = 'astropy__astropy-13236'
+
+if not os.path.exists('./cache/filtered_data.pkl') or 0:
     dataset = load_dataset(
         'princeton-nlp/SWE-bench_Verified',
         cache_dir='./cache',
@@ -22,11 +24,13 @@ else:
         ins = pickle.load(f)
 
 print(ins['base_commit'])
-print(ins['hints_text'])
-
+# print(ins['hints_text'])
 
 print(['problem_statement'])
-print(ins['problem_statement'][0])
-print('-' * 100)
-print(['test_patch'])
-print(ins['test_patch'][0])
+# print(ins['problem_statement'][0])
+a = update_issue_description(ins['problem_statement'][0], instance_id)
+print(a)
+if 0:
+    print('-' * 100)
+    print(['test_patch'])
+    print(ins['test_patch'][0])
