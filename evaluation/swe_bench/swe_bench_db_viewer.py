@@ -30,7 +30,9 @@ print(['problem_statement'])
 # print(ins['problem_statement'][0])
 a = update_issue_description(ins['problem_statement'][0], instance_id)
 print(a)
-if 0:
+if 1:
     print('-' * 100)
     print(['test_patch'])
-    print(ins['test_patch'][0])
+    print(ins['FAIL_TO_PASS'][0])
+    print('pass to pass')
+    print(ins['PASS_TO_PASS'][0])
