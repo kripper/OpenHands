@@ -277,19 +277,18 @@ def initialize_runtime(
     assert obs.exit_code == 0
 
     test_code = get_test_code(instance['instance_id'])
-    if test_code:
-        test_code = f'''
+    test_code = f'''
 FILE_CONTENT = """
 {test_code}
 print('End the task with <end></end>')
 """
 create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
 '''
-        action = IPythonRunCellAction(test_code)
-        logger.info(action, extra={'msg_type': 'ACTION'})
-        obs = runtime.run_action(action)
-        logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-        assert 'File updated' in obs.content
+    action = IPythonRunCellAction(test_code)
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
+    assert 'File updated' in obs.content
 
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
