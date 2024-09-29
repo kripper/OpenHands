@@ -19,6 +19,8 @@ ID: `astropy__astropy-13236`
 
 [gemini/gemini-1.5-pro-002 event history link](https://www.all-hands.dev/share?share_id=f09c6292699398ace674feb91dc58e81c49fddedbbe1206a36b70ed3a660cf83)
 
+Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_bench\status.json](evaluation/swe_bench/status.json)
+
 ### Kevin Changelogs:
 
   1) [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782) 🔥🔥🔥
