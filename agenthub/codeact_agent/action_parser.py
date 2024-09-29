@@ -26,10 +26,10 @@ class CodeActResponseParser(ResponseParser):
         # Need pay attention to the item order in self.action_parsers
         super().__init__()
         self.action_parsers = [
-            CodeActActionParserFinish(),
             CodeActActionParserCmdRun(),
             CodeActActionParserIPythonRunCell(),
             CodeActActionParserAgentDelegate(),
+            CodeActActionParserFinish(),
         ]
         self.default_parser = CodeActActionParserMessage()
 
