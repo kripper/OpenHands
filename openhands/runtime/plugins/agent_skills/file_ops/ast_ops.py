@@ -94,12 +94,11 @@ def get_base_class_init_signature(file_path, base_class_name):
             if base_init_signature:
                 formatted_signature = format_signature(base_init_signature)
                 return formatted_signature
-            else:
-                return None
         else:
             print('Base class file not found.')
     else:
         print('Base class is not imported.')
+    return []
 
 
 class BaseClassFinder(ast.NodeVisitor):
@@ -226,8 +225,11 @@ class InitMethodModifier(cst.CSTTransformer):
 
     def leave_Expr(self, original_node: cst.Expr, updated_node: cst.Expr) -> cst.Expr:
         base_class_name = get_base_class_name(self.file_path, self.class_name)
+        base_class_init_signature = get_base_class_init_signature(
+            self.file_path, base_class_name
+        )
         self.relevant_base_param = base_class_name and self.param_name in (
-            get_base_class_init_signature(self.file_path, base_class_name) or []
+            base_class_init_signature
         )
         if not self.relevant_base_param:
             return updated_node
@@ -295,8 +297,12 @@ def add_param_to_init_in_subclass(file_path, class_name, param_name):
         with open(file_path, 'w') as f:
             f.write(modified_tree.code)
         if transformer.relevant_base_param:
+            base_class_name = get_base_class_name(file_path, class_name)
+            base_class_init_signature = get_base_class_init_signature(
+                file_path, base_class_name
+            )
             print(
-                f"[Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment]. Don't remove the parameter from the super().__init__ call because it is very RELEVANT."
+                f"[Modified {class_name} class to include '{param_name}' in __init__, super().__init__ and added self assignment].\nBase class {base_class_name} __init__ signature: ({', '.join(base_class_init_signature)})"
             )
             # TODO get the line number of the super().__init__ call
             os.environ[file_path] = (

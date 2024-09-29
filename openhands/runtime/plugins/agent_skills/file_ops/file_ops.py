@@ -794,7 +794,7 @@ def replace_full_file_content(file_name: str, new_content: str) -> None:
                     and expr.replace(' = ', '=') not in new_content
                 ):
                     print(
-                        f'Error: {expr} from {class_name} not found in the new content'
+                        f'Error: {expr} in the {class_name} class is missing in the new content, where all parameters are properly handled, preventing the changes from being applied'
                     )
                     return
     ret_str = _edit_file_impl(
