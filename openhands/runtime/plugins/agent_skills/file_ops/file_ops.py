@@ -772,6 +772,22 @@ def delete_line(file_name: str, line_number: int) -> None:
         print(ret_str)
 
 
+def delete_lines(file_name: str, start_line_number: int, end_line_number: int) -> None:
+    """Delete the lines from the start line number to the end line number (inclusive) in a file.
+    This will NOT modify the content of the lines before OR after the given line number.
+    """
+    ret_str = _edit_file_impl(
+        file_name,
+        start=start_line_number,
+        end=end_line_number,
+        content='',
+        is_insert=False,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
+
+
 def replace_full_file_content(file_name: str, new_content: str) -> None:
     """Replace the full content of the specified file with the given new content."""
     if file_name == '/tmp/test_task.py':
@@ -994,6 +1010,7 @@ __all__ = [
     'create_file',
     'find_and_replace',
     'delete_line',
+    'delete_lines',
     # 'add_param_to_init_in_subclass',
     'insert_content_after_line',
     'insert_content_before_line',
