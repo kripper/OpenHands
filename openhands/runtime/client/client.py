@@ -231,6 +231,7 @@ class RuntimeClient:
         self.shell = pexpect.spawn(
             f'su {username}',
             encoding='utf-8',
+            codec_errors='ignore',
             echo=False,
         )
         self.__bash_PS1 = (
