@@ -142,8 +142,12 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         code = self.python_code.group(1).strip()
         three_single_quotes = "'''"
         three_backticks = '```'
-        if three_backticks in code and code.count(three_single_quotes) % 2 == 1:
-            code = code.replace(three_backticks, three_single_quotes).strip()
+        # for gemini-flash
+        if three_backticks in code:
+            if code.count(three_single_quotes) % 2 == 1:
+                code = code.replace(three_backticks, three_single_quotes).strip()
+            else:
+                code = code.replace(three_backticks, '').strip()
 
         thought = action_str.replace(self.python_code.group(0), '').strip()
 
