@@ -583,8 +583,12 @@ class RuntimeClient:
             # current working directory in Bash
             if self.pwd != getattr(self, '_jupyter_pwd', None):
                 await self.chdir()
-            if action.code == self.last_code and self.is_last_code_error:
+            if action.code.startswith('%%writefile /tmp/test_task.py'):
                 obs: Observation = ErrorObservation(
+                    "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
+                )
+            elif action.code == self.last_code and self.is_last_code_error:
+                obs = ErrorObservation(
                     '[You are trying to run the same code twice. Please focus and run the correct code.]'
                 )
             else:
