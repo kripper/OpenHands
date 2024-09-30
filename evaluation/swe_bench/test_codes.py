@@ -1,8 +1,6 @@
 def get_test_code(instance_id: str):
     test_codes = {
         'astropy__astropy-12907': """
-import os
-os.chdir('/testbed')
 from astropy.modeling import models as m
 from astropy.modeling.separable import separability_matrix
 
@@ -49,6 +47,16 @@ if actual != expected:
         print(line)
 
     assert actual == expected, "Output does not match expected structure"
+""",
+        'astropy__astropy-14539': r"""
+from astropy.io import fits
+col = fits.Column('a', format='QD', array=[[0], [0, 0]])
+hdu = fits.BinTableHDU.from_columns([col])
+hdu.writeto('/testbed/diffbug.fits', overwrite=True)
+
+print(fits.FITSDiff('diffbug.fits', 'diffbug.fits').identical)
+fits.printdiff('diffbug.fits', 'diffbug.fits')
+assert fits.FITSDiff('diffbug.fits', 'diffbug.fits').identical
 """,
     }
     return test_codes.get(instance_id, '')
