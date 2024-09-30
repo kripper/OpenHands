@@ -218,13 +218,16 @@ def open_file(
     print(output)
 
 
-def goto_line(line_number: int) -> None:
+def goto_line(line_number: int, file_path: str | None = None) -> None:
     """Moves the window to show the specified line number.
 
     Args:
         line_number: int: The line number to move to.
+        file_path: str | None = None: The path to the file to open, preferred absolute path. Defaults to the current file.
     """
     global CURRENT_FILE, CURRENT_LINE, WINDOW
+    if file_path:
+        CURRENT_FILE = os.path.abspath(file_path)
     _check_current_file()
 
     with open(str(CURRENT_FILE)) as file:
