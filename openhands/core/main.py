@@ -189,7 +189,7 @@ async def run_controller(
         AgentState.PAUSED,
         AgentState.STOPPED,
     ]:
-        await asyncio.sleep(1)  # Give back control for a tick, so the agent can run
+        await asyncio.sleep(0.1)  # Give back control for a tick, so the agent can run
 
     # save session when we're about to close
     if config.enable_cli_session:
