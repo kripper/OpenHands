@@ -1,5 +1,7 @@
 import json
 
+from pyperclip import paste
+
 a = r"""{
   "environment": "5edaf89",
   "trajectory": {
@@ -657,8 +659,9 @@ a = r"""{
 }
 """
 
-traj = json.loads(a)
+traj = json.loads(paste())
 # // script to print chat human friendly
-for i in traj['trajectory']['details'][0]['exportedConversation']['messages']:
-    print(i['content'])
-    print('-')
+for i in traj['trajectory']['details'][0]['exportedConversation']['plans'][0]:
+    print(i)
+    print('=' * 100)
+    print('=' * 100)
