@@ -77,7 +77,7 @@ for idx, item in enumerate(history):
             msg = item.get('message')
             if (
                 msg
-                == 'Please continue working on the task on whatever approach you think is suitable.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
+                == 'Please continue working on the task on whatever approach you think is suitable. You have full access to the repository. Eg: You can run <execute_python> os.listdir() </execute_python> to list the files in the current directory.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
             ):
                 msg = 'Auto reply 🤖'
             history[idx] = {'user': msg}

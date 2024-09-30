@@ -100,7 +100,7 @@ def codeact_user_response(
         else ''
     )
     msg = (
-        'Please continue working on the task on whatever approach you think is suitable.\n'
+        'Please continue working on the task on whatever approach you think is suitable. You have full access to the repository. Eg: You can run <execute_python> os.listdir() </execute_python> to list the files in the current directory.\n'
         f'{encaps_str}'
         'IMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
     )
