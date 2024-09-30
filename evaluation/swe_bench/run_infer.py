@@ -279,6 +279,8 @@ def initialize_runtime(
     test_code = get_test_code(instance['instance_id'])
     test_code = f'''
 FILE_CONTENT = """
+import os
+os.chdir('/testbed')
 {test_code}
 print('End the task with <end></end>')
 """
