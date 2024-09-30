@@ -75,7 +75,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     else:
         # Testing general agents
         instruction = (
-            f'Please fix the following issue for the repository which is already SETUP in /testbed.\n'
+            f'Please resolve the following issue for the repository, which is already set up, and the source code is available in the /testbed directory, to which you have access.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
             f'THE CODEBASE MAY BE NOT CLEAR. Use your judgement by analyzing the output of the code to fix the issue.\n'
