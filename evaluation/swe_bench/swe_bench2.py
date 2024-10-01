@@ -37,4 +37,32 @@ TypeError: RST.__init__() got an unexpected keyword argument 'header_rows"""
     elif instance_id == 'astropy__astropy-13236':
         actual = '- Add a FutureWarning here telling the user to wrap `data` in `Column` and that in the future (5.2) the structured array will be added as a `Column`.\n'
         return description.replace(actual, '')
+    elif instance_id == 'astropy__astropy-14995':
+        actual = '...'
+        expected1 = """Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 618, in multiply
+    return self._prepare_then_do_arithmetic(
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 731, in _prepare_then_do_arithmetic
+    result, init_kwds = operand._arithmetic(operation, operand2, **kwargs)
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 335, in _arithmetic
+    kwargs["mask"] = self._arithmetic_mask(
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 527, in _arithmetic_mask
+    return handle_mask(self.mask, operand.mask, **kwds)
+TypeError: unsupported operand type(s) for |: 'int' and 'NoneType'
+"""
+        expected2 = """Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 618, in multiply
+    return self._prepare_then_do_arithmetic(
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 734, in _prepare_then_do_arithmetic
+    result, init_kwds = cls._arithmetic(
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 335, in _arithmetic
+    kwargs["mask"] = self._arithmetic_mask(
+  File "/testbed/astropy/nddata/mixins/ndarithmetic.py", line 527, in _arithmetic_mask
+    return handle_mask(self.mask, operand.mask, **kwds)
+TypeError: unsupported operand type(s) for |: 'int' and 'NoneType'
+"""
+        for expected in [expected1, expected2]:
+            description = description.replace(actual, expected, 1)
     return description
