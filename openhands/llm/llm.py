@@ -154,7 +154,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             custom_llm_provider=self.config.custom_llm_provider,
             max_tokens=self.config.max_output_tokens,
             timeout=self.config.timeout,
-            temperature=self.config.temperature,
+            temperature=1
+            if self.config.model.startswith('o1-')
+            else self.config.temperature,
             top_p=self.config.top_p,
             caching=self.config.enable_cache,
             drop_params=self.config.drop_params,
