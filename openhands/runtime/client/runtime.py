@@ -141,9 +141,7 @@ class EventStreamRuntime(Runtime):
         else:
             self.instance_id = (sid or '') + str(uuid.uuid4())
             self._container_port = find_available_tcp_port()
-        self.api_url = (
-            f'http://{self.config.sandbox.api_hostname}:{self._container_port}'
-        )
+        self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
         self.session = requests.Session()
         self.status_message_callback = status_message_callback
 
@@ -246,7 +244,7 @@ class EventStreamRuntime(Runtime):
                 )
 
             self.api_url = (
-                f'http://{self.config.sandbox.api_hostname}:{self._container_port}'
+                f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
             )
 
             use_host_network = self.config.sandbox.use_host_network
