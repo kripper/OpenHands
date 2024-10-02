@@ -1,3 +1,6 @@
+import toml
+from pyperclip import copy
+
 swe_verified_lite = [
     'astropy__astropy-12907',
     'astropy__astropy-14182',
@@ -326,7 +329,17 @@ gru_resolved = [
 # intersect
 
 r = set(swe_verified_lite) & set(gru_resolved)
-print(len(r))
+# print(len(r))
+# load config.toml
+
+file = open('evaluation/swe_bench/config.toml', 'r')
+config = toml.load(file)
+instance = config['selected_ids'][0]
+
 r = sorted(r)
-for k, i in enumerate(r, 1):
-    print(k, i)
+
+idx = r.index(instance)
+print(r[idx + 1])
+
+
+copy(r[idx + 1])
