@@ -15,6 +15,10 @@ def get_runtime_cls(name: str):
         from openhands.runtime.remote.runtime import RemoteRuntime
 
         return RemoteRuntime
+    elif name == 'ec2':
+        from openhands.runtime.ec2.runtime import EC2Runtime
+
+        return EC2Runtime
     else:
         raise ValueError(f'Runtime {name} not supported')
 
