@@ -23,6 +23,8 @@ Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_benc
 
 ### Kevin Changelogs:
 
+  Oct 2, 2024: [Added EC2 Runtime](https://github.com/SmartManoj/Kevin/commit/37d3fab5f58aa939d0689c6559325007e3f001c5)
+
   1) [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782) 🔥🔥🔥
   2) [Restarted Jupyter kernel if package installed via bash too](https://github.com/All-Hands-AI/OpenHands/pull/3178) 👍
   3) [Cleaned Browser Observattions](https://github.com/All-Hands-AI/OpenHands/pull/3096) 🧹
