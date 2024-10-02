@@ -1,4 +1,5 @@
 import asyncio
+import concurrent.futures
 from threading import Thread
 from typing import Callable, Optional
 
@@ -76,6 +77,13 @@ class AgentSession:
         self.thread = Thread(target=self._run, daemon=True)
         self.thread.start()
 
+        def coro_callback(task):
+            fut: concurrent.futures.Future = concurrent.futures.Future()
+            try:
+                fut.set_result(task.result())
+            except Exception as e:
+                logger.error(f'Error starting session: {e}')
+
         coro = self._start(
             runtime_name,
             config,
@@ -86,7 +94,9 @@ class AgentSession:
             agent_configs,
             status_message_callback,
         )
-        asyncio.run_coroutine_threadsafe(coro, self.loop)  # type: ignore
+        asyncio.run_coroutine_threadsafe(coro, self.loop).add_done_callback(
+            coro_callback
+        )  # type: ignore
 
     async def _start(
         self,
@@ -173,15 +183,20 @@ class AgentSession:
         logger.info(f'Initializing runtime `{runtime_name}` now...')
         runtime_cls = get_runtime_cls(runtime_name)
 
-        self.runtime = runtime_cls(
-            config=config,
-            event_stream=self.event_stream,
-            sid=self.sid,
-            plugins=agent.sandbox_plugins,
-            status_message_callback=status_message_callback,
-        )
         llm_prompt_logger.handlers[0].reset_counter()
         llm_response_logger.handlers[0].reset_counter()
+
+        try:
+            self.runtime = runtime_cls(
+                config=config,
+                event_stream=self.event_stream,
+                sid=self.sid,
+                plugins=agent.sandbox_plugins,
+                status_message_callback=status_message_callback,
+            )
+        except Exception as e:
+            logger.error(f'Runtime initialization failed: {e}')
+            raise
 
         if self.runtime is not None:
             logger.debug(
