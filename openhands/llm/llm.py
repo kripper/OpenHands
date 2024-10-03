@@ -18,6 +18,7 @@ from litellm import completion_cost as litellm_completion_cost
 from litellm.caching import Cache
 from litellm.exceptions import (
     APIConnectionError,
+    APIError,
     InternalServerError,
     RateLimitError,
     ServiceUnavailableError,
@@ -39,6 +40,7 @@ __all__ = ['LLM']
 # tuple of exceptions to retry on
 LLM_RETRY_EXCEPTIONS: tuple[type[Exception], ...] = (
     APIConnectionError,
+    APIError,
     InternalServerError,
     RateLimitError,
     ServiceUnavailableError,
