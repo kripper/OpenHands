@@ -4,6 +4,8 @@
         ["astropy__astropy-13236","https://www.all-hands.dev/share?share_id=f09c6292699398ace674feb91dc58e81c49fddedbbe1206a36b70ed3a660cf83"],
         ["astropy__astropy-14309","https://www.all-hands.dev/share?share_id=9d07b2aff05da39a8765152145aa260bf8e1e5bdfb829b99795decd62511600c"],
         ["astropy__astropy-14995","https://www.all-hands.dev/share?share_id=08bca0f5cd50a836e327c9e7537f66ead03b33a59cdf695bb68a3fe0ba09850e"],
+        ["django__django-10914","https://www.all-hands.dev/share?share_id=55366c779119d7188f0c91523acd25c531bb7a6d72a79c8b200edb951a6998a6"],
+        ["django__django-11099","https://www.all-hands.dev/share?share_id=568ef716158476f2a062be1857176c0a22258b6fb9f1f79d4cac28876d64c96e"],
     ],
     "unresolved": [
         ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"]
