@@ -63,7 +63,8 @@ settings.configure(DEFAULT_CHARSET='utf-8');
 from django.http import HttpResponse
 # memoryview content
 response = HttpResponse(memoryview(b"My Content"))
-print(response.content)
+if response.content != b"My Content":
+    print(response.content)
 
 assert response.content == b"My Content"
 """,
