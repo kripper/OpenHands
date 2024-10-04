@@ -37,7 +37,7 @@ from openhands.linter import DefaultLinter, LintResult
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
-WINDOW = 100
+WINDOW = 500
 
 # This is also used in unit tests!
 MSG_FILE_UPDATED = '[File updated (edited at line {line_number}). Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.]'
@@ -186,7 +186,7 @@ def open_file(
     Args:
         path: str: The path to the file to open, preferred absolute path.
         line_number: int | None = 1: The line number to move to. Defaults to 1.
-        context_lines: int | None = 100: Only shows this number of lines in the context window (usually from line 1), with line_number as the center (if possible). Defaults to 100.
+        context_lines: int | None = 100: Only shows this number of lines in the context window (usually from line 1), with line_number as the center (if possible).
     """
     global CURRENT_FILE, CURRENT_LINE, WINDOW
 
