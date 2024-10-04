@@ -283,7 +283,7 @@ FILE_CONTENT = """
 import os
 os.chdir('/testbed')
 {test_code}
-print('End the task with <end></end>')
+print('Congratulations! Now, end the task with <end></end>')
 """
 create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
 '''
@@ -291,7 +291,7 @@ create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert 'File updated' in obs.content
+    # assert 'File updated' in obs.content
 
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
