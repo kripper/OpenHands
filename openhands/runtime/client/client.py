@@ -17,9 +17,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import pexpect
-from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.security import APIKeyHeader
 from pexpect import EOF, TIMEOUT, ExceptionPexpect
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -65,6 +66,15 @@ INIT_COMMANDS = [
     "export PATH=/openhands/poetry/$(ls /openhands/poetry | sed -n '2p')/bin:$PATH",
 ]
 SOFT_TIMEOUT_SECONDS = 5
+
+SESSION_API_KEY = os.environ.get('SESSION_API_KEY')
+api_key_header = APIKeyHeader(name='X-Session-API-Key', auto_error=False)
+
+
+def verify_api_key(api_key: str = Depends(api_key_header)):
+    if SESSION_API_KEY and api_key != SESSION_API_KEY:
+        raise HTTPException(status_code=403, detail='Invalid API Key')
+    return api_key
 
 
 class RuntimeClient:
@@ -321,7 +331,7 @@ class RuntimeClient:
     def _execute_bash(
         self,
         command: str,
-        timeout: int | None,
+        timeout: int,
         keep_prompt: bool = True,
         kill_on_timeout: bool = True,
     ) -> tuple[str, int]:
@@ -336,21 +346,80 @@ class RuntimeClient:
 
     def _interrupt_bash(
         self,
-        timeout: int | None,
+        action_timeout: int | None,
+        interrupt_timeout: int | None = None,
+        max_retries: int = 2,
     ) -> tuple[str, int]:
-        # send a SIGINT to the process
-        self.shell.sendintr()
-        self.shell.expect(self.__bash_expect_regex, timeout=timeout)
-        command_output = self.shell.before
-        return (
-            f'Command timed out. Sent SIGINT to the process: {command_output}\nPlease run in background if you want to continue.\n',
-            130,
+        self.shell.sendintr()  # send SIGINT to the shell
+        logger.debug('Sent SIGINT to bash. Waiting for output...')
+
+        interrupt_timeout = interrupt_timeout or 1  # default timeout for SIGINT
+        # try to interrupt the bash shell use SIGINT
+        while max_retries > 0:
+            try:
+                self.shell.expect(self.__bash_expect_regex, timeout=interrupt_timeout)
+                output = self.shell.before
+                logger.debug(f'Received output after SIGINT: {output}')
+                exit_code = 130  # SIGINT
+
+                _additional_msg = ''
+                if action_timeout is not None:
+                    _additional_msg = (
+                        f'Command timed out after {action_timeout} seconds. '
+                    )
+                output += (
+                    '\r\n\r\n'
+                    + f'[{_additional_msg}SIGINT was sent to interrupt the command.]'
+                )
+                return output, exit_code
+            except pexpect.TIMEOUT as e:
+                logger.warning(f'Bash pexpect.TIMEOUT while waiting for SIGINT: {e}')
+                max_retries -= 1
+
+        # fall back to send control-z
+        logger.error(
+            'Failed to get output after SIGINT. Max retries reached. Sending control-z...'
         )
+        self.shell.sendcontrol('z')
+        self.shell.expect(self.__bash_expect_regex)
+        output = self.shell.before
+        logger.debug(f'Received output after control-z: {output}')
+        # Try to kill the job
+        self.shell.sendline('kill -9 %1')
+        self.shell.expect(self.__bash_expect_regex)
+        logger.debug(f'Received output after killing job %1: {self.shell.before}')
+        output += self.shell.before
+
+        _additional_msg = ''
+        if action_timeout is not None:
+            _additional_msg = f'Command timed out after {action_timeout} seconds. '
+        output += (
+            '\r\n\r\n'
+            + f'[{_additional_msg}SIGINT was sent to interrupt the command, but failed. The command was killed.]'
+        )
+
+        # Try to get the exit code again
+        self.shell.sendline('echo $?')
+        self.shell.expect(self.__bash_expect_regex)
+        _exit_code_output = self.shell.before
+        exit_code = self._parse_exit_code(_exit_code_output)
+
+        return output, exit_code
+
+    def _parse_exit_code(self, output: str) -> int:
+        try:
+            exit_code = int(output.strip().split()[0])
+        except Exception:
+            logger.error('Error getting exit code from bash script')
+            # If we try to run an invalid shell script the output sometimes includes error text
+            # rather than the error code - we assume this is an error
+            exit_code = 2
+        return exit_code
 
     def _continue_bash(
         self,
         command: str,
-        timeout: int | None,
+        timeout: int,
         keep_prompt: bool = True,
         kill_on_timeout: bool = True,
     ) -> tuple[str, int]:
@@ -391,7 +460,7 @@ class RuntimeClient:
                         timeout_counter += 1
                         if timeout_counter > timeout:
                             logger.debug('Timeout reached.')
-                            return self._interrupt_bash(timeout=timeout)
+                            return self._interrupt_bash(action_timeout=timeout)
                 elif index in [3, 4]:
                     self.shell.sendline('Y')
                     full_output += output + self.shell.match.group(1)
@@ -475,7 +544,7 @@ class RuntimeClient:
                     output = '[Please run the tests using pytest.]'
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
-                        timeout=SOFT_TIMEOUT_SECONDS
+                        action_timeout=None,  # intentionally None
                     )
                 else:
                     output, exit_code = self._execute_bash(
@@ -787,6 +856,16 @@ if __name__ == '__main__':
         assert client is not None
         async with client.lock:
             response = await call_next(request)
+        return response
+
+    @app.middleware('http')
+    async def authenticate_requests(request: Request, call_next):
+        if request.url.path != '/alive' and request.url.path != '/server_info':
+            try:
+                verify_api_key(request.headers.get('X-Session-API-Key'))
+            except HTTPException as e:
+                return e
+        response = await call_next(request)
         return response
 
     @app.get('/server_info')
