@@ -303,7 +303,10 @@ def create_file(filename: str, content: str = '', overwrite: bool = False) -> No
 
             with open(filename, 'w') as file:
                 file.write('')
-            if content:
+            if filename == '/tmp/test_task.py':
+                with open(filename, 'w') as file:
+                    file.write(content)
+            elif content:
                 insert_content_before_line(filename, 1, content)
             else:
                 print(f'[File {filename} created.]')
@@ -429,6 +432,16 @@ def _edit_impl(lines, start, end, content):
     return content, n_added_lines
 
 
+def is_test_file(file_name: str) -> bool:
+    """Check if the file is a test file."""
+    if file_name == '/tmp/test_task.py':
+        print(
+            "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
+        )
+        return True
+    return False
+
+
 def _edit_file_impl(
     file_name: str,
     start: int | None = None,
@@ -453,6 +466,8 @@ def _edit_file_impl(
     ERROR_MSG = f'[Error editing file {file_name}. Please confirm the file is correct.]'
     ERROR_MSG_SUFFIX = 'Your changes have NOT been applied.\n'
 
+    if is_test_file(file_name):
+        return None
     if not _is_valid_filename(file_name):
         _output_error('Invalid file name.')
         return None
@@ -663,6 +678,8 @@ def _edit_file_impl(
 def find_and_replace(file_name: str, find_string: str, replace_string: str) -> None:
     """Find and replace a string in a file."""
     # simple method:
+    if is_test_file(file_name):
+        return
     with open(file_name, 'r') as file:
         file_content = file.read()
     occurrences = file_content.count(find_string)
@@ -796,11 +813,6 @@ def delete_lines(file_name: str, start_line_number: int, end_line_number: int) -
 
 def replace_full_file_content(file_name: str, new_content: str) -> None:
     """Replace the full content of the specified file with the given new content."""
-    if file_name == '/tmp/test_task.py':
-        print(
-            "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
-        )
-        return
     current_content = open(file_name, 'r').read()
     if current_content == new_content:
         print(
