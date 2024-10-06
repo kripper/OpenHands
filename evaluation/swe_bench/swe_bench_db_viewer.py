@@ -30,7 +30,8 @@ for _ in range(2):
     else:
         with open('./cache/filtered_data.pkl', 'rb') as f:
             ins = pickle.load(f)
-    if instance_id != ins['instance_id']:
+    if instance_id != ins['instance_id'][0]:
+        print(ins['instance_id'], instance_id)
         force = 1
 
 #
