@@ -8,6 +8,7 @@
         ["django__django-11099","https://www.all-hands.dev/share?share_id=568ef716158476f2a062be1857176c0a22258b6fb9f1f79d4cac28876d64c96e"],
         ["django__django-11133","https://www.all-hands.dev/share?share_id=f6f2df8ce1ae3cd081d01da7ae783100c50c20e609ce34430b54c7de62567048"],
         ["django__django-11179","https://www.all-hands.dev/share?share_id=38da75e69527ae709b8d0f7c071a4bd9efec69650c34815e5a76bd4e76c39347"],
+        ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
         ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"]
