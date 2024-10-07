@@ -92,7 +92,6 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             instruction += f'# Hints\n{instance.hints_text}\n\n'
         instruction += (
             'IMPORTANT: You should ONLY interact with the environment provided to you AND NEVER ASK FOR HUMAN HELP.\n'
-            'You should NOT modify any existing test case files. If needed, you can add new test cases in a NEW file to reproduce the issue.\n'
             'You SHOULD INCLUDE PROPER INDENTATION in your edit commands.\n'
         )
 
