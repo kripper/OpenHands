@@ -22,7 +22,7 @@ if [ -z "$SET" ]; then
     SET="lite"
 fi
 
-NAMESPACE=$2 # xingyaoww
+NAMESPACE=$3 # xingyaoww
 if [ -z "$NAMESPACE" ]; then
     echo "Default to namespace: xingyaoww"
     NAMESPACE="xingyaoww"
