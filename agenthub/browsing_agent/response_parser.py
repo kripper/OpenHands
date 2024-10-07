@@ -81,17 +81,17 @@ class BrowsingActionParserBrowseInteractive(ActionParser):
         assert (
             self.action_str is not None
         ), 'self.action_str should not be None when parse is called'
-        action_cmd = self.action_str.group(1).strip()
+        browser_actions = self.action_str.group(1).strip()
         thought = action_str.replace(self.action_str.group(0), '').strip()
         msg_content = ''
-        for sub_action in action_cmd.split('\n'):
+        for sub_action in browser_actions.split('\n'):
             if 'send_msg_to_user(' in sub_action:
                 tree = ast.parse(sub_action)
                 args = tree.body[0].value.args  # type: ignore
                 msg_content = args[0].value
 
         return BrowseInteractiveAction(
-            browser_actions=action_cmd,
+            browser_actions=browser_actions,
             thought=thought,
             browsergym_send_msg_to_user=msg_content,
         )
