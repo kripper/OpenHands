@@ -57,7 +57,7 @@ class LLMConfig:
     openrouter_app_name: str = 'OpenHands'
     num_retries: int = 8
     retry_multiplier: float = 2
-    retry_min_wait: int = 15
+    retry_min_wait: int = 5
     retry_max_wait: int = 120
     timeout: int | None = None
     max_message_chars: int = 10_000  # maximum number of characters in an observation's content when sent to the llm
