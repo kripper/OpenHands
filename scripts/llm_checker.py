@@ -3,9 +3,14 @@ import tomllib
 
 with open('config.toml', 'rb') as f:
     config = tomllib.load(f)
+    config = config['llm']
+    group = 'gemini_pro'
+    if group in config:
+        config = config[group]
 
-model = config['llm']['model']
-api_key = config['llm']['api_key']
+model = config['model']
+print('Using model:', model)
+api_key = config['api_key']
 
 response = litellm.completion(
     model=model,
