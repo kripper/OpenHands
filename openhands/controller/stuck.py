@@ -1,4 +1,4 @@
-from agenthub.codeact_agent.codeact_agent import CodeActAgent
+from openhands.agenthub.codeact_agent.codeact_agent import CodeActAgent
 from openhands.controller.state.state import State
 from openhands.core.config import load_app_config
 from openhands.core.logger import openhands_logger as logger
