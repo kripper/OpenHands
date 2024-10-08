@@ -19,13 +19,13 @@ export const commandSlice = createSlice({
     appendOutput: (state, action) => {
       state.commands.push({ content: action.payload, type: "output" });
     },
-    clearCommands: (state) => {
+    clearTerminal: (state) => {
       state.commands = [];
     },
   },
 });
 
-export const { appendInput, appendOutput, clearCommands } =
+export const { appendInput, appendOutput, clearTerminal } =
   commandSlice.actions;
 
 export default commandSlice.reducer;

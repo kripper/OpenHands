@@ -6,7 +6,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { RootState } from "#/store";
 import { updateBrowserTabUrl } from "#/services/browseService";
 
-function Browser(): JSX.Element {
+function BrowserPanel() {
   const { t } = useTranslation();
   const { url, screenshotSrc } = useSelector(
     (state: RootState) => state.browser,
@@ -59,4 +59,4 @@ function Browser(): JSX.Element {
   );
 }
 
-export default Browser;
+export default BrowserPanel;

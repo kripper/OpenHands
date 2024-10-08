@@ -2,9 +2,9 @@ import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import Markdown from "react-markdown";
-import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { VscArrowDown, VscArrowUp } from "react-icons/vsc";
 import { useTranslation } from "react-i18next";
+import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { Textarea } from "@nextui-org/react";
 import { RootState } from "#/store";
 import { Cell, appendJupyterInput } from "#/state/jupyterSlice";
@@ -80,12 +80,12 @@ function JupyterCell({ cell }: IJupyterCell): JSX.Element {
   );
 }
 
-function Jupyter(): JSX.Element {
+function JupyterEditor(): JSX.Element {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const { cells } = useSelector((state: RootState) => state.jupyter);
-  const jupyterRef = useRef<HTMLDivElement>(null);
+  const jupyterRef = React.useRef<HTMLDivElement>(null);
 
   const { hitBottom, scrollDomToBottom, onChatBodyScroll } =
     useScrollToBottom(jupyterRef);
@@ -160,4 +160,4 @@ function Jupyter(): JSX.Element {
   );
 }
 
-export default Jupyter;
+export default JupyterEditor;

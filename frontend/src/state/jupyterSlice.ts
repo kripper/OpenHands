@@ -22,7 +22,7 @@ export const cellSlice = createSlice({
     handleInputSubmission: (state, action) => {
       state.cells.push({ content: action.payload, type: "input" });
     },
-    clearCells: (state) => {
+    clearJupyter: (state) => {
       state.cells = [];
     },
   },
@@ -32,7 +32,7 @@ export const {
   appendJupyterInput,
   appendJupyterOutput,
   handleInputSubmission,
-  clearCells,
+  clearJupyter,
 } = cellSlice.actions;
 
 export default cellSlice.reducer;
