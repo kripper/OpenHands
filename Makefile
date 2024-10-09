@@ -219,6 +219,8 @@ run:
 	@echo "$(YELLOW)Waiting for the app to start...$(RESET)"
 	@until nc -z localhost $(BACKEND_PORT); do sleep 0.1; done
 	@echo "$(GREEN)Application started successfully.$(RESET)"
+	@cd frontend && echo "$(BLUE)Starting frontend with npm...$(RESET)" && npm run start -- --port $(FRONTEND_PORT)
+	@echo "$(GREEN)Application started successfully.$(RESET)"
 
 # Start both backend and frontend servers
 start:
