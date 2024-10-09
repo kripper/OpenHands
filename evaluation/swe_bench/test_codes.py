@@ -68,6 +68,19 @@ if response.content != b"My Content":
 
 assert response.content == b"My Content"
 """,
+        'psf__requests-2317': r"""
+import requests
+
+url = "https://httpbin.org/get"
+method = b'GET'
+
+try:
+    response = requests.request(method, url)
+    print(response.status_code)
+    assert response.status_code == 200
+except Exception as e:
+    print(f"Error: {e}")
+""",
     }
     return test_codes.get(instance_id, '')
 
