@@ -73,13 +73,10 @@ import requests
 
 url = "https://httpbin.org/get"
 method = b'GET'
-
-try:
-    response = requests.request(method, url)
-    print(response.status_code)
-    assert response.status_code == 200
-except Exception as e:
-    print(f"Error: {e}")
+response = requests.request(method, url)
+if response.status_code != 200:
+    print('Status code:', response.status_code)
+assert response.status_code == 200
 """,
     }
     return test_codes.get(instance_id, '')
