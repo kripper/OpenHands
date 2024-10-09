@@ -200,7 +200,7 @@ endif
 # Start frontend server
 start-frontend:
 	@echo "$(YELLOW)Starting frontend...$(RESET)"
-	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST_PORT) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $(mode)
+	@cd frontend && VITE_BACKEND_HOST=$(BACKEND_HOST_PORT) VITE_FRONTEND_PORT=$(FRONTEND_PORT) npm run $(mode) -- --port $(FRONTEND_PORT)
 
 # check for Windows (non-callable)
 _run_check:

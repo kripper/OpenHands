@@ -1,5 +1,7 @@
 import os
 
+__package_name__ = 'openhands_ai'
+
 
 def get_version():
     # Try getting the version from pyproject.toml
@@ -16,7 +18,7 @@ def get_version():
         from importlib.metadata import PackageNotFoundError, version
 
         try:
-            return version('openhands-ai')
+            return version(__package_name__)
         except PackageNotFoundError:
             pass
     except ImportError:
@@ -26,7 +28,7 @@ def get_version():
         from pkg_resources import DistributionNotFound, get_distribution
 
         try:
-            return get_distribution('openhands-ai').version
+            return get_distribution(__package_name__).version
         except DistributionNotFound:
             pass
     except ImportError:
