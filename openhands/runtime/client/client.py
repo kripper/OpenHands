@@ -531,6 +531,8 @@ class RuntimeClient:
                         output = '[You are already in this directory.]'
                 if output is not None:
                     pass
+                elif '-m venv' in command:
+                    output = '[venv is not needed in the sandbox because it is already isolated]'
                 elif re.search(r'cd [^;&]*\.py$', command, re.IGNORECASE):
                     output = (
                         '[Invalid usage of cd command. Use open_file skill instead.]'
