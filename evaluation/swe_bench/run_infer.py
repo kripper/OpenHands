@@ -305,6 +305,14 @@ create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     # assert 'File updated' in obs.content
 
+    # set SWE_BENCH=1 env
+    action = CmdRunAction(command='export SWE_BENCH=1')
+    action.timeout = 600
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
+    assert_and_raise(obs.exit_code == 0, f'Failed to set SWE_BENCH=1: {obs.content}')
+
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
     logger.info('-' * 30)
