@@ -11,6 +11,7 @@
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
-        ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"]
+        ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"],
+        ["psf__requests-2317","https://www.all-hands.dev/share?share_id=185afe2f4f45c2a502329f8f68f0d56e7e6f5d51a8229ab7e37f03464d470727"]
     ]
 }
