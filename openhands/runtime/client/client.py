@@ -544,6 +544,12 @@ class RuntimeClient:
                     )
                 elif ' -m unittest' in command:
                     output = '[Please run the tests using pytest.]'
+                elif (
+                    os.getenv('SWE_BENCH') == '1'
+                    and 'pytest' in command
+                    and '.py' not in command
+                ):
+                    output = '[Please run specific test cases instead of running all test cases.]'
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         action_timeout=None,  # intentionally None
