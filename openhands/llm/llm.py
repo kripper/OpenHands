@@ -85,6 +85,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         self.config: LLMConfig = copy.deepcopy(config)
         self.log_prompt_once = True
         self.reload_counter = 0
+        self.api_idx = 0
 
         if self.config.enable_cache:
             litellm.cache = Cache()
@@ -282,6 +283,19 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             else:
                 kwargs2 = kwargs.copy()
                 for _ in range(5):
+                    if os.getenv('attempt_number'):
+                        attempt_number = int(os.getenv('attempt_number', '-1'))
+                        if attempt_number != -1:
+                            try:
+                                from api_keys import api_keys
+
+                                self.api_idx = (self.api_idx + 1) % len(api_keys)
+                                print('Using API key', self.api_idx)
+                                kwargs['api_key'] = api_keys[self.api_idx]
+                            except Exception as e:
+                                print('Error in changing API key', e)
+                                pass
+                            os.environ['attempt_number'] = '-1'
                     resp = self.completion_unwrapped(*args, **kwargs)
                     message_back = resp['choices'][0]['message']['content']
                     self_analyse = int(os.environ.get('SELF_ANALYSE', '0'))

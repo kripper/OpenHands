@@ -48,3 +48,6 @@ class RetryMixin:
             f'{exception}. Attempt #{retry_state.attempt_number} | You can customize retry values in the configuration.',
             exc_info=False,
         )
+        import os
+
+        os.environ['attempt_number'] = str(retry_state.attempt_number)
