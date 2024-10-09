@@ -71,9 +71,15 @@ function ChatInterface() {
     onOpenChange: onFeedbackModalOpenChange,
   } = useDisclosure();
 
-  const handleSendMessage = (content: string, imageUrls: string[]) => {
+  const handleSendMessage = (
+    content: string,
+    dispatchContent: string = "",
+    imageUrls: string[] = [],
+  ) => {
     const timestamp = new Date().toISOString();
-    dispatch(addUserMessage({ content, imageUrls, timestamp }));
+    dispatch(
+      addUserMessage({ content: dispatchContent || content, imageUrls, timestamp }),
+    );
     send(createChatMessage(content, imageUrls, timestamp));
   };
 

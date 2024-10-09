@@ -1,4 +1,5 @@
 import ActionType from "#/types/ActionType";
+import Session from "./session";
 
 export function createChatMessage(
   message: string,

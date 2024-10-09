@@ -101,7 +101,7 @@ function AgentControlBar() {
   //   } else {
   //     setIsLoading(true);
   //   }
-  // };
+  };
 
   return (
     <div className="flex justify-between items-center gap-20">
