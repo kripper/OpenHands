@@ -329,7 +329,56 @@ gru_resolved = [
 # intersect
 
 r = set(swe_verified_lite) & set(gru_resolved)
-# print(len(r))
+r = [
+    'astropy__astropy-14995',
+    'django__django-10914',
+    'django__django-11099',
+    'django__django-11133',
+    'django__django-11179',
+    'django__django-11815',
+    'django__django-11999',
+    'django__django-12308',
+    'django__django-12708',
+    'django__django-13028',
+    'django__django-13315',
+    'django__django-13401',
+    'django__django-13658',
+    'django__django-13933',
+    'django__django-14238',
+    'django__django-14672',
+    'django__django-14752',
+    'django__django-14855',
+    'django__django-14915',
+    'django__django-14999',
+    'django__django-15814',
+    'django__django-15851',
+    'django__django-16139',
+    'django__django-16255',
+    'django__django-16527',
+    'django__django-16595',
+    'django__django-17087',
+    'matplotlib__matplotlib-23314',
+    'matplotlib__matplotlib-24970',
+    'matplotlib__matplotlib-25332',
+    'psf__requests-2317',
+    'pytest-dev__pytest-7432',
+    'scikit-learn__scikit-learn-10297',
+    'scikit-learn__scikit-learn-13142',
+    'scikit-learn__scikit-learn-13439',
+    'scikit-learn__scikit-learn-13779',
+    'scikit-learn__scikit-learn-14894',
+    'sphinx-doc__sphinx-8595',
+    'sphinx-doc__sphinx-8721',
+    'sympy__sympy-13480',
+    'sympy__sympy-13647',
+    'sympy__sympy-21379',
+    'sympy__sympy-21847',
+    'sympy__sympy-22714',
+    'sympy__sympy-23262',
+    'sympy__sympy-24066',
+    'sympy__sympy-24213',
+]
+print(len(r))
 # load config.toml
 
 file = open('evaluation/swe_bench/config.toml', 'r')
