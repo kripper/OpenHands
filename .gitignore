@@ -235,3 +235,4 @@ sc.py
 t.py
 containers/runtime/code
 api_keys.py
+evaluation/swe_bench/gru_traj.json
