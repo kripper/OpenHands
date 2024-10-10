@@ -366,7 +366,8 @@ def complete_runtime(
     git_patch = None
     while n_retries < 5:
         action = CmdRunAction(
-            command=f'git diff --no-color --cached {instance["base_commit"]}',
+            command=f'git diff --cached {instance["base_commit"]}',
+            # command=f'git diff --no-color --cached {instance["base_commit"]}',
             keep_prompt=False,
         )
         action.timeout = 600 + 100 * n_retries
