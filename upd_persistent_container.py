@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import docker
 
@@ -25,3 +26,4 @@ for c in client.containers.list():
         # restart the container
 print('Restarting the container')
 c.restart()
+print(datetime.now())
