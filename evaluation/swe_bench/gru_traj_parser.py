@@ -18,5 +18,7 @@ for i in traj['trajectory']['details'][0]['exportedConversation']['plans'][0]:
     for j in i:
         print(j['thought'])
         print(j['name'], j['args'])
-        print(j['observation'])
-        print('--' * 100)
+        # print(j['observation'])
+        print(' ' * 50)
+        print('--' * 50)
+        print(' ' * 50)
