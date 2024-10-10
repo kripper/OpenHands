@@ -78,6 +78,13 @@ if response.status_code != 200:
     print('Status code:', response.status_code)
 assert response.status_code == 200
 """,
+        'sympy__sympy-13647': r"""
+import sympy as sm
+M = sm.eye(6)
+V = 2 * sm.ones(6, 2)
+result = M.col_insert(3, V)
+assert result == sm.Matrix([[1, 0, 0, 2, 2, 0, 0, 0], [0, 1, 0, 2, 2, 0, 0, 0], [0, 0, 1, 2, 2, 0, 0, 0], [0, 0, 0, 2, 2, 1, 0, 0], [0, 0, 0, 2, 2, 0, 1, 0], [0, 0, 0, 2, 2, 0, 0, 1]])
+""",
     }
     return test_codes.get(instance_id, '')
 
