@@ -1009,7 +1009,7 @@ def custom_import(name, *args, **kwargs):
             "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
         )
         sys.exit(1)
-    if name in ['astropy', 'erfa']:
+    if name in ['astropy', 'erfa', 'sympy', 'mpmath']:
         print(
             f"Don't use {name} in Jupyter Notebook. Save the code to a Python file and test it in the terminal"
         )
