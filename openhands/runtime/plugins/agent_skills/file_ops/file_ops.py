@@ -1035,14 +1035,14 @@ def search_symbol(symbol_name, prefix):
         print(e.stderr)
 
 
-def search_function(symbol_name):
+def search_function(function_name: str):
     """Search for a function in the current directory."""
-    search_symbol(symbol_name, 'def')
+    search_symbol(function_name, 'def')
 
 
-def search_class(symbol_name):
+def search_class(class_name: str):
     """Search for a class in the current directory."""
-    search_symbol(symbol_name, 'class')
+    search_symbol(class_name, 'class')
 
 
 __all__ = [
