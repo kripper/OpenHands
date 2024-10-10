@@ -543,6 +543,8 @@ class RuntimeClient:
                         and 'python3' not in command
                     ):
                         output = "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
+                    elif 'pytest' in command and '.py' not in command:
+                        output = '[Please run specific test cases instead of running all test cases.]'
                 # logger.debug('magic')
                 # logger.debug(output)
                 # logger.debug(os.getenv('SWE_BENCH'))
@@ -561,12 +563,7 @@ class RuntimeClient:
                     )
                 elif ' -m unittest' in command:
                     output = '[Please run the tests using pytest.]'
-                elif (
-                    os.getenv('SWE_BENCH') == '1'
-                    and 'pytest' in command
-                    and '.py' not in command
-                ):
-                    output = '[Please run specific test cases instead of running all test cases.]'
+
                 elif command.lower() == 'ctrl+c':
                     output, exit_code = self._interrupt_bash(
                         action_timeout=None,  # intentionally None
