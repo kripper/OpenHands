@@ -1020,6 +1020,31 @@ def custom_import(name, *args, **kwargs):
 sys.modules['builtins'].__import__ = custom_import  # type: ignore
 
 
+def search_symbol(symbol_name, prefix):
+    try:
+        symbol_name = prefix + ' ' + symbol_name + '('
+        result = subprocess.run(
+            ['git', 'grep', '-n', symbol_name],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Symbol '{symbol_name}' not found in the repository.")
+        print(e.stderr)
+
+
+def search_function(symbol_name):
+    """Search for a function in the current directory."""
+    search_symbol(symbol_name, 'def')
+
+
+def search_class(symbol_name):
+    """Search for a class in the current directory."""
+    search_symbol(symbol_name, 'class')
+
+
 __all__ = [
     'open_file',
     'goto_line',
@@ -1040,6 +1065,8 @@ __all__ = [
     'kill_port',
     'clean_workspace',
     'custom_import',
+    'search_function',
+    'search_class',
 ]
 
 if __name__ == '__main__':
