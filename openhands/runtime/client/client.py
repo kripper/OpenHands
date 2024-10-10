@@ -529,7 +529,17 @@ class RuntimeClient:
                     path = command[3:].strip()
                     if self.pwd == path:
                         output = '[You are already in this directory.]'
-                if output is not None:
+                elif os.getenv('SWE_BENCH') == '1' or 1:  # TODO
+                    if command.startswith('git blame'):
+                        output = (
+                            "[Don't use git commands. Just directly give the solution.]"
+                        )
+                    elif 'pip install' in command:
+                        output = '[Use the current packages only.]'
+                # logger.debug('magic')
+                # logger.debug(output)
+                # logger.debug(os.getenv('SWE_BENCH'))
+                if output:
                     pass
                 elif '-m venv' in command:
                     output = '[venv is not needed in the sandbox because it is already isolated]'
