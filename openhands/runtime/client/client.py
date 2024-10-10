@@ -537,7 +537,11 @@ class RuntimeClient:
                     elif 'pip install' in command:
                         output = '[Use the current packages only.]'
 
-                    elif '/tmp/test_task.py' in command and 'cat' not in command:
+                    elif (
+                        '/tmp/test_task.py' in command
+                        and 'cat' not in command
+                        and 'python3' not in command
+                    ):
                         output = "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
                 # logger.debug('magic')
                 # logger.debug(output)
