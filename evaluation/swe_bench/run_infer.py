@@ -314,6 +314,15 @@ create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert_and_raise(obs.exit_code == 0, f'Failed to set SWE_BENCH=1: {obs.content}')
 
+    # set in ipy
+    code = """
+import os
+os.environ['SWE_BENCH'] = '1'
+"""
+    action = IPythonRunCellAction(code)
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     logger.info('-' * 30)
     logger.info('END Runtime Initialization Fn')
     logger.info('-' * 30)
