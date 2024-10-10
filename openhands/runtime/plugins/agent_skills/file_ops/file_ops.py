@@ -1046,6 +1046,10 @@ def search_class(symbol_name):
 
 
 __all__ = [
+    'search_function',
+    'search_class',
+    'search_dir',
+    'search_file',
     'open_file',
     'goto_line',
     'scroll_down',
@@ -1059,14 +1063,10 @@ __all__ = [
     'insert_content_before_line',
     'append_file',
     'replace_full_file_content',
-    'search_dir',
-    'search_file',
     'find_file',
     'kill_port',
     'clean_workspace',
     'custom_import',
-    'search_function',
-    'search_class',
 ]
 
 if __name__ == '__main__':
