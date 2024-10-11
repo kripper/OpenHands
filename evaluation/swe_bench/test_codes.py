@@ -96,6 +96,11 @@ expr = exp(sinh(Piecewise((x, y > x), (y, True)) / z))
 print(expr.subs({1: 1.0}))
 
 """,
+        'sympy__sympy-22714': r"""
+import sympy as sp
+with sp.evaluate(False):
+  sp.S('Point2D(Integer(1),Integer(2))')
+""",
     }
     return test_codes.get(instance_id, '')
 
