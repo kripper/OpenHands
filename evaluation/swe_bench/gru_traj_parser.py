@@ -3,12 +3,12 @@ import json
 from pyperclip import paste
 
 try:
-    traj = paste()
-    traj = json.loads(traj)
+    traj_content = paste()
+    traj = json.loads(traj_content)
     if not isinstance(traj, dict):
         raise Exception('Invalid trajectory')
     with open('evaluation/swe_bench/gru_traj.json', 'w') as f:
-        f.write(traj)
+        f.write(traj_content)
 except Exception as e:
     print(e)
     with open('evaluation/swe_bench/gru_traj.json', 'r') as f:
