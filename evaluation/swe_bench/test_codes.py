@@ -119,7 +119,7 @@ dim = SI._collect_factor_and_dimension(expr)[1]
 assert SI.get_dimension_system().is_dimensionless(dim)
 
 buggy_expr = 100 + exp(expr)
-SI._collect_factor_and_dimension(buggy_expr)
+print(SI._collect_factor_and_dimension(buggy_expr))
 """,
     }
     return test_codes.get(instance_id, '')
