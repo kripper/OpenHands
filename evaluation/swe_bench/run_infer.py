@@ -82,7 +82,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             f'THE CODEBASE MAY BE NOT CLEAR. Use your judgement by analyzing the output of the code to fix the issue.\n'
             'The current working directory is /testbed.\n'
             "Don't modify the test cases. You must pass the test cases.\n"
-            'Plan:\n1) Reproduce the bug\n 2) Search for the relevant files to modify instead of modifying the test files itself.;\n3) Pass the test cases.\n'
+            'Plan:\n1) Reproduce the bug\n2) Search for the relevant files to modify using search_function and search_class agent skills instead of modifying the test files itself;\n3) Pass the test cases.\n'
             "Please don't blabber\n"
         )
         if (
