@@ -101,6 +101,13 @@ import sympy as sp
 with sp.evaluate(False):
   sp.S('Point2D(Integer(1),Integer(2))')
 """,
+        'sympy__sympy-23262': r"""
+from sympy import lambdify
+import inspect
+
+output = inspect.getsource(lambdify([], tuple([1])))
+assert output == 'def _lambdifygenerated():\\n    return (1,)\\n', f'Got:\\n{output}'
+""",
     }
     return test_codes.get(instance_id, '')
 
