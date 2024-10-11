@@ -1009,7 +1009,10 @@ def custom_import(name, *args, **kwargs):
             "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
         )
         sys.exit(1)
-    if os.getenv('SWE_BENCH') == '1' and name in ['astropy', 'erfa', 'sympy', 'mpmath']:
+    if os.getenv('SWE_BENCH') == '1' and name in [
+        'astropy',
+        'erfa',
+    ]:
         print(
             f"Don't use {name} in Jupyter Notebook. Save the code to a Python file and test it in the terminal"
         )
