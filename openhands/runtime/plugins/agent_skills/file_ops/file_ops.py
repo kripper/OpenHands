@@ -1012,9 +1012,11 @@ def custom_import(name, *args, **kwargs):
     if os.getenv('SWE_BENCH') == '1' and name in [
         'astropy',
         'erfa',
+        'sympy',
+        'mpmath',
     ]:
         print(
-            f"Don't use {name} in Jupyter Notebook. Save the code to a Python file and test it in the terminal"
+            f"Don't use {name} in Jupyter Notebook as file changes will not be reflected. Save the code to a Python file and test it in the terminal"
         )
         sys.exit(1)
     return original_import(name, *args, **kwargs)
