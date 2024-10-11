@@ -544,6 +544,7 @@ class RuntimeClient:
                         '/tmp/test_task.py' in command
                         and 'cat' not in command
                         and 'python3' not in command
+                        and 'pytest' not in command
                     ):
                         output = "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
                     elif 'pytest' in command and '.py' not in command:

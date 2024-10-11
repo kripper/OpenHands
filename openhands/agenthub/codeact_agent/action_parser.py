@@ -86,7 +86,8 @@ class CodeActActionParserFinish(ActionParser):
         thought = action_str.replace(self.finish_command.group(0), '').strip()
         os.environ['finish_thought'] = thought
         if not self.is_finish2 and os.getenv('SWE_BENCH') == '1':
-            return CmdRunAction('python3 /tmp/test_task.py', thought='')
+            test_tool = os.getenv('TEST_TOOL', 'pytest')
+            return CmdRunAction(f'{test_tool} /tmp/test_task.py', thought='')
         return AgentFinishAction(thought=thought)
 
 
