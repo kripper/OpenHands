@@ -1039,12 +1039,20 @@ def search_symbol(symbol_name, prefix):
 
 
 def search_function(function_name: str):
-    """Search for a function in the current directory."""
+    """Search for a function in the current directory.
+
+    Args:
+        function_name: str: The name of the function to search for.
+    """
     search_symbol(function_name, 'def')
 
 
 def search_class(class_name: str):
-    """Search for a class in the current directory."""
+    """Search for a class in the current directory.
+
+    Args:
+        class_name: str: The name of the class to search for.
+    """
     search_symbol(class_name, 'class')
 
 
