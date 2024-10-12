@@ -52,6 +52,15 @@ AGENT_CLS_TO_INST_SUFFIX = {
 }
 
 
+try:
+    from evaluation.swe_bench.infer_checker import check_if_resolved
+except Exception as e:
+    print(e)
+
+    def check_if_resolved(instance_id: str) -> bool:
+        return False
+
+
 def _get_swebench_workspace_dir_name(instance: pd.Series) -> str:
     return f'{instance.repo}__{instance.version}'.replace('/', '__')
 
