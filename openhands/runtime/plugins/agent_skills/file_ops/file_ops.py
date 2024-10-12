@@ -863,7 +863,7 @@ def append_file(file_name: str, content: str) -> None:
         print(ret_str)
 
 
-def search_dir(search_term: str, dir_path: str = './') -> None:
+def search_in_dir(search_term: str, dir_path: str = './') -> None:
     """Searches for search_term in all files in dir. If dir is not provided, searches in the current directory.
 
     Args:
@@ -903,7 +903,7 @@ def search_dir(search_term: str, dir_path: str = './') -> None:
     print(f'[End of matches for "{search_term}" in {dir_path}]')
 
 
-def search_file(search_term: str, file_path: str | None = None) -> None:
+def search_in_file(search_term: str, file_path: str | None = None) -> None:
     """Searches for search_term in file. If file is not provided, searches in the current open file.
 
     Args:
@@ -1061,8 +1061,8 @@ def search_class(class_name: str):
 __all__ = [
     'search_function',
     'search_class',
-    'search_dir',
-    'search_file',
+    'search_in_dir',
+    'search_in_file',
     'open_file',
     'goto_line',
     'scroll_down',
