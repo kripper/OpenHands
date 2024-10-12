@@ -53,7 +53,7 @@ AGENT_CLS_TO_INST_SUFFIX = {
 
 
 try:
-    from evaluation.swe_bench.infer_checker import check_if_resolved
+    pass
 except Exception as e:
     print(e)
 
