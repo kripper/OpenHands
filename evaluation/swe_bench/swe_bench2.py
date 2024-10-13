@@ -65,4 +65,18 @@ TypeError: unsupported operand type(s) for |: 'int' and 'NoneType'
 """
         for expected in [expected1, expected2]:
             description = description.replace(actual, expected, 1)
+    elif instance_id == 'scikit-learn__scikit-learn-13779':
+        actual = "AttributeError: 'NoneType' object has no attribute 'fit'"
+        expected = """Traceback (most recent call last):
+  File "test_task.py", line 15, in <module>
+    voter.fit(X, y, sample_weight=np.ones(y.shape))
+  File "/testbed/sklearn/ensemble/voting.py", line 273, in fit
+    return super().fit(X, transformed_y, sample_weight)
+  File "/testbed/sklearn/ensemble/voting.py", line 81, in fit
+    if not has_fit_parameter(step, 'sample_weight'):
+  File "/testbed/sklearn/utils/validation.py", line 808, in has_fit_parameter
+    return parameter in signature(estimator.fit).parameters
+AttributeError: 'NoneType' object has no attribute 'fit'"""
+        return description.replace(actual, expected)
+
     return description
