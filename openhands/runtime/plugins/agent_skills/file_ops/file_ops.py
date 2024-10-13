@@ -34,8 +34,6 @@ import uuid
 
 from openhands.linter import DefaultLinter, LintResult
 
-from .cst_ops import add_param_to_init_in_subclass
-
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
 WINDOW = 500
@@ -1070,7 +1068,6 @@ __all__ = [
     'find_and_replace',
     'delete_line',
     'delete_lines',
-    'add_param_to_init_in_subclass',
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
@@ -1080,6 +1077,9 @@ __all__ = [
     'clean_workspace',
     'custom_import',
 ]
+
+if os.environ.get('CST_ENABLED') == '1':
+    __all__.append('add_param_to_init_in_subclass')
 
 if __name__ == '__main__':
     full_content = """
