@@ -10,6 +10,7 @@ import toml
 from datasets import load_dataset
 
 import openhands.agenthub
+from evaluation.swe_bench.infer_checker import check_if_resolved
 from evaluation.swe_bench.prompt import CODEACT_SWE_PROMPT
 from evaluation.swe_bench.swe_bench2 import update_issue_description
 from evaluation.swe_bench.test_codes import get_test_code
@@ -38,6 +39,7 @@ from openhands.events.serialization.event import event_to_dict
 from openhands.runtime.runtime import Runtime
 from openhands.runtime.utils.shutdown_listener import sleep_if_should_continue
 
+check_if_resolved()
 USE_HINT_TEXT = os.environ.get('USE_HINT_TEXT', 'false').lower() == 'true'
 USE_INSTANCE_IMAGE = os.environ.get('USE_INSTANCE_IMAGE', 'false').lower() == 'true'
 
@@ -50,15 +52,6 @@ AGENT_CLS_TO_INST_SUFFIX = {
     'CodeActAgent': 'When you think you have fixed the issue through code changes, please run the following command: <execute_bash> exit </execute_bash>.\n',
     'CodeActSWEAgent': 'When you think you have fixed the issue through code changes, please run the following command: <execute_bash> exit </execute_bash>.\n',
 }
-
-
-try:
-    pass
-except Exception as e:
-    print(e)
-
-    def check_if_resolved(instance_id: str) -> bool:
-        return False
 
 
 def _get_swebench_workspace_dir_name(instance: pd.Series) -> str:
