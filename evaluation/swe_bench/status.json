@@ -14,10 +14,13 @@
         ["sympy__sympy-23262","https://www.all-hands.dev/share?share_id=cc1833d9798109c78e4a8df056fced2d727c3395d818c00260bf1fe67227c066","gemini-1.5-flash-002"],
         ["sympy__sympy-24213","https://www.all-hands.dev/share?share_id=623b58060dab8b2d06454afbebc67260a7ff238971000b11c2bcd9ddf80de063"],
         ["scikit-learn__scikit-learn-10297","https://www.all-hands.dev/share?share_id=aa0cdadc2251772e148a8d5fc4d092160c41ae6a406577e02aab700329b96983"],
+        ["scikit-learn__scikit-learn-13439","https://www.all-hands.dev/share?share_id=f02c162a4d73ad06d02ed941ec9f663fae335257bd03cd2bd718324fae6e7aa7"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
         ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"],
-        ["psf__requests-2317","https://www.all-hands.dev/share?share_id=185afe2f4f45c2a502329f8f68f0d56e7e6f5d51a8229ab7e37f03464d470727"]
+        ["psf__requests-2317","https://www.all-hands.dev/share?share_id=185afe2f4f45c2a502329f8f68f0d56e7e6f5d51a8229ab7e37f03464d470727"],
+        ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
+        ["for ignoring trailing comma", "-"]
     ]
 }
