@@ -121,6 +121,16 @@ assert SI.get_dimension_system().is_dimensionless(dim)
 buggy_expr = 100 + exp(expr)
 print(SI._collect_factor_and_dimension(buggy_expr))
 """,
+        'scikit-learn__scikit-learn-13142': r"""
+import numpy as np
+from sklearn.mixture import GaussianMixture
+from sklearn.utils.testing import assert_array_equal
+X = np.random.randn(1000, 5)
+gm = GaussianMixture(n_components=5, n_init=5)
+c1 = gm.fit_predict(X)
+c2 = gm.predict(X)
+assert_array_equal(c1, c2)
+""",
     }
     return test_codes.get(instance_id, '')
 
