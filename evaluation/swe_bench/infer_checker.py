@@ -19,8 +19,6 @@ def check_if_resolved():
     if toml_data['selected_ids'][0] in resolved_instances:
         print('already resolved')
         exit(0)
-    else:
-        print('not resolved')
 
 
 if __name__ == '__main__':
