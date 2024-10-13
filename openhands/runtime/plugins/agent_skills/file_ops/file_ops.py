@@ -1077,8 +1077,12 @@ __all__ = [
     'custom_import',
 ]
 
-if os.environ.get('CST_ENABLED') == '1':
+try:
+    from .cst_ops import add_param_to_init_in_subclass  # noqa
+
     __all__.append('add_param_to_init_in_subclass')
+except ImportError:
+    print('libcst not installed')
 
 if __name__ == '__main__':
     full_content = """
