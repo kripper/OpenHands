@@ -327,8 +327,10 @@ create_file('/tmp/test_task.py', FILE_CONTENT, overwrite=True)
 
     # set in ipy
     code = """
-import os
+import os,sys
 os.environ['SWE_BENCH'] = '1'
+sys.modules['builtins'].__import__ = custom_import  # type: ignore
+
 """
     action = IPythonRunCellAction(code)
     logger.info(action, extra={'msg_type': 'ACTION'})
