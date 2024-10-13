@@ -305,7 +305,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                             {'role': 'assistant', 'content': message_back}
                         )
                         self_analyse_question = (
-                            'If the above approach is not wrong, just reply yes.'
+                            'If the above approach is wrong, just reply yes.'
                         )
                         kwargs2['messages'].append(
                             {'role': 'user', 'content': self_analyse_question}
@@ -316,10 +316,24 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         self_analyse_response_content = self_analyse_response[
                             'choices'
                         ][0]['message']['content'].strip()
-                        if self_analyse_response_content != 'yes':
+                        print(f'{self_analyse_response_content=}')
+                        if self_analyse_response_content == 'yes':
                             logger.info(
                                 f'Response is incorrect. {self_analyse_response_content}'
                             )
+                            new_messages = [
+                                {'role': 'assistant', 'content': message_back},
+                                {'role': 'user', 'content': self_analyse_question},
+                                {
+                                    'role': 'assistant',
+                                    'content': self_analyse_response_content,
+                                },
+                                {
+                                    'role': 'user',
+                                    'content': 'Then, please correctly respond.',
+                                },
+                            ]
+                            kwargs['messages'].extend(new_messages)
                             continue
                     if message_back and message_back != 'None':
                         if is_hallucination(message_back):
