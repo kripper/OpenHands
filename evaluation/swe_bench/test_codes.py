@@ -131,6 +131,20 @@ c1 = gm.fit_predict(X)
 c2 = gm.predict(X)
 assert_array_equal(c1, c2)
 """,
+        'scikit-learn__scikit-learn-14087': r"""
+import sys
+import sklearn
+from sklearn.linear_model import LogisticRegressionCV
+import numpy as np
+
+np.random.seed(29)
+X = np.random.normal(size=(1000, 3))
+beta = np.random.normal(size=3)
+intercept = np.random.normal(size=None)
+y = np.sign(intercept + X @ beta)
+
+LogisticRegressionCV(cv=5, solver='saga', tol=1e-2, refit=False).fit(X, y)
+""",
     }
     return test_codes.get(instance_id, '')
 
