@@ -292,6 +292,8 @@ class InitMethodModifier(cst.CSTTransformer):
             self.relevant_base_param = base_class_name and self.param_name in (
                 base_class_init_signature
             )
+            if self.relevant_base_param:
+                break
         if not self.relevant_base_param:
             print(
                 f"Parameter '{self.param_name}' not found in base class {base_class_name} __init__ signature ({', '.join(base_class_init_signature)})"
@@ -391,10 +393,9 @@ def add_param_to_init_in_subclass(
 
 
 if __name__ == '__main__':
-    # file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
     add_param_to_init_in_subclass(
-        r'C:\Users\smart\Desktop\GD\scikit-learn\sklearn\linear_model\ridge.py',
-        'RidgeClassifierCV',
-        'store_cv_values',
+        r'C:\Users\smart\Desktop\GD\scikit-learn\sklearn\ensemble\iforest.py',
+        'IsolationForest',
+        'warm_start',
         'False',
     )
