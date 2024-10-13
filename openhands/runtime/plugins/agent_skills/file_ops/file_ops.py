@@ -1014,6 +1014,7 @@ def custom_import(name, *args, **kwargs):
         'erfa',
         'sympy',
         'mpmath',
+        'sklearn',
     ]:
         print(
             f"Don't use {name} in Jupyter Notebook as file changes will not be reflected. Save the code to a Python file and test it in the terminal"
@@ -1075,7 +1076,7 @@ __all__ = [
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
-    'replace_full_file_content',
+    # 'replace_full_file_content',
     'find_file',
     'kill_port',
     'clean_workspace',
