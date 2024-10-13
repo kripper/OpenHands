@@ -32,8 +32,9 @@ import sys
 import tempfile
 import uuid
 
-# from .cst_ops import add_param_to_init_in_subclass
 from openhands.linter import DefaultLinter, LintResult
+
+from .cst_ops import add_param_to_init_in_subclass
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
@@ -1023,9 +1024,6 @@ def custom_import(name, *args, **kwargs):
     return original_import(name, *args, **kwargs)
 
 
-sys.modules['builtins'].__import__ = custom_import  # type: ignore
-
-
 def search_symbol(symbol_name, prefix):
     try:
         symbol_name = prefix + ' ' + symbol_name + '('
@@ -1072,7 +1070,7 @@ __all__ = [
     'find_and_replace',
     'delete_line',
     'delete_lines',
-    # 'add_param_to_init_in_subclass',
+    'add_param_to_init_in_subclass',
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
