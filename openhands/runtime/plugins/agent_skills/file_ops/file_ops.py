@@ -1008,15 +1008,14 @@ def custom_import(name, *args, **kwargs):
             "Don't run the Flask app in Jupyter Notebook. Save the code to a Python file and run it in the terminal in the background."
         )
         sys.exit(1)
-    if os.getenv('SWE_BENCH') == '1' and name in [
+    prohibited_packages = [
         'astropy',
-        'erfa',
         'sympy',
-        'mpmath',
         'sklearn',
-    ]:
+    ]
+    if os.getenv('SWE_BENCH') == '1' and any(p in name for p in prohibited_packages):
         print(
-            f"Don't use {name} in Jupyter Notebook as file changes will not be reflected. Save the code to a Python file and test it in the terminal"
+            f"Don't use {name.split('.')[0]} in Jupyter Notebook as file changes will not be reflected. Save the code to a Python file and test it in the terminal"
         )
         sys.exit(1)
     return original_import(name, *args, **kwargs)
