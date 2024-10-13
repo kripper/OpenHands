@@ -12,6 +12,10 @@ with open(r'evaluation\swe_bench\config.toml', 'r') as f:
 # print(config)
 # instance_id = 'astropy__astropy-14539'
 instance_id = config['selected_ids'][0]
+repo, issue_id = instance_id.rsplit('-', 1)
+repo = repo.replace('__', '/')
+url = f'https://github.com/{repo}/issues/{issue_id}'
+print(url)
 force = 0
 for _ in range(2):
     if not os.path.exists('./cache/filtered_data.pkl') or force:
