@@ -86,9 +86,19 @@ class BrowsingActionParserBrowseInteractive(ActionParser):
         msg_content = ''
         for sub_action in browser_actions.split('\n'):
             if 'send_msg_to_user(' in sub_action:
-                tree = ast.parse(sub_action)
-                args = tree.body[0].value.args  # type: ignore
-                msg_content = args[0].value
+                try:
+                    tree = ast.parse(sub_action)
+                    args = tree.body[0].value.args  # type: ignore
+                    msg_content = args[0].value
+                except SyntaxError:
+                    logger.error(f'Error parsing action: {sub_action}')
+                    # the syntax was not correct, but we can still try to get the message
+                    # e.g. send_msg_to_user("Hello, world!") or send_msg_to_user('Hello, world!'
+                    match = re.search(r'send_msg_to_user\((["\'])(.*?)\1\)', sub_action)
+                    if match:
+                        msg_content = match.group(2)
+                    else:
+                        msg_content = ''
 
         return BrowseInteractiveAction(
             browser_actions=browser_actions,

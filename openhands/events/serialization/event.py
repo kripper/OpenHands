@@ -21,15 +21,19 @@ TOP_KEYS = [
 ]
 UNDERSCORE_KEYS = ['id', 'timestamp', 'source', 'cause']
 
-DELETE_FROM_MEMORY_EXTRAS = {
+DELETE_FROM_TRAJECTORY_EXTRAS = {
     'screenshot',
     'axtree_txt',
     'open_pages_urls',
+    'dom_object',
+    'axtree_object',
     'active_page_index',
     'last_browser_action',
     'last_browser_action_error',
     'focused_element_bid',
 }
+
+DELETE_FROM_MEMORY_EXTRAS = DELETE_FROM_TRAJECTORY_EXTRAS | {'open_pages_urls'}
 
 
 def event_from_dict(data) -> 'Event':
@@ -82,6 +86,13 @@ def event_to_dict(event: 'Event') -> dict:
         pass
     else:
         raise ValueError(f'Event must be either action or observation. Got {event}')
+    return d
+
+
+def event_to_trajectory(event: 'Event') -> dict:
+    d = event_to_dict(event)
+    if 'extras' in d:
+        remove_fields(d['extras'], DELETE_FROM_TRAJECTORY_EXTRAS)
     return d
 
 
