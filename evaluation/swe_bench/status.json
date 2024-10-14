@@ -1,6 +1,6 @@
 {
     "resolved": [
-        ["astropy__astropy-12907","ran in gemini-1.5-pro-latest"],
+        ["astropy__astropy-12907","https://www.all-hands.dev/share?share_id=691fd73f531ecbd8162ad1fc6c286d33dfbb94d0b955f37f4b69d77f4aaff80a","gemini-1.5-pro-latest"],
         ["astropy__astropy-13236","https://www.all-hands.dev/share?share_id=f09c6292699398ace674feb91dc58e81c49fddedbbe1206a36b70ed3a660cf83"],
         ["astropy__astropy-14309","https://www.all-hands.dev/share?share_id=9d07b2aff05da39a8765152145aa260bf8e1e5bdfb829b99795decd62511600c"],
         ["astropy__astropy-14995","https://www.all-hands.dev/share?share_id=08bca0f5cd50a836e327c9e7537f66ead03b33a59cdf695bb68a3fe0ba09850e"],
