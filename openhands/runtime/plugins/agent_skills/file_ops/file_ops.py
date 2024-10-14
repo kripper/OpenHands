@@ -1057,8 +1057,8 @@ def search_class(class_name: str):
 __all__ = [
     'search_function',
     'search_class',
-    'search_in_dir',
-    'search_in_file',
+    # 'search_in_dir',
+    # 'search_in_file',
     'open_file',
     'goto_line',
     'scroll_down',
