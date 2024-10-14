@@ -393,7 +393,7 @@ def complete_runtime(
         if isinstance(obs, CmdOutputObservation):
             if obs.exit_code == 0:
                 git_patch = obs.content.strip()
-                ansi_color_escape = re.compile(r'\\u001b\[[0-9;]*m')
+                ansi_color_escape = re.compile(r'\x1b\[[0-9;]*m')
                 git_patch = ansi_color_escape.sub('', git_patch)
                 break
             else:
