@@ -34,11 +34,33 @@ def flake_lint(filepath: str) -> list[LintResult]:
     if not cmd_outputs:
         return results
     for line in cmd_outputs.splitlines():
-        parts = line.split(':')
-        if len(parts) >= 4:
+        parts = line.split(':', 3)
+        if len(parts) == 4:
             _msg = parts[3].strip()
-            if len(parts) > 4:
-                _msg += ': ' + parts[4].strip()
+            results.append(
+                LintResult(
+                    file=filepath,
+                    line=int(parts[1]),
+                    column=int(parts[2]),
+                    message=_msg,
+                )
+            )
+    return results
+
+
+def pylint(filepath: str) -> list[LintResult]:
+    pylint_cmd = f'pylint --errors-only {filepath}'
+    try:
+        cmd_outputs = run_cmd(pylint_cmd)
+    except FileNotFoundError:
+        return []
+    results: list[LintResult] = []
+    if not cmd_outputs:
+        return results
+    for line in cmd_outputs.splitlines():
+        parts = line.split(':', 3)
+        if len(parts) == 4:
+            _msg = parts[3].strip()
             results.append(
                 LintResult(
                     file=filepath,
@@ -59,6 +81,8 @@ class PythonLinter(BaseLinter):
         error = flake_lint(file_path)
         if not error:
             error = python_compile_lint(file_path)
+        if not error:
+            error = pylint(file_path)
         return error
 
     def compile_lint(self, file_path: str, code: str) -> List[LintResult]:
@@ -75,3 +99,7 @@ class PythonLinter(BaseLinter):
                     rule='SyntaxError',
                 )
             ]
+
+
+if __name__ == '__main__':
+    print(pylint('/mnt/c/Users/smart/Desktop/tmp/p.py'))
