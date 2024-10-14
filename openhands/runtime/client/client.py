@@ -658,10 +658,12 @@ class RuntimeClient:
                 'Note: you may need to restart the kernel to use updated packages.'
                 in output
             ):
-                parsed_output += await self.restart_kernel()
+                # parsed_output += await self.restart_kernel()
+                pass
             else:
                 # restart kernel if installed via bash too
-                await self.restart_kernel()
+                # await self.restart_kernel()
+                pass
         else:
             package_names = package_names.split()
             if all(
