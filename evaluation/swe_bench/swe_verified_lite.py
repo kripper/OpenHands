@@ -380,7 +380,7 @@ r = [
     'sympy__sympy-24066',
     'sympy__sympy-24213',
 ]
-print(len(r))
+# print(len(r))
 # load config.toml
 
 file = open('evaluation/swe_bench/config.toml', 'r')
