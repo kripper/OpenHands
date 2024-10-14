@@ -1078,9 +1078,10 @@ __all__ = [
 ]
 
 try:
-    from .cst_ops import add_param_to_init_in_subclass  # noqa
+    if os.environ.get('USER') == 'root':
+        from .cst_ops import add_param_to_init_in_subclass  # noqa
 
-    __all__.append('add_param_to_init_in_subclass')
+        __all__.append('add_param_to_init_in_subclass')
 except ImportError:
     print('libcst not installed')
 
