@@ -1,3 +1,5 @@
+import json
+
 import toml
 from pyperclip import copy
 
@@ -389,6 +391,14 @@ r = sorted(r)
 
 idx = r.index(instance)
 print(r[idx + 1])
-
-
 copy(r[idx + 1])
+
+if 0:
+    status_path = 'evaluation/swe_bench/status.json'
+
+    with open(status_path, 'r') as f:
+        data = json.load(f)
+
+    resolved_instances = [i[0] for i in data['resolved']][:-1]
+
+    print(set(resolved_instances) - set(r))
