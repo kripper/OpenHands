@@ -15,7 +15,8 @@ with warnings.catch_warnings():
 from litellm import ModelInfo, PromptTokensDetails
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
-from litellm.caching import Cache
+
+# from litellm.caching import Cache
 from litellm.exceptions import (
     APIConnectionError,
     APIError,
@@ -87,8 +88,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         self.reload_counter = 0
         self.api_idx = 0
 
-        if self.config.enable_cache:
-            litellm.cache = Cache()
+        # if self.config.enable_cache:
+        #     litellm.cache = Cache()
 
         # list of LLM completions (for logging purposes). Each completion is a dict with the following keys:
         # - 'messages': list of messages
