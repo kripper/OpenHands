@@ -1,3 +1,4 @@
+from openhands.core.logger import openhands_logger as logger
 from openhands.runtime.e2b.sandbox import E2BBox
 
 
@@ -19,6 +20,11 @@ def get_runtime_cls(name: str):
         from openhands.runtime.ec2.runtime import EC2Runtime
 
         return EC2Runtime
+    elif name == 'modal':
+        logger.info('Using ModalRuntime')
+        from openhands.runtime.modal.runtime import ModalRuntime
+
+        return ModalRuntime
     else:
         raise ValueError(f'Runtime {name} not supported')
 

@@ -46,6 +46,7 @@ from openhands.events.observation import (
     FileWriteObservation,
     Observation,
 )
+from openhands.events.observation.commands import IPythonRunCellObservation
 from openhands.events.serialization import event_from_dict, event_to_dict
 from openhands.runtime.browser import browse
 from openhands.runtime.browser.browser_env import BrowserEnv
@@ -612,12 +613,11 @@ class RuntimeClient:
         if 'jupyter' not in self.plugins:
             return
         _jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
-        logger.debug(
-            f"{self.pwd} != {getattr(self, '_jupyter_pwd', None)} -> reset Jupyter PWD"
-        )
+        jupyter_pwd = getattr(self, '_jupyter_pwd', None)
+        logger.debug(f'{self.pwd} != {jupyter_pwd} -> reset Jupyter PWD')
         reset_jupyter_pwd_code = f'import os; os.chdir("{self.pwd}")'
         _aux_action = IPythonRunCellAction(code=reset_jupyter_pwd_code)
-        _reset_obs = await _jupyter_plugin.run(_aux_action)
+        _reset_obs: IPythonRunCellObservation = await _jupyter_plugin.run(_aux_action)
         logger.debug(
             f'Changed working directory in IPython to: {self.pwd}. Output: {_reset_obs}'
         )
@@ -681,8 +681,10 @@ class RuntimeClient:
             _jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
             # This is used to make AgentSkills in Jupyter aware of the
             # current working directory in Bash
-            if self.pwd != getattr(self, '_jupyter_pwd', None):
+            jupyter_pwd = getattr(self, '_jupyter_pwd', None)
+            if self.pwd != jupyter_pwd:
                 await self.chdir()
+
             if action.code.startswith('%%writefile /tmp/test_task.py'):
                 obs: Observation = ErrorObservation(
                     "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
