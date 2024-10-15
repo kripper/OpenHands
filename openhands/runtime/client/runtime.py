@@ -170,7 +170,7 @@ class EventStreamRuntime(Runtime):
         except docker.errors.NotFound:
             self.is_initial_session = True
 
-        if self.is_initial_session or not attach_to_existing:
+        if self.is_initial_session:
             logger.info('Creating new Docker container')
             if self.runtime_container_image is None:
                 if self.base_container_image is None:
