@@ -8,7 +8,7 @@ import { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
 import { clearMessages } from "#/state/chatSlice";
 import { clearJupyter } from "#/state/jupyterSlice";
-import Session from "#/services/session";
+// import Session from "#/services/session";
 import { clearTerminal } from "#/state/commandSlice";
 import { clearCurentStep } from "#/state/agentSlice";
 import { useSocket } from "#/context/socket";

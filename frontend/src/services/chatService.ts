@@ -1,5 +1,5 @@
 import ActionType from "#/types/ActionType";
-import Session from "./session";
+// import Session from "./session";
 
 export function createChatMessage(
   message: string,
@@ -19,7 +19,7 @@ export function regenerateLastMessage(): void {
     args: {},
   };
   const eventString = JSON.stringify(event);
-  Session.send(eventString);
+  // Session.send(eventString);
 }
 
 export function sendJupyterCode(code: string): void {
@@ -28,5 +28,5 @@ export function sendJupyterCode(code: string): void {
     args: { code },
   };
   const eventString = JSON.stringify(event);
-  Session.send(eventString);
+  // Session.send(eventString);
 }
