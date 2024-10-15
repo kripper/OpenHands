@@ -147,8 +147,14 @@ LogisticRegressionCV(cv=5, solver='saga', tol=1e-2, refit=False).fit(X, y)
 """,
         'scikit-learn__scikit-learn-14983': r"""
 from sklearn.model_selection import RepeatedKFold, RepeatedStratifiedKFold
-assert repr(RepeatedKFold()) == 'RepeatedKFold(n_repeats=10, n_splits=5, random_state=None)'
-assert repr(RepeatedStratifiedKFold()) == 'RepeatedStratifiedKFold(n_repeats=10, n_splits=5, random_state=None)'
+cond = repr(RepeatedKFold()) == 'RepeatedKFold(n_repeats=10, n_splits=5, random_state=None)'
+if not cond:
+    print(repr(RepeatedKFold()))
+    assert repr(RepeatedKFold()) == 'RepeatedKFold(n_repeats=10, n_splits=5, random_state=None)'
+cond = repr(RepeatedStratifiedKFold()) == 'RepeatedStratifiedKFold(n_repeats=10, n_splits=5, random_state=None)'
+if not cond:
+    print(repr(RepeatedStratifiedKFold()))
+    assert repr(RepeatedStratifiedKFold()) == 'RepeatedStratifiedKFold(n_repeats=10, n_splits=5, random_state=None)'
 """,
     }
     return test_codes.get(instance_id, '')
