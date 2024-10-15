@@ -677,6 +677,14 @@ def _edit_file_impl(
 def find_and_replace(file_name: str, find_string: str, replace_string: str) -> None:
     """Find and replace a string in a file."""
     # simple method:
+    if find_string == '':
+        _output_error('`find_string` must not be empty.')
+        return
+
+    if find_string == replace_string:
+        _output_error('`find_string` and `replace_string` must be different.')
+        return
+
     if is_test_file(file_name):
         return
     with open(file_name, 'r') as file:
@@ -688,11 +696,6 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     print(f'[File updated successfully with {occurrences} occurrences replaced]')
     return
     # # FIXME: support replacing *all* occurrences
-    # if find_string.strip() == '':
-    #     raise ValueError('`find_string` must not be empty.')
-
-    # if find_string == replace_string:
-    #     raise ValueError('`find_string` and `replace_string` must be different.')
 
     # if not os.path.isfile(file_name):
     #     _output_error(f'File {file_name} not found.')
