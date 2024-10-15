@@ -2,7 +2,6 @@ import os
 import tempfile
 import threading
 import time
-import uuid
 from typing import Callable
 from zipfile import ZipFile
 
@@ -90,11 +89,12 @@ class LogBuffer:
             logger.error(f'Error streaming docker logs: {e}')
 
     def __del__(self):
-        if self.log_stream_thread.is_alive():
-            logger.warn(
-                "LogBuffer was not properly closed. Use 'log_buffer.close()' for clean shutdown."
-            )
-            self.close(timeout=5)
+        pass
+        # if self.log_stream_thread.is_alive():
+        #     logger.warn(
+        #         "LogBuffer was not properly closed. Use 'log_buffer.close()' for clean shutdown."
+        #     )
+        #     self.close(timeout=5)
 
     def close(self, timeout: float = 5.0):
         self._stop_event.set()
@@ -162,7 +162,7 @@ class EventStreamRuntime(Runtime):
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
         else:
-            self.instance_id = (sid or '') + str(uuid.uuid4())
+            self.instance_id = sid
             self._container_port = find_available_tcp_port()
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
         self.session = requests.Session()
@@ -172,7 +172,7 @@ class EventStreamRuntime(Runtime):
         self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
         self.runtime_container_image = self.config.sandbox.runtime_container_image
-        self.container_name = self.container_name_prefix + sid
+        self.container_name = self.container_name_prefix + self.instance_id
         self.container = None
         self.action_semaphore = threading.Semaphore(1)  # Ensure one action at a time
 
@@ -219,7 +219,7 @@ class EventStreamRuntime(Runtime):
             self._attach_to_container()
             self.start_docker_container()
 
-        self.log_buffer = LogBuffer(self.container)
+        # self.log_buffer = LogBuffer(self.container)
         # Will initialize both the event stream and the env vars
         self.init_base_runtime(
             config,
@@ -361,7 +361,6 @@ class EventStreamRuntime(Runtime):
         container = self.docker_client.containers.get(self.container_name)
         self.log_buffer = LogBuffer(container)
         self.container = container
-        self._container_port = 0
         for port in container.attrs['NetworkSettings']['Ports']:
             self._container_port = int(port.split('/')[0])
             break
