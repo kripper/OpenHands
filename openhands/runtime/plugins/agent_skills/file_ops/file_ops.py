@@ -1034,9 +1034,11 @@ def search_symbol(symbol_name, prefix):
             check=True,
         )
         print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"Symbol '{symbol_name}' not found in the repository.")
-        print(e.stderr)
+        return True
+    except subprocess.CalledProcessError:
+        # print(f"Symbol '{symbol_name}' not found in the repository.")
+        # print(e.stderr)
+        return False
 
 
 def search_function(function_name: str):
@@ -1045,7 +1047,8 @@ def search_function(function_name: str):
     Args:
         function_name: str: The name of the function to search for.
     """
-    search_symbol(function_name, 'def')
+    if not search_symbol(function_name, 'def'):
+        print(f"Function '{function_name}' not found in the repository.")
 
 
 def search_class(class_name: str):
@@ -1054,7 +1057,8 @@ def search_class(class_name: str):
     Args:
         class_name: str: The name of the class to search for.
     """
-    search_symbol(class_name, 'class')
+    if not search_symbol(class_name, 'class'):
+        print(f"Class '{class_name}' not found in the repository.")
 
 
 __all__ = [
