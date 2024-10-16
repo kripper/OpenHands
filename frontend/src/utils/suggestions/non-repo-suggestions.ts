@@ -1,6 +1,6 @@
 const KEY_1 = "Build an app to view pull requests";
-const VALUE_1 = `I want to create a React app to view all of the open pull 
-requests that exist on all of my team's github repos. Here 
+const VALUE_1 = `I want to create a React app to view all of the open pull
+requests that exist on all of my team's github repos. Here
 are some details:
 
 1. Please initialize the app using vite and react-ts.
@@ -28,10 +28,8 @@ This should be a client-only app with no backend. The list should persist in loc
 
 Please add tests for all of the above and make sure they pass`;
 
-const KEY_3 = "Write a bash script that shows the top story on Hacker News";
-const VALUE_3 = `Please write a bash script which displays the top story on Hacker News. It should show the title, the link, and the number of points.
-
-The script should only use tools that are widely available on unix systems, like curl and grep.`;
+const KEY_3 = "Write a Python script that shows the top story on Hacker News";
+const VALUE_3 = `Please write a Python script which displays the top story on Hacker News. It should show the title, the link, and the number of points.`;
 
 export const NON_REPO_SUGGESTIONS: Record<string, string> = {
   [KEY_1]: VALUE_1,
