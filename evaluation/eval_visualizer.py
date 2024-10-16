@@ -87,7 +87,7 @@ for idx, item in enumerate(history):
         raise e
 
 step_count = 0
-for idx, item in enumerate(history[:-1]):
+for idx, item in enumerate(history[:]):
     if item.get('log'):
         item = {'step': item['log'].split()[-1]}
         history[idx] = item
