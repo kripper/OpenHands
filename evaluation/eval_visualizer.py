@@ -91,6 +91,9 @@ for idx, item in enumerate(history[:-1]):
     if item.get('log'):
         item = {'step': item['log'].split()[-1]}
         history[idx] = item
+    if item.get('observation') == 'error':
+        item = {'error': item['content']}
+        history[idx] = item
 
 
 json_data['trajectory'] = history
