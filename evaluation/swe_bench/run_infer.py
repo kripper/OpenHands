@@ -270,7 +270,7 @@ def initialize_runtime(
         f'Failed to cd to /testbed: {obs.content}',
     )
 
-    action = CmdRunAction(command='git reset --hard')
+    action = CmdRunAction(command=f'git reset --hard {instance["base_commit"]}')
     action.timeout = 600
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
