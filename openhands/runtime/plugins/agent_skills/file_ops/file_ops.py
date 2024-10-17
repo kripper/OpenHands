@@ -26,6 +26,7 @@ Functions:
 """
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -693,7 +694,10 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     file_content = file_content.replace(find_string, replace_string)
     with open(file_name, 'w') as file:
         file.write(file_content)
-    print(f'[File updated successfully with {occurrences} occurrences replaced]')
+    if occurrences > 0:
+        print(f'[File updated successfully with {occurrences} occurrences replaced]')
+    else:
+        print(f'[No matches found for "{find_string}" in {file_name}]')
     return
     # # FIXME: support replacing *all* occurrences
 
@@ -750,6 +754,24 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
     # # TODO: automatically tries to fix linter error (maybe involve some static analysis tools on the location near the edit to figure out indentation)
     # if ret_str is not None:
     #     print(ret_str)
+
+
+def find_and_replace_regex(file_name: str, pattern: str, replacement: str) -> None:
+    """
+    Find and replace a string in a file using regex pattern.
+    """
+    with open(file_name, 'r+') as f:
+        content = f.read()
+        occurrences = len(re.findall(pattern, content))
+        new_content = re.sub(pattern, replacement, content)
+        f.seek(0)
+        f.write(new_content)
+        f.truncate()
+    if occurrences > 0:
+        print(f'[File updated successfully with {occurrences} occurrences replaced]')
+    else:
+        print(f'[No matches found for "{pattern}" in {file_name}]')
+    return
 
 
 def insert_content_before_line(file_name: str, line_number: int, content: str) -> None:
