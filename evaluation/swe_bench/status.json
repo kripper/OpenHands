@@ -22,6 +22,7 @@
         ["django__django-11999","https://www.all-hands.dev/share?share_id=f86858fac1b15d3070bfa41ec58d7a7e550b157893bb6a909ad72fed23dcd4d0"],
         ["scikit-learn__scikit-learn-14983","https://www.all-hands.dev/share?share_id=e06a53d482736ea32998ed726926f7e8ac4e5df72d7a097616727373abe254c6","For wrong solution https://www.all-hands.dev/share?share_id=3061df7b29e1e81a861367f49f27478fc8f0dc28f183c61d8d30dedbb6f44332"],
         ["django__django-13028","https://www.all-hands.dev/share?share_id=77aebf1a0a3b59611058252568493549eca231844c14cb2e200eafed730f1386"],
+        ["django__django-13315","https://www.all-hands.dev/share?share_id=c866fd0520ac4bff9d85812403522cdd04074eeae3008e61b12c0acf4bba097f"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
