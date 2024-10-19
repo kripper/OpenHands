@@ -884,6 +884,22 @@ def replace_line_content(file_name: str, line_number: int, new_content: str) -> 
         print(ret_str)
 
 
+def replace_lines_content(
+    file_name: str, start_line_number: int, end_line_number: int, new_content: str
+) -> None:
+    """Replace the content of the lines from the start line number to the end line number (inclusive) in a file."""
+    ret_str = _edit_file_impl(
+        file_name,
+        start=start_line_number,
+        end=end_line_number,
+        content=new_content,
+        is_insert=False,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
+
+
 def append_file(file_name: str, content: str) -> None:
     """Append content to the given file.
     It appends text `content` to the end of the specified file, ideal after a `create_file`!
@@ -1117,6 +1133,7 @@ __all__ = [
     'insert_content_before_line',
     'append_file',
     'replace_line_content',
+    'replace_lines_content',
     # 'replace_full_file_content',
     'find_file',
     'kill_port',
