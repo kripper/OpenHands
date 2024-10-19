@@ -870,6 +870,20 @@ def replace_full_file_content(file_name: str, new_content: str) -> None:
         print(ret_str)
 
 
+def replace_line_content(file_name: str, line_number: int, new_content: str) -> None:
+    """Replace the content of the given line number in a file."""
+    ret_str = _edit_file_impl(
+        file_name,
+        start=line_number,
+        end=line_number,
+        content=new_content,
+        is_insert=False,
+        is_append=False,
+    )
+    if ret_str is not None:
+        print(ret_str)
+
+
 def append_file(file_name: str, content: str) -> None:
     """Append content to the given file.
     It appends text `content` to the end of the specified file, ideal after a `create_file`!
@@ -1102,6 +1116,7 @@ __all__ = [
     'insert_content_after_line',
     'insert_content_before_line',
     'append_file',
+    'replace_line_content',
     # 'replace_full_file_content',
     'find_file',
     'kill_port',
@@ -1127,4 +1142,4 @@ print("hello world")
     file_name = r'C:\Users\smart\Desktop\GD\astropy\astropy\io\ascii\rst.py'
     # add_param_to_init_in_subclass(file_name, 'RST', 'header_rows')
     new_content = 'dummy'
-    replace_full_file_content(file_name, new_content)
+    replace_line_content(file_name, 1, new_content)
