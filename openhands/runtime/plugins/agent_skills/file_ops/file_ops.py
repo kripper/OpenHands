@@ -92,6 +92,8 @@ def _check_current_file(file_path: str | None = None) -> bool:
         file_path = CURRENT_FILE
     if not file_path or not os.path.isfile(file_path):
         return _output_error('No file open. Use the open_file function first.')
+    if not os.path.exists(file_path):
+        return _output_error(f'File {file_path} not found.')
     return True
 
 
@@ -122,7 +124,8 @@ def _print_window(
     file_path, targeted_line, window, return_str=False, ignore_window=False
 ):
     global CURRENT_LINE
-    _check_current_file(file_path)
+    if not _check_current_file(file_path):
+        return
     with open(file_path) as file:
         content = file.read()
 
