@@ -272,7 +272,7 @@ class CodeActAgent(Agent):
             ),
         ]
 
-        if len(state.history.get_events_as_list()) == 1:
+        if len(state.history.get_events_as_list()) == 1 and config.run_as_openhands:
             workspace_contents = ', '.join(os.listdir(config.workspace_base))
             if workspace_contents:
                 messages.append(
