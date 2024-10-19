@@ -85,7 +85,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             f'{instance.problem_statement}\n\n'
             'The current working directory is /testbed.\n'
             'Do not provide suggestions or workarounds. Directly fix the issue by modifying the source code.\n'
-            # 'Plan:\n1) Search for the relevant files to modify using search_function and search_class agent skills instead of modifying the test files itself;\n'
+            'Plan:\n1) Search for the relevant files to modify using search_function and search_class agent skills instead of modifying the test files itself;\n'
             # "Please don't blabber\n"
         )
         if (
