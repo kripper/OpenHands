@@ -1078,9 +1078,9 @@ def custom_import(name, *args, **kwargs):
     return original_import(name, *args, **kwargs)
 
 
-def search_symbol(symbol_name, prefix):
+def search_symbol(symbol_name, prefix='', suffix=''):
     try:
-        symbol_name = prefix + ' ' + symbol_name + '('
+        symbol_name = prefix + ' ' + symbol_name + suffix
         result = subprocess.run(
             ['git', 'grep', '-n', symbol_name],
             capture_output=True,
@@ -1101,7 +1101,7 @@ def search_function(function_name: str):
     Args:
         function_name: str: The name of the function to search for.
     """
-    if not search_symbol(function_name, 'def'):
+    if not search_symbol(function_name, 'def', '('):
         print(f"Function '{function_name}' not found in the repository.")
 
 
@@ -1111,7 +1111,7 @@ def search_class(class_name: str):
     Args:
         class_name: str: The name of the class to search for.
     """
-    if not search_symbol(class_name, 'class'):
+    if not search_symbol(class_name, 'class', '[:(]'):
         print(f"Class '{class_name}' not found in the repository.")
 
 
