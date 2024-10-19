@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from openhands.core.logger import openhands_logger as logger
@@ -49,10 +50,17 @@ def flake_lint(filepath: str) -> list[LintResult]:
     return results
 
 
-def pylint(filepath: str) -> list[LintResult]:
-    pylint_cmd = f'pylint --errors-only {filepath}'
+def lint(filepath: str, linter: str) -> list[LintResult]:
+    if linter == 'pylint':
+        lint_cmd = f'pylint --errors-only {filepath}'
+    elif linter == 'mypy':
+        lint_cmd = f'mypy {filepath}'
+    elif linter == 'vulture':
+        lint_cmd = f'vulture {filepath}'
+    else:
+        raise ValueError(f'Unknown linter: {linter}')
     try:
-        cmd_outputs = run_cmd(pylint_cmd)
+        cmd_outputs = run_cmd(lint_cmd)
     except FileNotFoundError:
         return []
     results: list[LintResult] = []
@@ -101,8 +109,12 @@ class PythonLinter(BaseLinter):
         error = flake_lint(file_path)
         if not error:
             error = python_compile_lint(file_path)
-        if not error:
-            error = pylint(file_path)
+        if not error and os.environ.get('PYLINT'):
+            error = lint(file_path, 'pylint')
+        if not error and os.environ.get('MYPY'):
+            error = lint(file_path, 'mypy')
+        if not error and os.environ.get('VULTURE'):
+            error = lint(file_path, 'vulture')
         return error
 
     def compile_lint(self, file_path: str, code: str) -> List[LintResult]:
@@ -122,4 +134,4 @@ class PythonLinter(BaseLinter):
 
 
 if __name__ == '__main__':
-    print(pylint('/mnt/c/Users/smart/Desktop/tmp/p.py'))
+    print(lint('/mnt/c/Users/smart/Desktop/tmp/p.py', 'pylint'))
