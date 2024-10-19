@@ -1013,7 +1013,6 @@ def find_file(file_name: str, dir_path: str = './') -> None:
         print(f'[Found {len(matches)} matches for "{file_name}" in {dir_path}]')
         for match in matches:
             print(f'{match}')
-        print(f'[End of matches for "{file_name}" in {dir_path}]')
     else:
         print(f'[No matches found for "{file_name}" in {dir_path}]')
 
