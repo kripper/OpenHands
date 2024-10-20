@@ -80,12 +80,12 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     else:
         # Testing general agents
         instruction = (
-            f'Please resolve the following issue for the repository, which is already set up, and the source code is available in the /testbed directory, to which you have access.\n'
+            f'Please resolve the following Github issue for the repository, which is already set up, and the source code is available in the /testbed directory, to which you have access.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
             'The current working directory is /testbed.\n'
             'Do not provide suggestions or workarounds. Directly fix the issue by modifying the source code.\n'
-            'Plan:\n1) Search for the relevant files to modify using search_function and search_class agent skills instead of modifying the test files itself;\n'
+            'Plan:\n1) Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n'
             # "Please don't blabber\n"
         )
         if (
