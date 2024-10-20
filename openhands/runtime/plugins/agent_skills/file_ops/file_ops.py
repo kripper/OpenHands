@@ -214,7 +214,7 @@ def open_file(
     output += _print_window(
         CURRENT_FILE,
         CURRENT_LINE,
-        _clamp(context_lines, 1, 300),
+        _clamp(context_lines, 1, total_lines),
         return_str=True,
         ignore_window=True,
     )
