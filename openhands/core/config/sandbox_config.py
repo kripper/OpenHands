@@ -33,6 +33,7 @@ class SandboxConfig:
         persist_sandbox: Whether to persist the sandbox after the task is done.
         fast_boot: Whether to use a fast boot mode for the sandbox.
         port: The port to use for the sandbox.
+        platform: The platform on which the image should be built. Default is None.
     """
 
     remote_runtime_api_url: str = 'http://localhost:8000'
@@ -55,6 +56,7 @@ class SandboxConfig:
     persist_sandbox: bool = True
     fast_boot: bool = True
     port: int = 63710
+    platform: str | None = None
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""

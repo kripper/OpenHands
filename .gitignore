@@ -178,7 +178,6 @@ evaluation/toolqa/data
 # frontend
 
 # dependencies
-frontend/node_modules
 frontend/.pnp
 frontend/bun.lockb
 frontend/yarn.lock
@@ -237,3 +236,4 @@ containers/runtime/code
 api_keys.py
 evaluation/swe_bench/gru_traj.json
 llm_debugger.py
+**/node_modules/
