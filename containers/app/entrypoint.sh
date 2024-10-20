@@ -49,7 +49,7 @@ else
     echo "Group with id $DOCKER_SOCKET_GID already exists"
   else
     echo "Creating group with id $DOCKER_SOCKET_GID"
-    groupadd -g $DOCKER_SOCKET_GID docker
+    groupadd -g $DOCKER_SOCKET_GID openhands-docker
   fi
 
   mkdir -p /home/enduser/.cache/huggingface/hub/
