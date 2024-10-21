@@ -50,6 +50,4 @@ print(a)
 if 1:
     print('-' * 100)
     print(['test_patch'])
-    print(ins['FAIL_TO_PASS'][0])
-    print('pass to pass')
-    print(ins['PASS_TO_PASS'][0])
+    print(ins['test_patch'][0])
