@@ -329,7 +329,7 @@ gru_resolved = [
 ]
 
 # intersect
-
+# print(len(swe_verified_lite))
 r = set(swe_verified_lite) & set(gru_resolved)
 r = [
     'astropy__astropy-14995',
@@ -388,17 +388,29 @@ config = toml.load(file)
 instance = config['selected_ids'][0]
 
 r = sorted(r)
+# r= ['django__django-12308', 'django__django-12708', 'django__django-17087', 'matplotlib__matplotlib-24970', 'matplotlib__matplotlib-25332', 'pytest-dev__pytest-7432',  'sphinx-doc__sphinx-8595', 'sphinx-doc__sphinx-8721', 'sympy__sympy-21379', 'sympy__sympy-22714', 'sympy__sympy-24066']
 
 idx = r.index(instance)
-print(r[idx + 1])
-copy(r[idx + 1])
+new_instance = r[idx + 1]
+print(new_instance)
+copy(new_instance)
 
-if 0:
+if 1:
     status_path = 'evaluation/swe_bench/status.json'
 
     with open(status_path, 'r') as f:
         data = json.load(f)
 
     resolved_instances = [i[0] for i in data['resolved']][:-1]
+    unresolved_instances = [i[0] for i in data['unresolved']][:-1]
+    # l = (set(resolved_instances) - set(r))
+    # print(len(l))
+    # print(len(r))
+    if 0:
+        new_set = set(r) - set(resolved_instances)
+        new_list = list(sorted(new_set))
+        print(new_list)
+        print(len(new_list))
 
-    print(set(resolved_instances) - set(r))
+    if new_instance in unresolved_instances:
+        print('new instance is unresolved')
