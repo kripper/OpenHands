@@ -32,8 +32,8 @@ from openhands.core.exceptions import (
 )
 from openhands.core.logger import LOG_DIR
 from openhands.core.logger import openhands_logger as logger
-from openhands.core.metrics import Metrics
 from openhands.llm.debug_mixin import DebugMixin
+from openhands.llm.metrics import Metrics
 from openhands.llm.retry_mixin import RetryMixin
 
 __all__ = ['LLM']
@@ -81,7 +81,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             config: The LLM configuration.
             metrics: The metrics to use.
         """
-        self.metrics: Metrics = metrics if metrics is not None else Metrics()
+        self.metrics: Metrics = (
+            metrics if metrics is not None else Metrics(model_name=config.model)
+        )
         self.cost_metric_supported: bool = True
         self.config: LLMConfig = copy.deepcopy(config)
         self.log_prompt_once = True
@@ -548,7 +550,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         return str(self)
 
     def reset(self):
-        self.metrics = Metrics()
+        self.metrics.reset()
         self.llm_completions = []
 
     def is_over_token_limit(self, messages: list[Message]) -> bool:

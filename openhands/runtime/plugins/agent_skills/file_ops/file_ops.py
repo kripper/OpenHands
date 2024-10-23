@@ -8,9 +8,6 @@ Functions:
 - goto_line(line_number: int): Moves the window to show the specified line number.
 - scroll_down(): Moves the window down by the number of lines specified in WINDOW.
 - scroll_up(): Moves the window up by the number of lines specified in WINDOW.
-
-- create_file(filename: str, content: str = ''): Creates a new file with the given name.
-
 - search_dir(search_term: str, dir_path: str = './'): Searches for a term in all files in the specified directory.
 - search_file(search_term: str, file_path: str | None = None): Searches for a term in the specified file or the currently open file.
 

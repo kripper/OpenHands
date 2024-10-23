@@ -138,7 +138,6 @@ def get_config(
     config = AppConfig(
         default_agent=metadata.agent_class,
         run_as_openhands=False,
-        max_budget_per_task=4,
         max_iterations=metadata.max_iterations,
         runtime=os.environ.get('RUNTIME', 'eventstream'),
         sandbox=SandboxConfig(
@@ -184,7 +183,7 @@ def initialize_runtime(
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert_and_raise(
-        obs.exit_code == 0, f'Failed to export SWE_INSTANCE_ID: {obs.content}'
+        obs.exit_code == 0, f'Failed to export SWE_INSTANCE_ID: {str(obs)}'
     )
 
     action = CmdRunAction(command="""export USER=$(whoami); echo USER=${USER} """)
@@ -192,7 +191,7 @@ def initialize_runtime(
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert_and_raise(obs.exit_code == 0, f'Failed to export USER: {obs.content}')
+    assert_and_raise(obs.exit_code == 0, f'Failed to export USER: {str(obs)}')
 
     if USE_INSTANCE_IMAGE:
         # inject the init script
@@ -206,7 +205,7 @@ def initialize_runtime(
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         assert_and_raise(
             obs.exit_code == 0,
-            f'Failed to create /swe_util/eval_data/instances: {obs.content}',
+            f'Failed to create /swe_util/eval_data/instances: {str(obs)}',
         )
 
         swe_instance_json_name = 'swe-bench-instance.json'
@@ -233,16 +232,16 @@ def initialize_runtime(
         logger.info(action, extra={'msg_type': 'ACTION'})
         obs = runtime.run_action(action)
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-        assert_and_raise(obs.exit_code == 0, f'Failed to cat ~/.bashrc: {obs.content}')
+        assert_and_raise(obs.exit_code == 0, f'Failed to cat ~/.bashrc: {str(obs)}')
 
         action = CmdRunAction(command='source ~/.bashrc')
         action.timeout = 600
         logger.info(action, extra={'msg_type': 'ACTION'})
         obs = runtime.run_action(action)
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-        assert_and_raise(
-            obs.exit_code == 0, f'Failed to source ~/.bashrc: {obs.content}'
-        )
+        if isinstance(obs, ErrorObservation):
+            logger.error(f'Failed to source ~/.bashrc: {str(obs)}')
+        assert_and_raise(obs.exit_code == 0, f'Failed to source ~/.bashrc: {str(obs)}')
 
         action = CmdRunAction(command='source /swe_util/instance_swe_entry.sh')
         action.timeout = 3600
@@ -251,7 +250,7 @@ def initialize_runtime(
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         assert_and_raise(
             obs.exit_code == 0,
-            f'Failed to source /swe_util/instance_swe_entry.sh: {obs.content}',
+            f'Failed to source /swe_util/instance_swe_entry.sh: {str(obs)}',
         )
     else:
         action = CmdRunAction(command='source /swe_util/swe_entry.sh')
@@ -261,7 +260,7 @@ def initialize_runtime(
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         assert_and_raise(
             obs.exit_code == 0,
-            f'Failed to source /swe_util/swe_entry.sh: {obs.content}',
+            f'Failed to source /swe_util/swe_entry.sh: {str(obs)}',
         )
 
     action = CmdRunAction(command='cd /testbed')
@@ -279,7 +278,7 @@ def initialize_runtime(
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert_and_raise(obs.exit_code == 0, f'Failed to git reset --hard: {obs.content}')
+    assert_and_raise(obs.exit_code == 0, f'Failed to git reset --hard: {str(obs)}')
 
     action = CmdRunAction(
         command='for remote_name in $(git remote); do git remote remove "${remote_name}"; done'
@@ -288,7 +287,7 @@ def initialize_runtime(
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert_and_raise(obs.exit_code == 0, f'Failed to remove git remotes: {obs.content}')
+    assert_and_raise(obs.exit_code == 0, f'Failed to remove git remotes: {str(obs)}')
 
     # delete pycache
     action = CmdRunAction(command='rm -rf __pycache__')
@@ -370,7 +369,7 @@ def complete_runtime(
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert_and_raise(
         obs.exit_code == 0,
-        f'Failed to git config --global core.pager "": {obs.content}',
+        f'Failed to git config --global core.pager "": {str(obs)}',
     )
 
     action = CmdRunAction(command='git add -A')
@@ -378,7 +377,7 @@ def complete_runtime(
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert_and_raise(obs.exit_code == 0, f'Failed to git add -A: {obs.content}')
+    assert_and_raise(obs.exit_code == 0, f'Failed to git add -A: {str(obs)}')
 
     n_retries = 0
     git_patch = None
@@ -406,7 +405,9 @@ def complete_runtime(
             logger.error(f'Error occurred: {obs.content}. Retrying...')
             sleep_if_should_continue(10)
         else:
-            assert_and_raise(False, f'Unexpected observation type: {type(obs)}')
+            assert_and_raise(False, f'Unexpected observation type: {str(obs)}')
+
+    assert_and_raise(git_patch is not None, 'Failed to get git diff (None)')
 
     logger.info('-' * 30)
     logger.info('END Runtime Completion Fn')
@@ -545,10 +546,6 @@ if __name__ == '__main__':
 
     details = {}
     _agent_cls = openhands.agenthub.Agent.get_cls(args.agent_cls)
-    if hasattr(_agent_cls, 'system_message'):
-        details['system_message'] = _agent_cls.system_message
-    if hasattr(_agent_cls, 'in_context_example'):
-        details['in_context_example'] = _agent_cls.in_context_example
 
     dataset_descrption = (
         args.dataset.replace('/', '__') + '-' + args.split.replace('/', '__')
