@@ -392,8 +392,7 @@ r = sorted(r)
 
 idx = r.index(instance)
 new_instance = r[idx + 1]
-print(new_instance)
-copy(new_instance)
+
 
 if 1:
     status_path = 'evaluation/swe_bench/status.json'
@@ -414,3 +413,8 @@ if 1:
 
     if new_instance in unresolved_instances:
         print('new instance is unresolved')
+    if new_instance in resolved_instances:
+        print('new instance is already resolved')
+
+print(new_instance)
+copy(new_instance)
