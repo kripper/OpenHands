@@ -3,6 +3,8 @@ import copy
 import traceback
 from typing import Type
 
+import litellm
+
 from openhands.controller.agent import Agent
 from openhands.controller.state.state import State, TrafficControlState
 from openhands.controller.stuck import StuckDetector
@@ -144,10 +146,15 @@ class AgentController:
         - a user-friendly message, which will be shown in the chat box. This should not be a raw exception message.
         - an ErrorObservation that can be sent to the LLM by the user role, with the exception message, so it can self-correct next time.
         """
-        if exception:
-            message += f': {exception}'
         self.state.last_error = message
-        self.event_stream.add_event(ErrorObservation(message), EventSource.USER)
+        if exception:
+            self.state.last_error += f': {exception}'
+        detail = str(exception) if exception is not None else ''
+        if exception is not None and isinstance(exception, litellm.AuthenticationError):
+            detail = 'Please check your credentials. Is your API key correct?'
+        self.event_stream.add_event(
+            ErrorObservation(f'{message}:{detail}'), EventSource.USER
+        )
 
     async def start_step_loop(self):
         """The main loop for the agent's step-by-step execution."""
