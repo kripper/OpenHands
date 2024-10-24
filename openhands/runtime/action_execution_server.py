@@ -321,12 +321,15 @@ class ActionExecutor:
             matched is not None
         ), f'Failed to parse bash prompt: {ps1}. This should not happen.'
         other_info, username, hostname, working_dir = matched.groups()
+        other_info = other_info.strip()
+        if other_info:
+            other_info += '\n'
         working_dir = working_dir.rstrip()
         self.pwd = os.path.expanduser(working_dir)
 
         # re-assemble the prompt
         # ignore the hostname AND use 'openhands-workspace'
-        prompt = f'{other_info.strip()}\n{username}@openhands-workspace:{working_dir} '
+        prompt = f'{other_info}{username}@openhands-workspace:{working_dir} '
         if username == 'root':
             prompt += '#'
         else:
