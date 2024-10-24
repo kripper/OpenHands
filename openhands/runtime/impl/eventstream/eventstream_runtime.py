@@ -381,8 +381,8 @@ class EventStreamRuntime(Runtime):
         reraise=(ConnectionRefusedError,),
     )
     def _wait_until_alive(self):
-        if not (self.log_buffer and self.log_buffer.client_ready):
-            raise RuntimeError('Runtime client is not ready.')
+        # if not (self.log_buffer and self.log_buffer.client_ready):
+        #     raise RuntimeError('Runtime client is not ready.')
 
         response = send_request_with_retry(
             self.session,
