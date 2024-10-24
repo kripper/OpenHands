@@ -15,6 +15,9 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
 
  [gemini-1.5-flash-latest event history link](https://www.all-hands.dev/share?share_id=d5b2d7fd7b4eab01aac2281218b031ca819df68ac9ee01675fb5c2a2db8d60f5)
 
+ ID: `sympy__sympy-22714`
+ [openai/nvidia/llama-3.1-nemotron-70b-instruct](https://www.all-hands.dev/share?share_id=95f9ada5e76b767a07018497a412f876f5ffbe5debb578bcc72d52ab1036555f)
+
 Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_bench\status.json](evaluation/swe_bench/status.json)
 
 ### Kevin Changelogs:
