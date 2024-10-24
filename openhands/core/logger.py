@@ -70,10 +70,8 @@ class ColoredFormatter(logging.Formatter):
         return super().format(record)
 
 
-console_formatter = ColoredFormatter(
-    '\033[92m%(asctime)s - %(name)s:%(levelname)s\033[0m: %(filename)s:%(lineno)s - %(message)s',
-    datefmt='%H:%M:%S',
-)
+console_formatter_fmt = '\033[92m%(asctime)s - %(name)s:%(levelname)s\033[0m: %(filename)s:%(lineno)s - %(message)s'
+
 
 file_formatter = logging.Formatter(
     '%(asctime)s - %(name)s:%(levelname)s: %(filename)s:%(lineno)s - %(message)s',
@@ -123,10 +121,11 @@ def get_console_handler(log_level=logging.INFO, extra_info: str | None = None):
     """Returns a console handler for logging."""
     console_handler = logging.StreamHandler()
     console_handler.setLevel(log_level)
-    formatter_str = '%(asctime)s - %(levelname)s - %(message)s'
+    formatter_str = console_formatter_fmt
     if extra_info:
         formatter_str = f'{extra_info} - ' + formatter_str
-    console_handler.setFormatter(logging.Formatter(formatter_str))
+    formatter = ColoredFormatter(formatter_str, datefmt='%H:%M:%S')
+    console_handler.setFormatter(formatter)
     return console_handler
 
 
