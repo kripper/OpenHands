@@ -6,7 +6,7 @@ import docker
 full_file_names = [
     'openhands/runtime/plugins/agent_skills/file_ops/file_ops.py',
     'openhands/runtime/plugins/agent_skills/file_ops/cst_ops.py',
-    r'openhands/runtime/client/client.py',
+    r'openhands/runtime/action_execution_server.py',
 ]
 client = docker.from_env()
 for c in client.containers.list():
