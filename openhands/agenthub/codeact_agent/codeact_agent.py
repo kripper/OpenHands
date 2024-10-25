@@ -236,7 +236,7 @@ class CodeActAgent(Agent):
         # prepare what we want to send to the LLM
         messages = self._get_messages(state)
         try:
-            last_message_content = messages[-1].content[0].text.strip().splitlines()[-3]
+            last_message_content = messages[-1].content[0].text.strip().splitlines()[-1]
             if last_message_content.endswith('<end></end>'):
                 return AgentFinishAction(thought=os.getenv('finish_thought', ''))
         except Exception as e:
