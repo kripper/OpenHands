@@ -2,6 +2,7 @@ import os
 import tempfile
 import threading
 import time
+from functools import lru_cache
 from typing import Callable
 from zipfile import ZipFile
 
@@ -192,6 +193,9 @@ class EventStreamRuntime(Runtime):
         except docker.errors.NotFound:
             self.is_initial_session = True
 
+        self.skip_container_logs = (
+            os.environ.get('SKIP_CONTAINER_LOGS', 'false').lower() == 'true'
+        )
         if self.is_initial_session:
             logger.info('Creating new Docker container')
             if self.runtime_container_image is None:
@@ -244,6 +248,7 @@ class EventStreamRuntime(Runtime):
         self.send_status_message(' ')
 
     @staticmethod
+    @lru_cache(maxsize=1)
     def _init_docker_client() -> docker.DockerClient:
         try:
             return docker.from_env()
@@ -465,8 +470,8 @@ class EventStreamRuntime(Runtime):
             if not action.runnable:
                 return NullObservation('')
             if (
-                hasattr(action, 'is_confirmed')
-                and action.is_confirmed
+                hasattr(action, 'confirmation_state')
+                and action.confirmation_state
                 == ActionConfirmationStatus.AWAITING_CONFIRMATION
             ):
                 return NullObservation('')
@@ -478,8 +483,8 @@ class EventStreamRuntime(Runtime):
                     f'Action {action_type} is not supported in the current runtime.'
                 )
             if (
-                hasattr(action, 'is_confirmed')
-                and action.is_confirmed == ActionConfirmationStatus.REJECTED
+                getattr(action, 'confirmation_state', None)
+                == ActionConfirmationStatus.REJECTED
             ):
                 return UserRejectObservation(
                     'Action has been rejected by the user! Waiting for further user input.'

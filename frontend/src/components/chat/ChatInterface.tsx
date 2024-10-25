@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { VscArrowDown } from "react-icons/vsc";
 import { FaRegThumbsDown, FaRegThumbsUp, FaSyncAlt } from "react-icons/fa";
 import { useDisclosure } from "@nextui-org/react";
-import ChatInput from "./ChatInput";
 import Chat from "./Chat";
 import TypingIndicator from "./TypingIndicator";
 import { RootState } from "#/store";
@@ -25,6 +24,9 @@ import ThumbsUpIcon from "#/assets/thumbs-up.svg?react";
 import ThumbsDownIcon from "#/assets/thumbs-down.svg?react";
 import { cn } from "#/utils/utils";
 import { IoMdChatbubbles } from "react-icons/io";
+import { InteractiveChatBox } from "../interactive-chat-box";
+import { convertImageToBase64 } from "#/utils/convert-image-to-base-64";
+import { generateAgentStateChangeEvent } from "#/services/agentStateService";
 
 interface ScrollButtonProps {
   onClick: () => void;
@@ -71,16 +73,19 @@ function ChatInterface() {
     onOpenChange: onFeedbackModalOpenChange,
   } = useDisclosure();
 
-  const handleSendMessage = (
-    content: string,
-    dispatchContent: string = "",
-    imageUrls: string[] = [],
-  ) => {
+  const handleSendMessage = async (content: string, dispatchContent: string = "", files: File[]) => {
+    const promises = files.map((file) => convertImageToBase64(file));
+    const imageUrls = await Promise.all(promises);
+
     const timestamp = new Date().toISOString();
     dispatch(
       addUserMessage({ content: dispatchContent || content, imageUrls, timestamp }),
     );
     send(createChatMessage(content, imageUrls, timestamp));
+  };
+
+  const handleStop = () => {
+    send(generateAgentStateChangeEvent(AgentState.STOPPED));
   };
 
   const shareFeedback = async (polarity: "positive" | "negative") => {
@@ -158,7 +163,7 @@ function ChatInterface() {
         <Chat messages={messages} curAgentState={curAgentState} />
       </div>
 
-      <div>
+      <div className="px-4 pb-4">
         <div className="relative">
           {feedbackShared !== messages.length && messages.length > 3 && (
             <div
@@ -214,31 +219,14 @@ function ChatInterface() {
           </div>
         </div>
 
-        {feedbackShared !== messages.length && messages.length > 2 && (
-          <div className="flex justify-start gap-2 p-2">
-            <ScrollButton
-              onClick={() => shareFeedback("positive")}
-              icon={<FaRegThumbsUp className="inline mr-2 w-3 h-3" />}
-              label=""
-            />
-            <ScrollButton
-              onClick={() => shareFeedback("negative")}
-              icon={<FaRegThumbsDown className="inline mr-2 w-3 h-3" />}
-              label=""
-            />
-            <ScrollButton
-              onClick={handleRegenerateClick}
-              icon={<FaSyncAlt className="inline mr-2 w-3 h-3" />}
-              label=""
-            />
-          </div>
-        )}
-        <ChatInput
-          disabled={
+        <InteractiveChatBox
+          isDisabled={
             curAgentState === AgentState.LOADING ||
             curAgentState === AgentState.AWAITING_USER_CONFIRMATION
           }
-          onSendMessage={handleSendMessage}
+          mode={curAgentState === AgentState.RUNNING ? "stop" : "submit"}
+          onSubmit={handleSendMessage}
+          onStop={handleStop}
         />
       </div>
       <FeedbackModal

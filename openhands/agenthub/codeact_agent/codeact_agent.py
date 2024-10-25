@@ -164,7 +164,9 @@ class CodeActAgent(Agent):
         if isinstance(obs, CmdOutputObservation):
             ansi_color_escape = re.compile(r'\x1b\[[0-9;]*m')
             obs.content = ansi_color_escape.sub('', obs.content)
-            text = obs_prefix + truncate_content(obs.content, max_message_chars)
+            text = obs_prefix + truncate_content(
+                obs.content + obs.interpreter_details, max_message_chars
+            )
             if obs.exit_code != 0:
                 text += f'\n[Command finished with exit code {obs.exit_code}. Why did you run this command?]'
             # text += (
