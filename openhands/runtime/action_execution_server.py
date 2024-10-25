@@ -553,7 +553,7 @@ class ActionExecutor:
                         and 'pytest' not in command
                     ):
                         output = "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
-                    elif 'pytest' in command and '.py' not in command:
+                    elif command.startswith('pytest') and '.py' not in command:
                         output = '[Please run specific test cases instead of running all test cases.]'
                 # logger.debug('magic')
                 # logger.debug(output)
@@ -602,8 +602,7 @@ class ActionExecutor:
                 if exit_code != 0:
                     break
 
-            # strip last line break only
-            all_output = '\r\n'.join(all_output.split('\r\n')[:-1])
+            all_output = '\r\n'.join(all_output.split('\r\n'))
             return CmdOutputObservation(
                 command_id=-1,
                 content=all_output,
