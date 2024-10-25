@@ -43,9 +43,11 @@
         ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id= 7c982ef4a62fe966dc7f7a469ab805b166d767dd0da3b087413db42acb833a09"],
         ["sphinx-doc__sphinx-8721","https://www.all-hands.dev/share?share_id= 0b3d0db09dd27a399220f0532ad49fe410af7ba8f7c8ee95f33fbdb4e17ae608"],
         ["sympy__sympy-22714","https://www.all-hands.dev/share?share_id= fe76880dc2303ab6030329d47a635ca67f562c62b36e5d919a03c264465619cd"],
+        ["sympy__sympy-24066","https://www.all-hands.dev/share?share_id= 22c039fcff5a529139cc23b0f0b63795fbc27241941ed211f19c45b2d13989f9"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
+        ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id= 133ae36e252fdad12b8b45aaa168a94fadbb86666e4f2aec901f6c2a355fa3e9","https://github.com/princeton-nlp/SWE-bench/issues/241"],
         ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"],
         ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
         ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
