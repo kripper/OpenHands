@@ -85,6 +85,7 @@ V = 2 * sm.ones(6, 2)
 result = M.col_insert(3, V)
 assert result == sm.Matrix([[1, 0, 0, 2, 2, 0, 0, 0], [0, 1, 0, 2, 2, 0, 0, 0], [0, 0, 1, 2, 2, 0, 0, 0], [0, 0, 0, 2, 2, 1, 0, 0], [0, 0, 0, 2, 2, 0, 1, 0], [0, 0, 0, 2, 2, 0, 0, 1]])
 """,
+        # MOD: (Piecewise((x, y > x), (y, True)) / z) % 1 added extra; not given in statement
         'sympy__sympy-21379': r"""
 from sympy import *
 from sympy.core.cache import clear_cache
@@ -92,6 +93,7 @@ from sympy.core.cache import clear_cache
 x, y, z = symbols('x y z', real=True)
 
 clear_cache()
+(Piecewise((x, y > x), (y, True)) / z) % 1
 expr = exp(sinh(Piecewise((x, y > x), (y, True)) / z))
 print(expr.subs({1: 1.0}))
 
