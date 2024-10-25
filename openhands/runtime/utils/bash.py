@@ -43,7 +43,7 @@ def split_bash_commands(commands):
 
     # Add any remaining text after the last command to the last command
     remaining = commands[last_end:].rstrip()
-    logger.debug(f'BASH PARSING remaining: {remaining}')
+    logger.debug(f'BASH PARSING: {remaining = }')
     if last_end < len(commands) and result:
         result[-1] += remaining
         logger.debug(f'BASH PARSING result[-1] += remaining: {result[-1]}')
