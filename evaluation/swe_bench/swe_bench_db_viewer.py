@@ -5,6 +5,7 @@ import toml
 from datasets import load_dataset
 
 from evaluation.swe_bench.swe_bench2 import update_issue_description
+from sandbox_checker import execute_action, run, run_ipython
 
 with open(r'evaluation\swe_bench\config.toml', 'r') as f:
     config = toml.load(f)
@@ -50,9 +51,20 @@ print(a)
 if 1:
     print('-' * 100)
     print(['test_patch'])
-    print(ins['test_patch'][0])
+    test_patch = ins['test_patch'][0]
+    print(test_patch)
+    if 1:
+        code = rf'''
+code = """{test_patch}"""
+with open(f'/testbed/test_patch.diff', 'w') as f:
+    f.write(code)
+'''
+        execute_action(run_ipython(code))
+        cmd = 'git apply /testbed/test_patch.diff'
+        execute_action(run(cmd))
 
-if 1:
+
+if 0:
     print('-' * 100)
     print(['TEST PASS_TO_PASS'])
     print(ins['PASS_TO_PASS'][0])
