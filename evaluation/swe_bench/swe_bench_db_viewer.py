@@ -51,3 +51,8 @@ if 1:
     print('-' * 100)
     print(['test_patch'])
     print(ins['test_patch'][0])
+
+if 1:
+    print('-' * 100)
+    print(['TEST PASS_TO_PASS'])
+    print(ins['PASS_TO_PASS'][0])
