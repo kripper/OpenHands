@@ -13,6 +13,14 @@ for line in output.splitlines():
         assert return_code == 0
 """
 
+custom_pytest_code = """
+import subprocess
+cmd = 'pytest {file_name}'
+print('Running:', cmd)
+return_code = subprocess.run(cmd, shell=True).returncode
+assert return_code == 0
+"""
+
 
 def get_test_code(instance_id: str):
     test_codes = {
@@ -175,6 +183,9 @@ if not cond:
     assert repr(RepeatedStratifiedKFold()) == 'RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=None)'
 """,
         'pytest-dev__pytest-7432': default_test_code,
+        'matplotlib__matplotlib-25332': custom_pytest_code.format(
+            file_name='lib/matplotlib/tests/test_pickle.py::test_shared'
+        ),
     }
     return test_codes.get(instance_id, '')
 
