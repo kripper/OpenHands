@@ -269,7 +269,7 @@ class ActionExecutor:
                     obs.content = self.parse_pip_output(action.code, obs.content)
                 obs.content = obs.content.rstrip()
                 self.last_code = action.code
-                self.is_last_code_error = 'error' in obs.content
+                self.is_last_code_error = 'Traceback' in obs.content
             # obs.content += f'\n[Jupyter current working directory: {self.bash_session.pwd}]'
             # obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
             return obs
