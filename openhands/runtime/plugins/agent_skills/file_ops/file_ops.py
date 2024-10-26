@@ -35,6 +35,7 @@ from openhands.linter import DefaultLinter, LintResult
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
 WINDOW = 500
+SMALL_WINDOW = 10
 
 # This is also used in unit tests!
 MSG_FILE_UPDATED = '[File updated (edited at line {line_number}). Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.]'
@@ -669,7 +670,9 @@ def _edit_file_impl(
     CURRENT_FILE = file_name
     if enable_auto_lint:
         os.remove(original_file_backup_path)
-    ret_str += _print_window(CURRENT_FILE, CURRENT_LINE, WINDOW, return_str=True) + '\n'
+    ret_str += (
+        _print_window(CURRENT_FILE, CURRENT_LINE, SMALL_WINDOW, return_str=True) + '\n'
+    )
     ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
     # ret_str += '[File updated successfully]'
     return ret_str
