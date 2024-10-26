@@ -4,10 +4,11 @@ cmd = 'git diff --name-only'
 output = subprocess.check_output(cmd, shell=True).decode('utf-8')
 for line in output.splitlines():
     file_name = line.split('/')[-1]
-    cmd = f'find . -name {file_name}'
+    cmd = f'find . -name test_{file_name}'
     output = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
     if output:
         cmd = f'pytest {output}'
+        print('Running:', cmd)
         return_code = subprocess.run(cmd, shell=True).returncode
         assert return_code == 0
 """
