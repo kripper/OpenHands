@@ -1,3 +1,18 @@
+default_test_code = r"""
+import os, subprocess
+cmd = 'git diff --name-only'
+output = subprocess.check_output(cmd, shell=True).decode('utf-8')
+for line in output.splitlines():
+    file_name = line.split('/')[-1]
+    cmd = f'find . -name {file_name}'
+    output = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
+    if output:
+        cmd = f'pytest {output}'
+        return_code = subprocess.run(cmd, shell=True).returncode
+        assert return_code == 0
+"""
+
+
 def get_test_code(instance_id: str):
     test_codes = {
         'astropy__astropy-12907': """
@@ -158,6 +173,7 @@ if not cond:
     print(repr(RepeatedStratifiedKFold()))
     assert repr(RepeatedStratifiedKFold()) == 'RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=None)'
 """,
+        'pytest-dev__pytest-7432': default_test_code,
     }
     return test_codes.get(instance_id, '')
 
