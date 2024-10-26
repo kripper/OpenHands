@@ -131,16 +131,18 @@ class CodeActAgent(Agent):
 
     @classmethod
     def get_action_message(self, action: Action) -> Message | None:
-        if (
-            isinstance(action, AgentDelegateAction)
-            or isinstance(action, CmdRunAction)
-            or isinstance(action, IPythonRunCellAction)
-            or isinstance(action, MessageAction)
-            or isinstance(action, BrowseURLAction)
-            or isinstance(action, AgentSummarizeAction)
-            or isinstance(action, FileEditAction)
-            or (isinstance(action, AgentFinishAction) and action.source == 'agent')
-        ):
+        if isinstance(
+            action,
+            (
+                AgentDelegateAction,
+                CmdRunAction,
+                IPythonRunCellAction,
+                MessageAction,
+                BrowseURLAction,
+                AgentSummarizeAction,
+                FileEditAction,
+            ),
+        ) or (isinstance(action, AgentFinishAction) and action.source == 'agent'):
             content = [TextContent(text=self.action_to_str(action))]
 
             if (

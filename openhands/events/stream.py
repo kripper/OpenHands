@@ -1,6 +1,7 @@
 import asyncio
 import os
 import threading
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Iterable
@@ -30,23 +31,17 @@ def session_exists(sid: str, file_store: FileStore) -> bool:
         return False
 
 
+@dataclass
 class EventStream:
     sid: str
     file_store: FileStore
     # For each subscriber ID, there is a stack of callback functions - useful
     # when there are agent delegates
-    _subscribers: dict[str, list[Callable]]
-    _cur_id: int
-    _lock: threading.Lock
+    _subscribers: dict[str, list[Callable]] = field(default_factory=dict)
+    _cur_id: int = 0
+    _lock: threading.Lock = field(default_factory=threading.Lock)
 
-    def __init__(self, sid: str, file_store: FileStore):
-        self.sid = sid
-        self.file_store = file_store
-        self._subscribers = {}
-        self._cur_id = 0
-        self._lock = threading.Lock()
-        self._reinitialize_from_file_store()
-
+    def __post_init__(self) -> None:
         # add events from trajectory.json
         event_history_path = r'event_history.json'
         if not os.path.exists(event_history_path):
@@ -63,8 +58,6 @@ class EventStream:
                 else EventSource.USER
             )
             self.add_event(event, source)
-
-    def _reinitialize_from_file_store(self) -> None:
         try:
             events = self.file_store.list(f'sessions/{self.sid}/events')
         except FileNotFoundError:
@@ -202,4 +195,4 @@ class EventStream:
         self.file_store.delete(f'sessions/{self.sid}')
         self._cur_id = 0
         # self._subscribers = {}
-        self._reinitialize_from_file_store()
+        self.__post_init__()

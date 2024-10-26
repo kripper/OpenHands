@@ -1,10 +1,11 @@
 import copy
+import json
 import os
 import time
 import warnings
 from functools import partial
 from time import sleep
-from typing import Any, Union
+from typing import Union
 
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
@@ -53,11 +54,9 @@ LLM_RETRY_EXCEPTIONS: tuple[type[Exception], ...] = (
 # remove this when we gemini and deepseek are supported
 CACHE_PROMPT_SUPPORTED_MODELS = [
     'claude-3-5-sonnet-20240620',
+    'claude-3-5-sonnet-20241022',
     'claude-3-haiku-20240307',
     'claude-3-opus-20240229',
-    'anthropic/claude-3-opus-20240229',
-    'anthropic/claude-3-haiku-20240307',
-    'anthropic/claude-3-5-sonnet-20240620',
 ]
 
 
@@ -93,11 +92,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         # if self.config.enable_cache:
         #     litellm.cache = Cache()
 
-        # list of LLM completions (for logging purposes). Each completion is a dict with the following keys:
-        # - 'messages': list of messages
-        # - 'response': response from the LLM
-        self.llm_completions: list[dict[str, Any]] = []
-
         # litellm actually uses base Exception here for unknown model
         self.model_info: ModelInfo | None = None
         try:
@@ -110,6 +104,13 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         # noinspection PyBroadException
         except Exception:
             logger.warning(f'Could not get model info for {config.model}')
+
+        if self.config.log_completions:
+            if self.config.log_completions_folder is None:
+                raise RuntimeError(
+                    'log_completions_folder is required when log_completions is enabled'
+                )
+            os.makedirs(self.config.log_completions_folder, exist_ok=True)
 
         # Set the max tokens in an LM-specific way if not set
         if config.max_input_tokens is None:
@@ -351,16 +352,24 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
 
             # log for evals or other scripts that need the raw completion
             if self.config.log_completions:
-                self.llm_completions.append(
-                    {
-                        'messages': messages,
-                        'response': resp,
-                        'timestamp': time.time(),
-                        'cost': self._completion_cost(resp)
-                        if not isinstance(resp, dict)
-                        else 0,
-                    }
+                assert self.config.log_completions_folder is not None
+                log_file = os.path.join(
+                    self.config.log_completions_folder,
+                    # use the metric model name (for draft editor)
+                    f'{self.metrics.model_name}-{time.time()}.json',
                 )
+                with open(log_file, 'w') as f:
+                    json.dump(
+                        {
+                            'messages': messages,
+                            'response': resp,
+                            'args': args,
+                            'kwargs': kwargs,
+                            'timestamp': time.time(),
+                            'cost': self._completion_cost(resp),
+                        },
+                        f,
+                    )
 
             # log the LLM response
             self.log_response(message_back)
@@ -406,7 +415,10 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             self.config.caching_prompt is True
             and self.model_info is not None
             and self.model_info.get('supports_prompt_caching', False)
-            and self.config.model in CACHE_PROMPT_SUPPORTED_MODELS
+            and (
+                self.config.model in CACHE_PROMPT_SUPPORTED_MODELS
+                or self.config.model.split('/')[-1] in CACHE_PROMPT_SUPPORTED_MODELS
+            )
         )
 
     def _post_completion(self, response: ModelResponse) -> None:
@@ -551,7 +563,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
 
     def reset(self):
         self.metrics.reset()
-        self.llm_completions = []
 
     def is_over_token_limit(self, messages: list[Message]) -> bool:
         """
