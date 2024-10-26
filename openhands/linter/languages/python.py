@@ -52,6 +52,7 @@ def flake_lint(filepath: str) -> list[LintResult]:
 
 def lint(filepath: str, linter: str) -> list[LintResult]:
     if linter == 'pylint':
+        # E1123: Unexpected keyword argument 'include_naming_indexes' in method call (unexpected-keyword-arg)
         lint_cmd = f'pylint --errors-only {filepath}'
     elif linter == 'mypy':
         lint_cmd = f'mypy {filepath}'
