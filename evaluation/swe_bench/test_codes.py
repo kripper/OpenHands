@@ -186,7 +186,7 @@ if not cond:
         'matplotlib__matplotlib-25332': custom_pytest_code.format(
             file_name='lib/matplotlib/tests/test_pickle.py::test_shared'
         ),
-        'matplotlib__matplotlib-24970': default_test_code,
+        # 'matplotlib__matplotlib-24970': default_test_code,
     }
     return test_codes.get(instance_id, '')
 
