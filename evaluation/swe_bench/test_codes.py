@@ -21,6 +21,14 @@ return_code = subprocess.run(cmd, shell=True).returncode
 assert return_code == 0
 """
 
+custom_test_code = """
+import subprocess
+cmd = '{cmd}'
+print('Running:', cmd)
+return_code = subprocess.run(cmd, shell=True).returncode
+assert return_code == 0
+"""
+
 
 def get_test_code(instance_id: str):
     test_codes = {
@@ -185,6 +193,9 @@ if not cond:
         'pytest-dev__pytest-7432': default_test_code,
         'matplotlib__matplotlib-25332': custom_pytest_code.format(
             file_name='lib/matplotlib/tests/test_pickle.py::test_shared'
+        ),
+        'django__django-12708': custom_test_code.format(
+            cmd='/testbed/tests/runtests.py test migrations.test_operations.OperationTests.test_alter_unique_together  --parallel 1'
         ),
         # 'matplotlib__matplotlib-24970': default_test_code,
     }
