@@ -49,15 +49,18 @@
     "unresolved": [
         ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id= 133ae36e252fdad12b8b45aaa168a94fadbb86666e4f2aec901f6c2a355fa3e9","https://github.com/princeton-nlp/SWE-bench/issues/241"],
         ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"],
-        ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
-        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
-        ["django__django-12308","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=30eab9f836bcb08e21b949ec1ff877724d60f0a0cec5aba6a63f45a4c3533d07"],
-        ["django__django-12708","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=714d648555ae4f9a4d5817a8d530c6ada6e46cdba9b39484d9634a46bda2a9f7"],
-        ["django__django-17087","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=e14ba574b99f6cc9492480503a565397daf8776009e7723541a7bdae7d333078"],
-        ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
-        ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
-        ["matplotlib__matplotlib-25332","https://www.all-hands.dev/share?share_id=0654301a1a8af534bee6443a0e431b2986472214c47250752595e66b6e2f6e7d"],
+        ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
+        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
+        ["django__django-12308","https://www.all-hands.dev/share?share_id=30eab9f836bcb08e21b949ec1ff877724d60f0a0cec5aba6a63f45a4c3533d07"],
+        ["django__django-12708","https://www.all-hands.dev/share?share_id=72652d9dc3dd2a132bc260741bc89bbdb5aaef4a846b46f4ba6f56d82ea2a29e"],
+        ["django__django-17087","https://www.all-hands.dev/share?share_id=e14ba574b99f6cc9492480503a565397daf8776009e7723541a7bdae7d333078"],
+        ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
+        ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
+        ["matplotlib__matplotlib-25332","https://www.all-hands.dev/share?share_id=bf85d126b0065382311361ffd4d14c938c3afcddb760f92af5217a727b1fb31a"],
         ["django__django-12308","https://www.all-hands.dev/share?share_id=96cdd34367f53f58015fcef3bcf72721bf2d322f4c2bc268f022702c65440617"],
+        ["pytest-dev__pytest-7432","https://www.all-hands.dev/share?share_id=5ee546dfe1d04172b9ed07299b0ea19ad33bdbd1720df95e0e4e44a03bd2669b"],
+        ["sympy__sympy-21379","https://www.all-hands.dev/share?share_id=dd5fd9d295d9abbe183cf5a852d8510d14008f821b3eaa28d091b90de135df34"],
+
         ["for ignoring trailing comma", "-"]
     ]
 }
