@@ -1,5 +1,6 @@
 import os
 import pickle
+from pprint import pprint
 
 import toml
 from datasets import load_dataset
@@ -54,11 +55,11 @@ if 1:
     test_patch = ins['test_patch'][0]
     print(test_patch)
     if 1:
-        code = rf'''
-code = """{test_patch}"""
+        code = rf"""
+code = r'''{test_patch}'''
 with open(f'/testbed/test_patch.diff', 'w') as f:
     f.write(code)
-'''
+"""
         execute_action(run_ipython(code))
         cmd = 'git apply /testbed/test_patch.diff'
         execute_action(run(cmd))
@@ -67,4 +68,6 @@ with open(f'/testbed/test_patch.diff', 'w') as f:
 if 0:
     print('-' * 100)
     print(['TEST PASS_TO_PASS'])
-    print(ins['PASS_TO_PASS'][0])
+    pprint(ins['PASS_TO_PASS'][0])
+    print(['TEST FAIL_TO_PASS'])
+    pprint(ins['FAIL_TO_PASS'][0])
