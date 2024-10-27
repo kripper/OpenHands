@@ -44,6 +44,7 @@
         ["sphinx-doc__sphinx-8721","https://www.all-hands.dev/share?share_id= 0b3d0db09dd27a399220f0532ad49fe410af7ba8f7c8ee95f33fbdb4e17ae608"],
         ["sympy__sympy-22714","https://www.all-hands.dev/share?share_id= fe76880dc2303ab6030329d47a635ca67f562c62b36e5d919a03c264465619cd"],
         ["sympy__sympy-24066","https://www.all-hands.dev/share?share_id= 22c039fcff5a529139cc23b0f0b63795fbc27241941ed211f19c45b2d13989f9"],
+        ["django__django-17087","https://www.all-hands.dev/share?share_id= 4c6a5ccdcad9a2c1586fd319dcb4d64199f8f4a6cc67e442dbd5b05e18e96b19"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
@@ -54,7 +55,6 @@
         ["django__django-12308","https://www.all-hands.dev/share?share_id=30eab9f836bcb08e21b949ec1ff877724d60f0a0cec5aba6a63f45a4c3533d07"],
         ["django__django-12708","https://www.all-hands.dev/share?share_id=72652d9dc3dd2a132bc260741bc89bbdb5aaef4a846b46f4ba6f56d82ea2a29e"],
         ["django__django-17087","https://www.all-hands.dev/share?share_id=e14ba574b99f6cc9492480503a565397daf8776009e7723541a7bdae7d333078"],
-        ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
         ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
         ["matplotlib__matplotlib-25332","https://www.all-hands.dev/share?share_id=bf85d126b0065382311361ffd4d14c938c3afcddb760f92af5217a727b1fb31a"],
         ["django__django-12308","https://www.all-hands.dev/share?share_id=96cdd34367f53f58015fcef3bcf72721bf2d322f4c2bc268f022702c65440617"],
