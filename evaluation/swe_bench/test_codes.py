@@ -7,7 +7,7 @@ for line in output.splitlines():
     cmd = f'find . -name test_{file_name}'
     output = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
     if output:
-        cmd = f'pytest {output}'
+        cmd = f'pytest -x {output}'
         print('Running:', cmd)
         return_code = subprocess.run(cmd, shell=True).returncode
         assert return_code == 0
@@ -186,6 +186,7 @@ if not cond:
         'matplotlib__matplotlib-25332': custom_pytest_code.format(
             file_name='lib/matplotlib/tests/test_pickle.py::test_shared'
         ),
+        'matplotlib__matplotlib-24970': default_test_code,
     }
     return test_codes.get(instance_id, '')
 
