@@ -79,4 +79,7 @@ TypeError: unsupported operand type(s) for |: 'int' and 'NoneType'
 AttributeError: 'NoneType' object has no attribute 'fit'"""
         return description.replace(actual, expected)
 
+    elif instance_id == 'matplotlib__matplotlib-24970':
+        return description + '\nEnable the warnings e.g., python -W always <file>.py'
+
     return description
