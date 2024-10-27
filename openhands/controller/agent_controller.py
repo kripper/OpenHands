@@ -413,12 +413,13 @@ class AgentController:
             return
 
         # check if agent got stuck before taking any action
-        if self._is_stuck():
+        is_stuck, resolution = self._is_stuck()
+        if is_stuck:
             # This need to go BEFORE report_error to sync metrics
-            self.event_stream.add_event(
-                FatalErrorObservation('Agent got stuck in a loop'), EventSource.USER
+            await self.set_agent_state_to(AgentState.ERROR)
+            await self.report_error(
+                f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
             )
-            return
 
         if self.delegate is not None:
             assert self.delegate != self
@@ -483,13 +484,6 @@ class AgentController:
 
         await self.update_state_after_step()
         logger.info(action, extra={'msg_type': 'ACTION'})
-        is_stuck, resolution = self._is_stuck()
-        if is_stuck:
-            # This need to go BEFORE report_error to sync metrics
-            await self.set_agent_state_to(AgentState.ERROR)
-            await self.report_error(
-                f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
-            )
 
     async def _delegate_step(self):
         """Executes a single step of the delegate agent."""
