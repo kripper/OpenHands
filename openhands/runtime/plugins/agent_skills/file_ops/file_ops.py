@@ -1142,10 +1142,64 @@ def show_class(file_path: str, class_name: str):
     print(f"Class '{class_name}' not found in the code.")
 
 
+def show_function(file_path: str, fully_qualified_function_name: str) -> None:
+    """
+    Show the definition of the given fully qualified function name in the given file path.
+
+    Args:
+        file_path: str: The path to the file containing the function definition.
+        fully_qualified_function_name: str: The fully qualified name of the function to search for.
+    """
+    parts = fully_qualified_function_name.split('.')
+
+    if len(parts) == 1:  # Top-level function (no class)
+        class_name = None
+        function_name = parts[0]
+    else:  # Method inside a class
+        class_name = parts[0]
+        function_name = parts[1]
+
+    with open(file_path, 'r') as file:
+        code = file.read()
+
+    tree = ast.parse(code)
+
+    lines = code.splitlines()
+
+    def print_function_code(node):
+        start_line = node.lineno - 1  # AST line numbers are 1-based
+        end_line = node.end_lineno  # type: ignore
+        for i in range(start_line, end_line):
+            print(f'{i + 1:3}| {lines[i]}')
+        return
+
+    if class_name:
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef) and node.name == class_name:
+                for sub_node in node.body:
+                    if (
+                        isinstance(sub_node, ast.FunctionDef)
+                        and sub_node.name == function_name
+                    ):
+                        print_function_code(sub_node)
+                        return
+                print(f"Function '{function_name}' not found in class '{class_name}'.")
+                return
+        print(f"Class '{class_name}' not found in the code.")
+    else:
+        # Top-level function (no class)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == function_name:
+                print_function_code(node)
+                return
+        print(f"Function '{function_name}' not found in the code.")
+
+
 __all__ = [
     'search_function',
     'search_class',
     'show_class',
+    'show_function',
     # 'search_in_dir',
     # 'search_in_file',
     'open_file',
