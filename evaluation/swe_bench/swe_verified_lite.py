@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 
 import toml
 from pyperclip import copy
@@ -433,13 +432,13 @@ non_gru_resolved = [
     'sympy__sympy-21612',
 ]
 
-pprint(non_gru_resolved)
+# pprint(non_gru_resolved)
 file = open('evaluation/swe_bench/config.toml', 'r')
 config = toml.load(file)
 instance = config['selected_ids'][0]
 
 # r= ['django__django-12308', 'django__django-12708', 'django__django-17087', 'matplotlib__matplotlib-24970', 'matplotlib__matplotlib-25332', 'pytest-dev__pytest-7432',  'sphinx-doc__sphinx-8595', 'sphinx-doc__sphinx-8721', 'sympy__sympy-21379', 'sympy__sympy-22714', 'sympy__sympy-24066']
-
+r = non_gru_resolved
 idx = r.index(instance)
 new_instance = r[idx + 1]
 
