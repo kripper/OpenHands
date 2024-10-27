@@ -22,6 +22,7 @@ Functions:
 - kill_port(port_number: int): Kills the process running on the specified port.
 """
 
+import ast
 import os
 import re
 import shutil
@@ -1115,9 +1116,36 @@ def search_class(class_name: str):
         print(f"Class '{class_name}' not found in the repository.")
 
 
+def show_class(file_path: str, class_name: str):
+    """
+    Show the class definition of the given class name in the given file path.
+
+    Args:
+        file_path: str: The path to the file containing the class definition.
+        class_name: str: The name of the class to search for.
+    """
+    with open(file_path, 'r') as file:
+        code = file.read()
+    tree = ast.parse(code)
+
+    lines = code.splitlines()
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ClassDef) and node.name == class_name:
+            start_line: int = node.lineno - 1  # AST line numbers are 1-based
+            end_line: int = node.end_lineno  # type: ignore
+
+            for i in range(start_line, end_line):
+                print(f'{i + 1:3}| {lines[i]}')
+            return
+
+    print(f"Class '{class_name}' not found in the code.")
+
+
 __all__ = [
     'search_function',
     'search_class',
+    'show_class',
     # 'search_in_dir',
     # 'search_in_file',
     'open_file',
