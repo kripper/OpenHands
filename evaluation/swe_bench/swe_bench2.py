@@ -82,5 +82,5 @@ AttributeError: 'NoneType' object has no attribute 'fit'"""
     elif instance_id == 'matplotlib__matplotlib-24970':
         return description + '\nEnable the warnings e.g., python -W always <file>.py'
     elif instance_id == 'django__django-12708':
-        return description.replace('378', '380')
+        return description.replace('378', '411')
     return description
