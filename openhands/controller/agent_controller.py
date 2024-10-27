@@ -406,7 +406,18 @@ class AgentController:
             return
 
         if self._pending_action:
+            logger.debug(
+                f'{self.agent.name} LEVEL {self.state.delegate_level} LOCAL STEP {self.state.local_iteration} GLOBAL STEP {self.state.iteration} awaiting pending action to get executed: {self._pending_action}'
+            )
             await asyncio.sleep(1)
+            return
+
+        # check if agent got stuck before taking any action
+        if self._is_stuck():
+            # This need to go BEFORE report_error to sync metrics
+            self.event_stream.add_event(
+                FatalErrorObservation('Agent got stuck in a loop'), EventSource.USER
+            )
             return
 
         if self.delegate is not None:
