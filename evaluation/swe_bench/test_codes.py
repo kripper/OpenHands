@@ -223,6 +223,9 @@ print(Sum(e[i, i], (i, 0, n-1)).doit())
 # Total sum of the elements is expected to be 'n' but the answer is 0!
 assert Sum(Sum(e[i, j], (i, 0, n-1)), (j, 0, n-1)).doit() != 0
 """,
+        'sympy__sympy-17655': custom_test_code.format(
+            cmd='bin/test sympy/geometry/tests/test_point.py'
+        ),
     }
     return test_codes.get(instance_id, '')
 
