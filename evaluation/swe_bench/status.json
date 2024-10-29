@@ -45,8 +45,9 @@
         ["sympy__sympy-22714","https://www.all-hands.dev/share?share_id=fe76880dc2303ab6030329d47a635ca67f562c62b36e5d919a03c264465619cd"],
         ["sympy__sympy-24066","https://www.all-hands.dev/share?share_id=22c039fcff5a529139cc23b0f0b63795fbc27241941ed211f19c45b2d13989f9"],
         ["django__django-17087","https://www.all-hands.dev/share?share_id=4c6a5ccdcad9a2c1586fd319dcb4d64199f8f4a6cc67e442dbd5b05e18e96b19"],
-        ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id=133ae36e252fdad12b8b45aaa168a94fadbb86666e4f2aec901f6c2a355fa3e9","https://github.com/princeton-nlp/SWE-bench/issues/241"],
+        ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id=8f0116a444c11aa9e6888802b4e0750fc206b06333db77abbdf2149efbe4d7a4"],
         ["sphinx-doc__sphinx-8713","https://www.all-hands.dev/share?share_id=a20cd2b1315477ed79ef1c8e02603c0927f5a55ab0744042c8114ceaa4b9874c"],
+        ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=1069a43d3faee7e62c030fe2631e7f9df8219678e438e497ec657772c4ff752f"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
@@ -61,7 +62,7 @@
         ["django__django-12308","https://www.all-hands.dev/share?share_id=96cdd34367f53f58015fcef3bcf72721bf2d322f4c2bc268f022702c65440617"],
         ["pytest-dev__pytest-7432","https://www.all-hands.dev/share?share_id=5ee546dfe1d04172b9ed07299b0ea19ad33bdbd1720df95e0e4e44a03bd2669b"],
         ["sympy__sympy-21379","https://www.all-hands.dev/share?share_id=dd5fd9d295d9abbe183cf5a852d8510d14008f821b3eaa28d091b90de135df34"],
-
+        ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=e06e3fd8bd7e718c928afdc21ebc906afc82eaf7294d7fdeed206bf26d31b995"],
         ["for ignoring trailing comma", "-"]
     ]
 }
