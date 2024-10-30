@@ -133,7 +133,7 @@ class AgentController:
         Args:
             message (str): The message to log.
         """
-        message = f'[Agent Controller {self.id}] {message}'
+        # message = f'[Agent Controller {self.id}] {message}'
         getattr(logger, level)(message, extra=extra)
 
     def update_state_before_step(self):
