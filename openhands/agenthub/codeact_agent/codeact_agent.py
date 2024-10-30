@@ -224,7 +224,6 @@ class CodeActAgent(Agent):
             ]
         return []
 
-    @classmethod
     def get_observation_message(
         self,
         obs: Observation,

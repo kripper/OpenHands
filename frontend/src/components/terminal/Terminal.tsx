@@ -10,7 +10,7 @@ interface TerminalProps {
 
 function Terminal({ secrets }: TerminalProps) {
   const { commands } = useSelector((state: RootState) => state.cmd);
-  const ref = useTerminal(commands, secrets);
+  const { ref } = useTerminal(commands, secrets);
 
   return (
     <div className="h-full p-2 min-h-0">

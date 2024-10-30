@@ -1,7 +1,5 @@
 import copy
-import json
 import os
-import time
 import warnings
 from functools import partial
 from time import sleep
@@ -397,23 +395,23 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             # log for evals or other scripts that need the raw completion
             if self.config.log_completions:
                 assert self.config.log_completions_folder is not None
-                log_file = os.path.join(
-                    self.config.log_completions_folder,
-                    # use the metric model name (for draft editor)
-                    f'{self.metrics.model_name}-{time.time()}.json',
-                )
-                with open(log_file, 'w') as f:
-                    json.dump(
-                        {
-                            'messages': messages,
-                            'response': resp,
-                            'args': args,
-                            'kwargs': kwargs,
-                            'timestamp': time.time(),
-                            'cost': self._completion_cost(resp),
-                        },
-                        f,
-                    )
+                # log_file = os.path.join(
+                #     self.config.log_completions_folder,
+                #     # use the metric model name (for draft editor)
+                #     f'{self.metrics.model_name}-{time.time()}.json',
+                # )
+                # with open(log_file, 'w') as f:
+                #     json.dump(
+                #         {
+                #             'messages': messages,
+                #             'response': resp,
+                #             'args': args,
+                #             'kwargs': kwargs,
+                #             'timestamp': time.time(),
+                #             'cost': self._completion_cost(resp),
+                #         },
+                #         f,
+                #     )
 
             # log the LLM response
             self.log_response(message_back)
