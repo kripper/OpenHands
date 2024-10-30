@@ -48,6 +48,8 @@
         ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id=8f0116a444c11aa9e6888802b4e0750fc206b06333db77abbdf2149efbe4d7a4"],
         ["sphinx-doc__sphinx-8713","https://www.all-hands.dev/share?share_id=a20cd2b1315477ed79ef1c8e02603c0927f5a55ab0744042c8114ceaa4b9874c"],
         ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=1069a43d3faee7e62c030fe2631e7f9df8219678e438e497ec657772c4ff752f"],
+        ["sympy__sympy-18189","https://www.all-hands.dev/share?share_id=c0305693cba105ddf40189db94446cb3e31c152a188fd8e3b1afeede553bcb04"],
+        ["sympy__sympy-20154","https://www.all-hands.dev/share?share_id=5e28a8a6fa6705f425e68711d9e942300f90aeec2916ca2dfa9503f4182c491a"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
@@ -64,6 +66,8 @@
         ["sympy__sympy-21379","https://www.all-hands.dev/share?share_id=dd5fd9d295d9abbe183cf5a852d8510d14008f821b3eaa28d091b90de135df34"],
         ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=e06e3fd8bd7e718c928afdc21ebc906afc82eaf7294d7fdeed206bf26d31b995"],
         ["sympy__sympy-13031","https://www.all-hands.dev/share?share_id=7f9b5a98c6f0043adcc5e6e96c2bdb4c0583514e40156ca638e06972bff12eb1"],
+        ["sympy__sympy-15345","https://www.all-hands.dev/share?share_id=5fbf50f648efdd7e6d8d70b25d94d99404ea4610c78c16c99560c85a993933f3"],
+        ["sympy__sympy-18199","https://www.all-hands.dev/share?share_id=8e4b7ee2f62aa688926bf97c476e3bf5f362a64e66f7bb121acb4f17fe14f5d1"],
         ["for ignoring trailing comma", "-"]
     ]
 }
