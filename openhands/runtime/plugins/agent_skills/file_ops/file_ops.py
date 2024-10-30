@@ -32,6 +32,9 @@ import tempfile
 import uuid
 
 from openhands.linter import DefaultLinter, LintResult
+from openhands.runtime.plugins.agent_skills.file_ops.ast_ops import (
+    find_base_classes_without_slots,
+)
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
@@ -1221,6 +1224,7 @@ __all__ = [
     'kill_port',
     'clean_workspace',
     'custom_import',
+    'find_base_classes_without_slots',
 ]
 
 try:

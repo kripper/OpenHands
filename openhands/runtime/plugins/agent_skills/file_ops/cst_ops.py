@@ -4,6 +4,10 @@ import os
 import libcst as cst
 from libcst import FunctionDef, Name, Param, Parameters
 
+from openhands.runtime.plugins.agent_skills.file_ops.file_utils import (
+    find_base_class_file,
+)
+
 
 def has_init_method(class_node):
     return any(
@@ -84,21 +88,6 @@ def find_imported_base_class(code, class_name):
 def read_file(file_path):
     with open(file_path, 'r') as f:
         return f.read()
-
-
-def find_base_class_file(file_path, base_class_module):
-    # Assuming the module is in the current working directory or a standard path
-    dir_name = os.path.dirname(file_path)
-    if dir_name == '':
-        dir_name = os.getcwd()
-    possible_paths = [
-        os.path.join(dir_name, base_class_module.replace('.', '/') + '.py'),
-        # You can add more paths if necessary
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            return path
-    return None
 
 
 def get_class_init_signature_from_code(code, class_name, param_name=None):
