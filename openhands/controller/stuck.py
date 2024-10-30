@@ -37,8 +37,12 @@ class StuckDetector:
         # stuck input
         stuck_input = 'Aanalyze the history'
         for index, (action, observation) in enumerate(zip(actions, observations), 1):
-            action = CodeActAgent.get_action_message(action)
-            observation = CodeActAgent.get_observation_message(observation)
+            action = CodeActAgent.get_action_message(
+                action, pending_tool_call_action_messages={}
+            )
+            observation = CodeActAgent.get_observation_message(
+                observation, tool_call_id_to_message={}
+            )
             stuck_input += f'\n{index = }. {action = }\n{observation = }'
 
         message_sequence = []

@@ -23,7 +23,7 @@ def get_runtime_cls(name: str):
 
         return EC2Runtime
     elif name == 'modal':
-        logger.info('Using ModalRuntime')
+        logger.debug('Using ModalRuntime')
         from openhands.runtime.impl.modal.modal_runtime import ModalRuntime
 
         return ModalRuntime

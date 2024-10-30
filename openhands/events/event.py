@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 from openhands.core.metrics import Metrics
+from openhands.events.tool import ToolCallMetadata
 
 
 class EventSource(str, Enum):
@@ -70,6 +71,17 @@ class Event:
     @llm_metrics.setter
     def llm_metrics(self, value: Metrics) -> None:
         self._llm_metrics = value
+
+    # optional field
+    @property
+    def tool_call_metadata(self) -> ToolCallMetadata | None:
+        if hasattr(self, '_tool_call_metadata'):
+            return self._tool_call_metadata  # type: ignore[attr-defined]
+        return None
+
+    @tool_call_metadata.setter
+    def tool_call_metadata(self, value: ToolCallMetadata) -> None:
+        self._tool_call_metadata = value
 
 
 @dataclass

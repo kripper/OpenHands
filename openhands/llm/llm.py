@@ -7,6 +7,8 @@ from functools import partial
 from time import sleep
 from typing import Union
 
+import requests
+
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
 
@@ -94,16 +96,52 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
 
         # litellm actually uses base Exception here for unknown model
         self.model_info: ModelInfo | None = None
-        try:
-            if self.config.model.startswith('openrouter'):
-                self.model_info = litellm.get_model_info(self.config.model)
-            else:
+
+        if self.config.model.startswith('openrouter'):
+            self.model_info = litellm.get_model_info(self.config.model)
+        elif self.config.model.startswith('litellm_proxy/'):
+            # IF we are using LiteLLM proxy, get model info from LiteLLM proxy
+            # GET {base_url}/v1/model/info with litellm_model_id as path param
+            response = requests.get(
+                f'{self.config.base_url}/v1/model/info',
+                headers={'Authorization': f'Bearer {self.config.api_key}'},
+            )
+            resp_json = response.json()
+            if 'data' not in resp_json:
+                logger.error(
+                    f'Error getting model info from LiteLLM proxy: {resp_json}'
+                )
+            all_model_info = resp_json.get('data', [])
+            current_model_info = next(
+                (
+                    info
+                    for info in all_model_info
+                    if info['model_name']
+                    == self.config.model.removeprefix('litellm_proxy/')
+                ),
+                None,
+            )
+            if current_model_info:
+                self.model_info = current_model_info['model_info']
+
+        # Last two attempts to get model info from NAME
+        if not self.model_info:
+            try:
                 self.model_info = litellm.get_model_info(
                     self.config.model.split(':')[0]
                 )
-        # noinspection PyBroadException
-        except Exception:
-            logger.warning(f'Could not get model info for {config.model}')
+            # noinspection PyBroadException
+            except Exception:
+                pass
+        if not self.model_info:
+            try:
+                self.model_info = litellm.get_model_info(
+                    self.config.model.split('/')[-1]
+                )
+            # noinspection PyBroadException
+            except Exception:
+                pass
+        logger.debug(f'Model info: {self.model_info}')
 
         if self.config.log_completions:
             if self.config.log_completions_folder is None:
@@ -153,6 +191,10 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 total = max_input_tokens + max_output_tokens
                 litellm.OllamaConfig.num_ctx = total
                 logger.info(f'Setting OllamaConfig.num_ctx to {total}')
+        self.config.supports_function_calling = (
+            self.model_info is not None
+            and self.model_info.get('supports_function_calling', False)
+        )
 
         self._completion = partial(
             litellm_completion,
@@ -175,6 +217,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             logger.debug('LLM: model has vision enabled')
         if self.is_caching_prompt_active():
             logger.debug('LLM: caching prompt enabled')
+        if self.config.supports_function_calling:
+            logger.debug('LLM: model supports function calling')
 
         self.completion_unwrapped = self._completion
 
@@ -475,8 +519,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             if cache_write_tokens:
                 stats += 'Input tokens (cache write): ' + str(cache_write_tokens) + '\n'
 
+        # log the stats
         # if stats:
-        # logger.info(stats)
+        #     logger.debug(stats)
 
     def get_token_count(self, messages=None, text=None):
         """Get the number of tokens in a list of messages.
@@ -536,19 +581,21 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 input_cost_per_token=self.config.input_cost_per_token,
                 output_cost_per_token=self.config.output_cost_per_token,
             )
-            logger.info(f'Using custom cost per token: {cost_per_token}')
+            logger.debug(f'Using custom cost per token: {cost_per_token}')
             extra_kwargs['custom_cost_per_token'] = cost_per_token
 
-        if not self._is_local():
-            try:
+        try:
+            # try directly get response_cost from response
+            cost = getattr(response, '_hidden_params', {}).get('response_cost', None)
+            if cost is None:
                 cost = litellm_completion_cost(
                     completion_response=response, **extra_kwargs
                 )
-                self.metrics.add_cost(cost)
-                return cost
-            except Exception:
-                self.cost_metric_supported = False
-                logger.warning('Cost calculation not supported for this model.')
+            self.metrics.add_cost(cost)
+            return cost
+        except Exception:
+            self.cost_metric_supported = False
+            logger.debug('Cost calculation not supported for this model.')
         return 0.0
 
     def __str__(self):

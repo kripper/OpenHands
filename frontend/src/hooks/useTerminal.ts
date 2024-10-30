@@ -11,7 +11,10 @@ import { useSocket } from "#/context/socket";
   The reason for this is that the hook exposes a ref that requires a DOM element to be rendered.
 */
 
-export const useTerminal = (commands: Command[] = []) => {
+export const useTerminal = (
+  commands: Command[] = [],
+  secrets: string[] = [],
+) => {
   const { send } = useSocket();
   const terminal = React.useRef<Terminal | null>(null);
   const fitAddon = React.useRef<FitAddon | null>(null);
@@ -161,11 +164,15 @@ export const useTerminal = (commands: Command[] = []) => {
       }
       // Start writing commands from the last command index
       for (let i = lastCommandIndex.current; i < commands.length; i += 1) {
-        const command = commands[i];
-        const lines = command.content.split("\n");
+        // eslint-disable-next-line prefer-const
+        let { content, type } = commands[i];
 
+        secrets.forEach((secret) => {
+          content = content.replaceAll(secret, "*".repeat(10));
+        });
+        const lines = content.split("\n");
         lines.forEach((line, index) => {
-          if (index < lines.length - 1 || command.type === "input") {
+          if (index < lines.length - 1 || type === "input") {
             terminal.current?.writeln(line);
           } else {
             terminal.current?.write(line);

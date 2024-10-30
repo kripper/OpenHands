@@ -132,15 +132,15 @@ class ActionExecutor:
             obs = await self.run_ipython(
                 IPythonRunCellAction(code=self.kernel_init_code)
             )
-            logger.info(f'AgentSkills initialized: {obs}')
+            logger.debug(f'AgentSkills initialized: {obs}')
 
         await self._init_bash_commands()
-        logger.info('Runtime client initialized.')
+        logger.debug('Runtime client initialized.')
 
     async def _init_plugin(self, plugin: Plugin):
         await plugin.initialize(self.username)
         self.plugins[plugin.name] = plugin
-        logger.info(f'Initializing plugin: {plugin.name}')
+        logger.debug(f'Initializing plugin: {plugin.name}')
 
         if isinstance(plugin, JupyterPlugin):
             await self.run_ipython(
@@ -150,7 +150,7 @@ class ActionExecutor:
             )
 
     async def _init_bash_commands(self):
-        logger.info(f'Initializing by running {len(INIT_COMMANDS)} bash commands...')
+        logger.debug(f'Initializing by running {len(INIT_COMMANDS)} bash commands...')
         # if root user, skip last command
         if self.username == 'root':
             INIT_COMMANDS.pop()
@@ -165,14 +165,15 @@ class ActionExecutor:
             )
             assert obs.exit_code == 0
 
-        logger.info('Bash init commands completed')
+        logger.debug('Bash init commands completed')
 
     async def run_action(self, action) -> Observation:
-        action_type = action.action
-        logger.debug(f'Running action:\n{action}')
-        observation = await getattr(self, action_type)(action)
-        logger.debug(f'Action output:\n{observation}')
-        return observation
+        async with self.lock:
+            action_type = action.action
+            logger.debug(f'Running action:\n{action}')
+            observation = await getattr(self, action_type)(action)
+            logger.debug(f'Action output:\n{observation}')
+            return observation
 
     async def run(
         self, action: CmdRunAction
@@ -447,13 +448,6 @@ if __name__ == '__main__':
         )
 
     @app.middleware('http')
-    async def one_request_at_a_time(request: Request, call_next):
-        assert client is not None
-        async with client.lock:
-            response = await call_next(request)
-        return response
-
-    @app.middleware('http')
     async def authenticate_requests(request: Request, call_next):
         if request.url.path != '/alive' and request.url.path != '/server_info':
             try:
@@ -519,7 +513,7 @@ if __name__ == '__main__':
                 shutil.unpack_archive(zip_path, full_dest_path)
                 os.remove(zip_path)  # Remove the zip file after extraction
 
-                logger.info(
+                logger.debug(
                     f'Uploaded file {file.filename} and extracted to {destination}'
                 )
             else:
@@ -527,7 +521,7 @@ if __name__ == '__main__':
                 file_path = os.path.join(full_dest_path, file.filename)
                 with open(file_path, 'wb') as buffer:
                     shutil.copyfileobj(file.file, buffer)
-                logger.info(f'Uploaded file {file.filename} to {destination}')
+                logger.debug(f'Uploaded file {file.filename} to {destination}')
 
             return JSONResponse(
                 content={
@@ -543,7 +537,7 @@ if __name__ == '__main__':
 
     @app.get('/download_files')
     async def download_file(path: str):
-        logger.info('Downloading files')
+        logger.debug('Downloading files')
         try:
             if not os.path.isabs(path):
                 raise HTTPException(
@@ -661,7 +655,5 @@ if __name__ == '__main__':
             logger.error(f'Error listing files: {e}', exc_info=True)
             return []
 
-    logger.info('Runtime client initialized.')
-
-    logger.info(f'Starting action execution API on port {args.port}')
+    logger.debug(f'Starting action execution API on port {args.port}')
     run(app, host='0.0.0.0', port=args.port)

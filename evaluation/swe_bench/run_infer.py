@@ -27,6 +27,7 @@ from evaluation.utils.shared import (
 )
 from openhands.controller.state.state import State
 from openhands.core.config import (
+    AgentConfig,
     AppConfig,
     SandboxConfig,
     get_llm_config_arg,
@@ -48,11 +49,6 @@ USE_INSTANCE_IMAGE = os.environ.get('USE_INSTANCE_IMAGE', 'false').lower() == 't
 AGENT_CLS_TO_FAKE_USER_RESPONSE_FN = {
     'CodeActAgent': codeact_user_response,
     'CodeActSWEAgent': codeact_user_response,
-}
-
-AGENT_CLS_TO_INST_SUFFIX = {
-    'CodeActAgent': 'When you think you have fixed the issue through code changes, please run the following command: <execute_bash> exit </execute_bash>.\n',
-    'CodeActSWEAgent': 'When you think you have fixed the issue through code changes, please run the following command: <execute_bash> exit </execute_bash>.\n',
 }
 
 
@@ -79,7 +75,8 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             )
         instruction += CODEACT_SWE_PROMPT.format(workspace_dir_name=workspace_dir_name)
     else:
-        # Testing general agents
+        # Instruction based on Anthropic's official trajectory
+        # https://github.com/eschluntz/swe-bench-experiments/tree/main/evaluation/verified/20241022_tools_claude-3-5-sonnet-updated/trajs
         instruction = (
             f'Please resolve the following Github issue for the repository, which is already set up, and the source code is available in the /testbed directory, to which you have access.\n'
             '# Problem Statement\n'
@@ -89,6 +86,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             # 'Reproduce the issue in the test code before fixing it.\n'
             "Plan:\n1) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
             'Add your valuable thoughts to every action you take.\n'
+            # 'Think about edgecases and make sure your fix handles them as well\n'
             # "Please don't blabber\n"
         )
         if (
@@ -167,6 +165,12 @@ def get_config(
             f'{metadata.llm_config.log_completions_folder}'
         )
     config.set_llm_config(metadata.llm_config)
+    agent_config = AgentConfig(
+        codeact_enable_jupyter=False,
+        codeact_enable_browsing_delegate=False,
+        codeact_enable_llm_editor=False,
+    )
+    config.set_agent_config(agent_config)
     return config
 
 
@@ -368,7 +372,7 @@ def complete_runtime(
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert_and_raise(
-        obs.exit_code == 0,
+        isinstance(obs, CmdOutputObservation) and obs.exit_code == 0,
         f'Failed to cd to /testbed: {obs.content}',
     )
 
@@ -378,7 +382,7 @@ def complete_runtime(
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     assert_and_raise(
-        obs.exit_code == 0,
+        isinstance(obs, CmdOutputObservation) and obs.exit_code == 0,
         f'Failed to git config --global core.pager "": {str(obs)}',
     )
 
@@ -387,7 +391,10 @@ def complete_runtime(
     logger.info(action, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
-    assert_and_raise(obs.exit_code == 0, f'Failed to git add -A: {str(obs)}')
+    assert_and_raise(
+        isinstance(obs, CmdOutputObservation) and obs.exit_code == 0,
+        f'Failed to git add -A: {str(obs)}',
+    )
 
     n_retries = 0
     git_patch = None
@@ -466,6 +473,7 @@ def process_instance(
         if (
             state.last_error
             and 'fatal error during agent execution' in state.last_error
+            and 'stuck in a loop' not in state.last_error
         ):
             raise EvalException('Fatal error detected: ' + state.last_error)
 
@@ -550,6 +558,7 @@ if __name__ == '__main__':
     llm_config = None
     if args.llm_config:
         llm_config = get_llm_config_arg(args.llm_config)
+        llm_config.log_completions = True
 
     if llm_config is None:
         raise ValueError(f'Could not find LLM config: --llm_config {args.llm_config}')
