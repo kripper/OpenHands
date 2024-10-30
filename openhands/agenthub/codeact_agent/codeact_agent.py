@@ -1,4 +1,3 @@
-import json
 import os
 import re
 from collections import deque
@@ -118,9 +117,9 @@ class CodeActAgent(Agent):
                 codeact_enable_jupyter=self.config.codeact_enable_jupyter,
                 codeact_enable_llm_editor=self.config.codeact_enable_llm_editor,
             )
-            logger.info(
-                f'TOOLS loaded for CodeActAgent: {json.dumps(self.tools, indent=2)}'
-            )
+            # logger.info(
+            #     f'TOOLS loaded for CodeActAgent: {json.dumps(self.tools, indent=2)}'
+            # )
             self.system_prompt = codeact_function_calling.SYSTEM_PROMPT
             self.initial_user_message = None
         else:
@@ -136,7 +135,6 @@ class CodeActAgent(Agent):
 
         self.pending_actions: deque[Action] = deque()
 
-    @classmethod
     def get_action_message(
         self,
         action: Action,

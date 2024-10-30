@@ -1,6 +1,8 @@
 from openhands.agenthub.codeact_agent.codeact_agent import CodeActAgent
 from openhands.controller.state.state import State
 from openhands.core.config import load_app_config
+from openhands.core.config.agent_config import AgentConfig
+from openhands.core.config.llm_config import LLMConfig
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.message import Message, TextContent
 from openhands.events.action.action import Action
@@ -37,10 +39,11 @@ class StuckDetector:
         # stuck input
         stuck_input = 'Aanalyze the history'
         for index, (action, observation) in enumerate(zip(actions, observations), 1):
-            action = CodeActAgent.get_action_message(
+            agent = CodeActAgent(llm=LLM(LLMConfig()), config=AgentConfig())
+            action = agent.get_action_message(
                 action, pending_tool_call_action_messages={}
             )
-            observation = CodeActAgent.get_observation_message(
+            observation = agent.get_observation_message(
                 observation, tool_call_id_to_message={}
             )
             stuck_input += f'\n{index = }. {action = }\n{observation = }'
