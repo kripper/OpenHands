@@ -16,19 +16,20 @@ def find_imported_base_class(code, class_name):
     return None
 
 
-def find_base_classes_without_slots(code, target_class, file_path):
+def find_base_classes_without_slots(file_path, target_class):
     """
     Recursively checks all base classes of a given class, including external imports,
     to identify which lack a __slots__ attribute.
 
     Parameters:
-    code (str): The Python source code to analyze.
-    target_class (str): The name of the class to check.
     file_path (str): The path to the file where the initial code is located.
+    target_class (str): The name of the class to check.
 
     Returns:
     list: A list of base classes in the entire inheritance chain of the target class that do not have __slots__.
     """
+    with open(file_path, 'r') as file:
+        code = file.read()
     tree = ast.parse(code)
     class_defs = {
         node.name: node for node in tree.body if isinstance(node, ast.ClassDef)
@@ -115,8 +116,10 @@ def find_base_classes_without_slots(code, target_class, file_path):
 
 if __name__ == '__main__':
     # Usage example
-    f = r'C:\Users\smart\Desktop\GD\sympy\sympy\core\symbol.py'
-    with open(f, 'r') as file:
-        code = file.read()
-
-    (find_base_classes_without_slots(code, 'Symbol', f))
+    file_name = r'C:\Users\smart\Desktop\GD\sympy\sympy\core\symbol.py'
+    (
+        find_base_classes_without_slots(
+            file_name,
+            'Symbol',
+        )
+    )
