@@ -6,7 +6,6 @@ import pexpect
 
 from openhands.core.logger import openhands_logger as logger
 from openhands.events.action import CmdRunAction
-from openhands.events.event import EventSource
 from openhands.events.observation import (
     CmdOutputObservation,
     FatalErrorObservation,
@@ -443,13 +442,13 @@ class BashSession:
                 self.last_command = command
                 if command.startswith('pip install'):
                     output = self.parse_pip_output(command, output)
-                if all_output:
-                    # previous output already exists so we add a newline
-                    all_output += '\r\n'
+                # if all_output:
+                #     # previous output already exists so we add a newline
+                #     all_output += '\r\n'
 
                 # If the command originated with the agent, append the command that was run...
-                if action.source == EventSource.AGENT:
-                    all_output += command + '\r\n'
+                # if action.source == EventSource.AGENT:
+                #     all_output += command + '\r\n'
 
                 all_output += str(output)
                 if exit_code != 0:
