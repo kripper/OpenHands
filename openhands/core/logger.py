@@ -13,9 +13,6 @@ DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 'yes']
 LOG_TO_FILE = os.getenv('USER') not in ['openhands', 'root']
 if DEBUG:
     LOG_LEVEL = 'DEBUG'
-    import litellm
-
-    litellm.set_verbose = True
 
 DISABLE_COLOR_PRINTING = False
 
