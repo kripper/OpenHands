@@ -86,6 +86,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             # 'Reproduce the issue in the test code before fixing it.\n'
             "Plan:\n1) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
             'Add your valuable thoughts to every action you take.\n'
+            'Identify the root cause of the issue and fix it.\n'
             # 'Think about edgecases and make sure your fix handles them as well\n'
             # "Please don't blabber\n"
         )
@@ -286,6 +287,11 @@ def initialize_runtime(
         obs.exit_code == 0,
         f'Failed to cd to /testbed: {obs.content}',
     )
+
+    action = IPythonRunCellAction(code='%cd /testbed')
+    logger.info(action, extra={'msg_type': 'ACTION'})
+    obs = runtime.run_action(action)
+    logger.info(obs, extra={'msg_type': 'OBSERVATION'})
 
     action = CmdRunAction(command=f'git reset --hard {instance["base_commit"]}')
     action.timeout = 600
