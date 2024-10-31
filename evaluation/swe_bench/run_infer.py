@@ -86,7 +86,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             # 'Reproduce the issue in the test code before fixing it.\n'
             "Plan:\n1) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
             'Add your valuable thoughts to every action you take.\n'
-            'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
+            # 'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
             # 'Think about edgecases and make sure your fix handles them as well\n'
             # "Please don't blabber\n"
         )
