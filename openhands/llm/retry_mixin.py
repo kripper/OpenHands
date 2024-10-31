@@ -44,10 +44,13 @@ class RetryMixin:
     def log_retry_attempt(self, retry_state):
         """Log retry attempts."""
         exception = retry_state.outcome.exception()
-        logger.error(
-            f'{exception}. Attempt #{retry_state.attempt_number} | You can customize retry values in the configuration.',
-            exc_info=False,
-        )
+        if 'RESOURCE_EXHAUSTED' in str(exception):
+            logger.error(f'429 | Attempt #{retry_state.attempt_number}')
+        else:
+            logger.error(
+                f'{exception}. Attempt #{retry_state.attempt_number} | You can customize retry values in the configuration.',
+                exc_info=False,
+            )
         import os
 
         os.environ['attempt_number'] = str(retry_state.attempt_number)
