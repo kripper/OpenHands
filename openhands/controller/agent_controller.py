@@ -506,7 +506,7 @@ class AgentController:
             self.event_stream.add_event(action, EventSource.AGENT)
 
         await self.update_state_after_step()
-        self.log('debug', str(action), extra={'msg_type': 'ACTION'})
+        self.log('info', str(action), extra={'msg_type': 'ACTION'})
 
     async def _delegate_step(self):
         """Executes a single step of the delegate agent."""
