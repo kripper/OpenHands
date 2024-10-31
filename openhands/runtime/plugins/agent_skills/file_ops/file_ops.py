@@ -1146,15 +1146,15 @@ def show_class(file_path: str, class_name: str):
     print(f"Class '{class_name}' not found in the code.")
 
 
-def show_function(file_path: str, fully_qualified_function_name: str) -> None:
+def show_function(file_path: str, qualified_function_name: str) -> None:
     """
-    Show the definition of the given fully qualified function name in the given file path.
+    Show the definition of the given qualified function name in the given file path.
 
     Args:
         file_path: str: The path to the file containing the function definition.
-        fully_qualified_function_name: str: The fully qualified name of the function to search for.
+        qualified_function_name: str: The qualified name of the function to search for within the file context.
     """
-    parts = fully_qualified_function_name.split('.')
+    parts = qualified_function_name.split('.')
 
     if len(parts) == 1:  # Top-level function (no class)
         class_name = None
