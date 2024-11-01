@@ -53,6 +53,8 @@ class ImageContent(Content):
 
 
 class Message(BaseModel):
+    # NOTE: this is not the same as EventSource
+    # These are the roles in the LLM's APIs
     role: Literal['user', 'system', 'assistant', 'tool']
     content: list[TextContent | ImageContent] = Field(default_factory=list)
     condensable: bool = True

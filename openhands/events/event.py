@@ -9,6 +9,7 @@ from openhands.events.tool import ToolCallMetadata
 class EventSource(str, Enum):
     AGENT = 'agent'
     USER = 'user'
+    ENVIRONMENT = 'environment'
 
 
 @dataclass

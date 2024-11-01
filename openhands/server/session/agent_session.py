@@ -119,7 +119,7 @@ class AgentSession:
             agent_configs=agent_configs,
         )
         self.event_stream.add_event(
-            ChangeAgentStateAction(AgentState.INIT), EventSource.USER
+            ChangeAgentStateAction(AgentState.INIT), EventSource.ENVIRONMENT
         )
         if self.controller:
             self.controller.agent_task = self.controller.start_step_loop()
@@ -140,7 +140,13 @@ class AgentSession:
             await self.security_analyzer.close()
 
         if self.loop:
-            self.loop.stop()
+            if self.loop.is_closed():
+                logger.debug(
+                    'Trying to close already closed loop. (It probably never started correctly)'
+                )
+            else:
+                self.loop.stop()
+            self.loop = None
 
         self._closed = True
 

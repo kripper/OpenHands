@@ -158,7 +158,7 @@ class AgentController:
         if exception is not None and isinstance(exception, litellm.AuthenticationError):
             detail = 'Please check your credentials. Is your API key correct?'
         self.event_stream.add_event(
-            ErrorObservation(f'{message}:{detail}'), EventSource.USER
+            ErrorObservation(f'{message}:{detail}'), EventSource.ENVIRONMENT
         )
 
     async def start_step_loop(self):
@@ -352,7 +352,8 @@ class AgentController:
 
         self.state.agent_state = new_state
         self.event_stream.add_event(
-            AgentStateChangedObservation('', self.state.agent_state), EventSource.AGENT
+            AgentStateChangedObservation('', self.state.agent_state),
+            EventSource.ENVIRONMENT,
         )
 
         if new_state == AgentState.INIT and self.state.resume_state:
