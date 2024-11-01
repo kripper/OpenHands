@@ -51,6 +51,8 @@
         ["sympy__sympy-18189","https://www.all-hands.dev/share?share_id=c0305693cba105ddf40189db94446cb3e31c152a188fd8e3b1afeede553bcb04"],
         ["sympy__sympy-20154","https://www.all-hands.dev/share?share_id=5e28a8a6fa6705f425e68711d9e942300f90aeec2916ca2dfa9503f4182c491a"],
         ["sympy__sympy-20590","https://www.all-hands.dev/share?share_id=6ab8307ba21b3487265d43852e16fc4e89f2f9286be68b35ef1df2dbcebfc538"],
+        ["sympy__sympy-17139","https://www.all-hands.dev/share?share_id=82abf7224d8885d6bdfa19001b8dd880b9abe8d39f11fe16b1e5985f2025c6bb"],
+        ["scikit-learn__scikit-learn-25747","https://www.all-hands.dev/share?share_id=5f0ed81825360330cb4607aa1ffa1e1d83f8f2b978cf4042b79a37f416dfcffd"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
@@ -69,6 +71,10 @@
         ["sympy__sympy-13031","https://www.all-hands.dev/share?share_id=7f9b5a98c6f0043adcc5e6e96c2bdb4c0583514e40156ca638e06972bff12eb1"],
         ["sympy__sympy-15345","https://www.all-hands.dev/share?share_id=5fbf50f648efdd7e6d8d70b25d94d99404ea4610c78c16c99560c85a993933f3"],
         ["sympy__sympy-18199","https://www.all-hands.dev/share?share_id=8e4b7ee2f62aa688926bf97c476e3bf5f362a64e66f7bb121acb4f17fe14f5d1"],
+        ["sympy__sympy-17630","https://www.all-hands.dev/share?share_id=ff4c71cf80b51ca276e34f50153f115d02acff34ebbe523d117857009b518f38"],
+        ["sphinx-doc__sphinx-11445","https://www.all-hands.dev/share?share_id=268085699b2f32c465f3f313c14529ee332541abd446925a1ebe46139fd6af4f"],
+        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=2dd6574fb4fb6454516117b8f3265e628764c3bf6af166c01c8937f7f9e947ba"],
+        ["pydata__xarray-4094","https://www.all-hands.dev/share?share_id=82c6160a306b52d3ba1307e1f52eef2185341525d6efe7d13f25cd5aa5f7cfea"],
         ["for ignoring trailing comma", "-"]
     ]
 }
