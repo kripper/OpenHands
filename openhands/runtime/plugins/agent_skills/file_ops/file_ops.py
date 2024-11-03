@@ -33,7 +33,7 @@ import uuid
 
 from openhands.linter import DefaultLinter, LintResult
 from openhands.runtime.plugins.agent_skills.file_ops.ast_ops import (
-    find_base_classes_without_slots,
+    show_class_structure,
 )
 
 CURRENT_FILE: str | None = None
@@ -1204,6 +1204,7 @@ __all__ = [
     'search_class',
     'show_class',
     'show_function',
+    'show_class_structure',
     # 'search_in_dir',
     # 'search_in_file',
     'open_file',
@@ -1224,7 +1225,6 @@ __all__ = [
     'kill_port',
     'clean_workspace',
     'custom_import',
-    'find_base_classes_without_slots',
 ]
 
 try:
