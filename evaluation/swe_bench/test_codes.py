@@ -226,6 +226,9 @@ assert Sum(Sum(e[i, j], (i, 0, n-1)), (j, 0, n-1)).doit() != 0
         'sympy__sympy-17655': custom_test_code.format(
             cmd='bin/test sympy/geometry/tests/test_point.py'
         ),
+        'django__django-13590': custom_test_code.format(
+            cmd='tests/runtests.py expressions.tests.IterableLookupInnerExpressionsTests.test_complex_expressions_do_not_introduce_sql_injection_via_untrusted_string_inclusion && tests/runtests.py expressions.tests.IterableLookupInnerExpressionsTests.test_range_lookup_allows_F_expressions_and_expressions_for_integers'
+        ),
     }
     return test_codes.get(instance_id, '')
 
