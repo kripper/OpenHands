@@ -876,6 +876,14 @@ def replace_full_file_content(file_name: str, new_content: str) -> None:
 
 def replace_line_content(file_name: str, line_number: int, new_content: str) -> None:
     """Replace the content of the given line number in a file."""
+    # check if the old content is the same as the new content
+    with open(file_name, 'r') as f:
+        old_content = f.read()
+    if old_content.splitlines()[line_number - 1] == new_content:
+        print(
+            f'[The content of line {line_number} is already the same as the proposed changes]'
+        )
+        return
     ret_str = _edit_file_impl(
         file_name,
         start=line_number,
@@ -892,6 +900,17 @@ def replace_lines_content(
     file_name: str, start_line_number: int, end_line_number: int, new_content: str
 ) -> None:
     """Replace the content of the lines from the start line number to the end line number (inclusive) in a file."""
+    # check if the old content is the same as the new content
+    with open(file_name, 'r') as f:
+        old_content = f.read()
+    if (
+        old_content.splitlines()[start_line_number - 1 : end_line_number]
+        == new_content.splitlines()
+    ):
+        print(
+            f'[The content of the lines from {start_line_number} to {end_line_number} is already the same as the proposed changes]'
+        )
+        return
     ret_str = _edit_file_impl(
         file_name,
         start=start_line_number,
