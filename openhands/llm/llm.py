@@ -463,6 +463,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         Returns:
             boolean: True if prompt caching is supported and enabled for the given model.
         """
+        if self.config.model.startswith('gemini'):
+            # GeminiException - Gemini Context Caching only supports 1 message/block of continuous messages. Cause: Environment reminder is added in the prompt?
+            return False
         return self.config.caching_prompt is True and (
             (
                 self.config.model in CACHE_PROMPT_SUPPORTED_MODELS
