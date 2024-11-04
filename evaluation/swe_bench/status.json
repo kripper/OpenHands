@@ -53,6 +53,10 @@
         ["sympy__sympy-20590","https://www.all-hands.dev/share?share_id=6ab8307ba21b3487265d43852e16fc4e89f2f9286be68b35ef1df2dbcebfc538"],
         ["sympy__sympy-17139","https://www.all-hands.dev/share?share_id=82abf7224d8885d6bdfa19001b8dd880b9abe8d39f11fe16b1e5985f2025c6bb"],
         ["scikit-learn__scikit-learn-25747","https://www.all-hands.dev/share?share_id=5f0ed81825360330cb4607aa1ffa1e1d83f8f2b978cf4042b79a37f416dfcffd"],
+        ["matplotlib__matplotlib-24149","https://www.all-hands.dev/share?share_id=5033e489f0ab8a72997f830a0e64c977e94e6582f4e02a187777f8ccf507aab4"],
+        ["sympy__sympy-17655","https://www.all-hands.dev/share?share_id=642323a89761d10d4a1595d2ca209f721e6c127cce65b53cc7a83335382e42f6"],
+        ["django__django-13033","https://www.all-hands.dev/share?share_id=23adff3abbd54df543fea509ded9e80b43d5f20a8d537058efb037cea5dbea9a"],
+        ["django__django-13590","https://www.all-hands.dev/share?share_id=ee2819dcb40f29679285802a8391b5903a48c35569f324406d4418bdeb7f01c9"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
