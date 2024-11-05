@@ -349,8 +349,8 @@ class CodeActAgent(Agent):
             return self.pending_actions.popleft()
 
         # if we're done, go back
-        latest_user_message = state.history.get_last_user_message()
-        if latest_user_message and latest_user_message.strip() == '/exit':
+        last_user_message = state.get_last_user_message()
+        if last_user_message and last_user_message.strip() == '/exit':
             return AgentFinishAction()
 
         response = None
@@ -449,7 +449,7 @@ class CodeActAgent(Agent):
                 ),
             )
 
-        if len(state.history.get_events_as_list()) == 1 and config.run_as_openhands:
+        if len(state.history) == 1 and config.run_as_openhands:
             workspace_contents = ', '.join(os.listdir(config.workspace_base))
             if workspace_contents:
                 messages.append(
@@ -463,16 +463,16 @@ class CodeActAgent(Agent):
                     )
                 )
 
-        if state.history.summary:
-            summary_message = self.get_action_message(
-                state.history.summary, pending_tool_call_action_messages={}
-            )
-            if summary_message:
-                messages.extend(summary_message)
+        # if state.history.summary:
+        #     summary_message = self.get_action_message(
+        #         state.history.summary, pending_tool_call_action_messages={}
+        #     )
+        #     if summary_message:
+        #         messages.extend(summary_message)
 
         pending_tool_call_action_messages: dict[str, Message] = {}
         tool_call_id_to_message: dict[str, Message] = {}
-        events = list(state.history.get_events())
+        events = list(state.history)
         for event in events:
             # create a regular message from an event
             if isinstance(event, Action):

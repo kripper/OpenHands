@@ -19,7 +19,6 @@ from openhands.events.action import (
     IPythonRunCellAction,
     MessageAction,
 )
-from openhands.events.event import LogEvent
 from openhands.events.observation import (
     CmdOutputObservation,
     IPythonRunCellObservation,
@@ -166,8 +165,8 @@ class CodeActSWEAgent(Agent):
         - AgentFinishAction() - end the interaction
         """
         # if we're done, go back
-        latest_user_message = state.history.get_last_user_message()
-        if latest_user_message and latest_user_message.strip() == '/exit':
+        last_user_message = state.get_last_user_message()
+        if last_user_message and last_user_message.strip() == '/exit':
             return AgentFinishAction()
 
         # prepare what we want to send to the LLM
@@ -197,19 +196,22 @@ class CodeActSWEAgent(Agent):
             # ),
         ]
 
-        if state.history.summary:
-            summary_message = self.get_action_message(state.history.summary)
-            if summary_message:
-                messages.append(summary_message)
-        for event in state.history.get_events():
-            if event.id > state.history.last_summarized_event_id:
-                # create a regular message from an event
-                if isinstance(event, Action):
-                    message = self.get_action_message(event)
-                elif isinstance(event, Observation):
-                    message = self.get_observation_message(event)
-                elif isinstance(event, LogEvent):
-                    message = None
+        for event in state.history:
+            # create a regular message from an event
+            if isinstance(event, Action):
+                message = self.get_action_message(event)
+            elif isinstance(event, Observation):
+                message = self.get_observation_message(event)
+            else:
+                raise ValueError(f'Unknown event type: {type(event)}')
+
+            # add regular message
+            if message:
+                # handle error if the message is the SAME role as the previous message
+                # litellm.exceptions.BadRequestError: litellm.BadRequestError: OpenAIException - Error code: 400 - {'detail': 'Only supports u/a/u/a/u...'}
+                # there should not have two consecutive messages from the same role
+                if messages and messages[-1].role == message.role:
+                    messages[-1].content.extend(message.content)
                 else:
                     raise ValueError(f'Unknown event type: {type(event)}')
 
