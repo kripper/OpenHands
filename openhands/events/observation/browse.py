@@ -25,7 +25,7 @@ class BrowserOutputObservation(Observation):
         return 'Visited ' + self.url
 
     def __str__(self) -> str:
-        return (
+        ret = (
             '**BrowserOutputObservation**\n'
             f'URL: {self.url}\n'
             f'Error: {self.error}\n'
@@ -34,5 +34,36 @@ class BrowserOutputObservation(Observation):
             f'Last browser action: {self.last_browser_action}\n'
             f'Last browser action error: {self.last_browser_action_error}\n'
             f'Focused element bid: {self.focused_element_bid}\n'
-            f'CONTENT: {self.content}\n'
+            f'Content: {self.content}\n'
         )
+        ret += '--- Agent Observation ---\n'
+        ret += self.get_agent_obs_text()
+        return ret
+
+    def get_agent_obs_text(self) -> str:
+        """Get a concise text that will be shown to the agent."""
+        text = f'[Current URL: {self.url}]\n'
+        text += f'[Focused element bid: {self.focused_element_bid}]\n\n'
+        if self.error:
+            text += (
+                '================ BEGIN error message ===============\n'
+                'The following error occurred when executing the last action:\n'
+                f'{self.last_browser_action_error}\n'
+                '================ END error message ===============\n'
+            )
+        else:
+            text += '[Action executed successfully.]\n'
+
+        try:
+            # We do not filter visible only here because we want to show the full content
+            # of the web page to the agent for simplicity.
+            # FIXME: handle the case when the web page is too large
+            cur_axtree_txt = self.axtree_txt
+            text += (
+                f'============== BEGIN accessibility tree ==============\n'
+                f'{cur_axtree_txt}\n'
+                f'============== END accessibility tree ==============\n'
+            )
+        except Exception as e:
+            text += f'\n[Error encountered when processing the accessibility tree: {e}]'
+        return text

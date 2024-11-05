@@ -38,10 +38,8 @@ export interface LogMessage {
 }
 
 export interface StatusMessage {
-  // TODO not implemented yet
-  // Whether the status is an error, default is false
-  is_error: boolean;
-
-  // A status message to display to the user
-  status: string;
+  status_update: true;
+  type: string;
+  id: string;
+  message: string;
 }

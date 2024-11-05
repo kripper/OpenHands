@@ -18,6 +18,7 @@ from openhands.events.action import (
     AgentDelegateAction,
     AgentFinishAction,
     AgentSummarizeAction,
+    BrowseInteractiveAction,
     CmdRunAction,
     FileEditAction,
     IPythonRunCellAction,
@@ -27,12 +28,12 @@ from openhands.events.action.browse import BrowseURLAction
 from openhands.events.event import LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
+    BrowserOutputObservation,
     CmdOutputObservation,
     FileEditObservation,
     IPythonRunCellObservation,
     UserRejectObservation,
 )
-from openhands.events.observation.browse import BrowserOutputObservation
 from openhands.events.observation.error import ErrorObservation
 from openhands.events.observation.observation import Observation
 from openhands.events.serialization.event import truncate_content
@@ -49,7 +50,7 @@ config = load_app_config()
 
 
 class CodeActAgent(Agent):
-    VERSION = '2.1'
+    VERSION = '2.2'
     """
     The Code Act Agent is a minimalist agent.
     The agent works by passing the model a list of action-observation pairs and prompting the model to take the next step.
@@ -112,7 +113,7 @@ class CodeActAgent(Agent):
         if self.function_calling_active:
             # Function calling mode
             self.tools = codeact_function_calling.get_tools(
-                codeact_enable_browsing_delegate=self.config.codeact_enable_browsing_delegate,
+                codeact_enable_browsing=self.config.codeact_enable_browsing,
                 codeact_enable_jupyter=self.config.codeact_enable_jupyter,
                 codeact_enable_llm_editor=self.config.codeact_enable_llm_editor,
             )
@@ -149,10 +150,10 @@ class CodeActAgent(Agent):
 
         Args:
             action (Action): The action to convert. Can be one of:
-                - AgentDelegateAction: For delegating tasks to other agents
                 - CmdRunAction: For executing bash commands
                 - IPythonRunCellAction: For running IPython code
                 - FileEditAction: For editing files
+                - BrowseInteractiveAction: For browsing the web
                 - AgentFinishAction: For ending the interaction
                 - MessageAction: For sending messages
             pending_tool_call_action_messages (dict[str, Message]): Dictionary mapping response IDs
@@ -179,6 +180,7 @@ class CodeActAgent(Agent):
                 BrowseURLAction,
                 AgentSummarizeAction,
                 FileEditAction,
+                BrowseInteractiveAction,
             ),
         ) or (isinstance(action, AgentFinishAction) and action.source == 'agent'):
             if self.function_calling_active:
@@ -202,6 +204,10 @@ class CodeActAgent(Agent):
                 )
                 return []
             else:
+                assert not isinstance(action, BrowseInteractiveAction), (
+                    'BrowseInteractiveAction is not supported in non-function calling mode. Action: '
+                    + str(action)
+                )
                 content = [TextContent(text=self.action_parser.action_to_str(action))]
                 return [
                     Message(
@@ -277,6 +283,8 @@ class CodeActAgent(Agent):
             text = truncate_content(text, max_message_chars)
         elif isinstance(obs, FileEditObservation):
             text = obs_prefix + truncate_content(str(obs), max_message_chars)
+        elif isinstance(obs, BrowserOutputObservation):
+            text = obs_prefix + obs.get_agent_obs_text()
         elif isinstance(obs, AgentDelegateObservation):
             text = obs_prefix + truncate_content(
                 obs.outputs['content'] if 'content' in obs.outputs else '',
@@ -364,6 +372,7 @@ class CodeActAgent(Agent):
         }
         if self.function_calling_active:
             params['tools'] = self.tools
+            params['parallel_tool_calls'] = False
         else:
             params['stop'] = [
                 '</execute_ipython>',

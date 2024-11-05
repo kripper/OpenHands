@@ -38,7 +38,6 @@ from openhands.events.action import (
 from openhands.events.observation import (
     CmdOutputObservation,
     ErrorObservation,
-    FatalErrorObservation,
     FileReadObservation,
     FileWriteObservation,
     Observation,
@@ -177,7 +176,7 @@ class ActionExecutor:
 
     async def run(
         self, action: CmdRunAction
-    ) -> CmdOutputObservation | FatalErrorObservation:
+    ) -> CmdOutputObservation | ErrorObservation:
         return self.bash_session.run(action)
 
     async def chdir(self):

@@ -24,6 +24,7 @@ from evaluation.utils.shared import (
     prepare_dataset,
     reset_logger_for_multiprocessing,
     run_evaluation,
+    update_llm_config_for_completions_logging,
 )
 from openhands.controller.state.state import State
 from openhands.core.config import (
@@ -45,6 +46,7 @@ from openhands.utils.async_utils import call_async_from_sync
 check_if_resolved()
 USE_HINT_TEXT = os.environ.get('USE_HINT_TEXT', 'false').lower() == 'true'
 USE_INSTANCE_IMAGE = os.environ.get('USE_INSTANCE_IMAGE', 'false').lower() == 'true'
+RUN_WITH_BROWSING = os.environ.get('RUN_WITH_BROWSING', 'false').lower() == 'true'
 
 AGENT_CLS_TO_FAKE_USER_RESPONSE_FN = {
     'CodeActAgent': codeact_user_response,
@@ -103,6 +105,13 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
 
     # NOTE: You can actually set slightly different instruction for different agents
     # instruction += AGENT_CLS_TO_INST_SUFFIX[metadata.agent_class]
+
+    if RUN_WITH_BROWSING:
+        instruction += (
+            '<IMPORTANT!>\n'
+            'You SHOULD NEVER attempt to browse the web. '
+            '</IMPORTANT!>\n'
+        )
     return instruction
 
 
@@ -157,18 +166,14 @@ def get_config(
         workspace_base=None,
         workspace_mount_path=None,
     )
-    if metadata.llm_config.log_completions:
-        metadata.llm_config.log_completions_folder = os.path.join(
-            metadata.eval_output_dir, 'llm_completions', instance['instance_id']
+    config.set_llm_config(
+        update_llm_config_for_completions_logging(
+            metadata.llm_config, metadata.eval_output_dir, instance['instance_id']
         )
-        logger.info(
-            f'Logging LLM completions for instance {instance["instance_id"]} to '
-            f'{metadata.llm_config.log_completions_folder}'
-        )
-    config.set_llm_config(metadata.llm_config)
+    )
     agent_config = AgentConfig(
         codeact_enable_jupyter=False,
-        codeact_enable_browsing_delegate=False,
+        codeact_enable_browsing=RUN_WITH_BROWSING,
         codeact_enable_llm_editor=False,
     )
     config.set_agent_config(agent_config)
