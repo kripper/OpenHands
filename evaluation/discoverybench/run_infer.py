@@ -80,7 +80,7 @@ def get_config(
     agent_config = AgentConfig(
         function_calling=False,
         codeact_enable_jupyter=True,
-        codeact_enable_browsing_delegate=True,
+        codeact_enable_browsing=True,
     )
     config.set_agent_config(agent_config)
     return config
