@@ -115,7 +115,7 @@ class EventStreamRuntime(Runtime):
         env_vars (dict[str, str] | None, optional): Environment variables to set. Defaults to None.
     """
 
-    container_name_prefix = 'openhands-runtime-'
+    container_name_prefix = 'kevin-runtime-'
 
     # Need to provide this method to allow inheritors to init the Runtime
     # without initting the EventStreamRuntime.
