@@ -145,6 +145,11 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 litellm.OllamaConfig.num_ctx = total
                 logger.info(f'Setting OllamaConfig.num_ctx to {total}')
 
+        if self.config.model.split('/')[-1].startswith('o1-'):
+            #  temperature, top_p and n are fixed at 1, while presence_penalty and frequency_penalty are fixed at 0.
+            self.config.temperature = 1
+            self.config.top_p = 1
+
         self._completion = partial(
             litellm_completion,
             model=self.config.model,
@@ -154,9 +159,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             custom_llm_provider=self.config.custom_llm_provider,
             max_tokens=self.config.max_output_tokens,
             timeout=self.config.timeout,
-            temperature=1
-            if self.config.model.startswith('o1-')
-            else self.config.temperature,
+            temperature=self.config.temperature,
             top_p=self.config.top_p,
             caching=self.config.enable_cache,
             drop_params=self.config.drop_params,
@@ -215,6 +218,10 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
 
             # ensure we work with a list of messages
             messages = messages if isinstance(messages, list) else [messages]
+
+            if self.config.model.split('/')[-1].startswith('o1-'):
+                # Message types: user and assistant messages only, system messages are not supported.
+                messages[0].role = 'user'
 
             if self.is_over_token_limit(messages):
                 if kwargs['condense']:
