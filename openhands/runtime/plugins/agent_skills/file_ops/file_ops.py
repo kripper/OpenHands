@@ -126,6 +126,7 @@ def _print_window(
     file_path, targeted_line, window, return_str=False, ignore_window=False
 ):
     global CURRENT_LINE
+    file_path = os.path.abspath(file_path)
     if not _check_current_file(file_path):
         return
     with open(file_path) as file:
@@ -156,7 +157,7 @@ def _print_window(
         if start > 1:
             output += f'({start - 1} more lines above)\n'
         else:
-            output += '(this is the beginning of the file)\n'
+            output += f'(File name: {file_path})\n'
         for i in range(start, end + 1):
             width = len(str(end))
             _new_line = f'{i:>{width}}|{lines[i-1]}'
