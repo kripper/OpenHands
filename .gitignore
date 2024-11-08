@@ -238,3 +238,4 @@ api_keys.py
 evaluation/swe_bench/gru_traj.json
 llm_debugger.py
 **/node_modules/
+evaluation/swe_bench/oh_traj.json
