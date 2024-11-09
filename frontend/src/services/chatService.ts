@@ -13,20 +13,20 @@ export function createChatMessage(
   return JSON.stringify(event);
 }
 
-export function regenerateLastMessage(): void {
+export function createRegenerateLastMessage(): string {
   const event = {
     action: ActionType.REGENERATE,
     args: {},
   };
   const eventString = JSON.stringify(event);
-  // Session.send(eventString);
+  return eventString;
 }
 
-export function sendJupyterCode(code: string): void {
+export function createJupyterCode(code: string): string {
   const event = {
     action: ActionType.RUN_IPYTHON,
     args: { code },
   };
   const eventString = JSON.stringify(event);
-  // Session.send(eventString);
+  return eventString;
 }

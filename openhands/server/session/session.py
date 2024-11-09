@@ -145,10 +145,9 @@ class Session:
         if event.source == EventSource.AGENT:
             await self.send(event_to_dict(event))
         elif event.source == EventSource.USER and isinstance(
-            event, CmdOutputObservation
+            event, (CmdOutputObservation, BrowserOutputObservation, IPythonRunCellObservation),
         ):
             await self.send(event_to_dict(event))
-        # NOTE: ipython observations are not sent here currently
         elif event.source == EventSource.ENVIRONMENT and isinstance(
             event,
             (

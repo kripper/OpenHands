@@ -10,7 +10,8 @@ import { RootState } from "#/store";
 import { Cell, appendJupyterInput } from "#/state/jupyterSlice";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import { I18nKey } from "#/i18n/declaration";
-import { sendJupyterCode } from "#/services/chatService";
+import { createJupyterCode } from "#/services/chatService";
+import { useSocket } from "#/context/socket";
 
 interface IJupyterCell {
   cell: Cell;
@@ -92,6 +93,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const { send } = useSocket();
   const { cells } = useSelector((state: RootState) => state.jupyter);
   const jupyterRef = React.useRef<HTMLDivElement>(null);
 
@@ -103,7 +105,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
   const handleInputSubmit = () => {
     if (inputValue.trim()) {
       dispatch(appendJupyterInput(inputValue));
-      sendJupyterCode(inputValue);
+      send(createJupyterCode(inputValue));
       setInputValue("");
     }
   };
