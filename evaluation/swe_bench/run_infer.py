@@ -108,14 +108,6 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
     # NOTE: You can actually set slightly different instruction for different agents
     # instruction += AGENT_CLS_TO_INST_SUFFIX[metadata.agent_class]
 
-    instruction += (
-        '<IMPORTANT>\n'
-        '- You MUST generate only one action per turn!\n'
-        '- A patch is a set of changes to the source code of the codebase that you are given\n'
-        '- You MUST generate a patch that attempts to fix the issue described in the <pr_description>\n'
-        '</IMPORTANT>\n'
-    )
-
     if RUN_WITH_BROWSING:
         instruction += (
             '<IMPORTANT!>\n'
