@@ -43,4 +43,4 @@ class IPythonRunCellObservation(Observation):
         return 'Code executed in IPython cell.'
 
     def __str__(self) -> str:
-        return f'**IPythonRunCellObservation**\n{self.content}'
+        return f'**IPythonRunCellObservation (source={self.source})**\n{self.content}'

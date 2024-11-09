@@ -253,6 +253,8 @@ class AgentController:
             self.state.outputs = action.outputs
             self.state.metrics.merge(self.state.local_metrics)
             await self.set_agent_state_to(AgentState.REJECTED)
+        else:
+            logger.info(action, extra={'msg_type': 'ACTION'})
 
     async def _handle_observation(self, observation: Observation):
         """Handles observation from the event stream.
@@ -292,13 +294,14 @@ class AgentController:
         """
         if action.source == EventSource.USER:
             self.log(
-                'debug',
+                'info',
                 str(action),
                 extra={'msg_type': 'ACTION', 'event_source': EventSource.USER},
             )
             if self.get_agent_state() != AgentState.RUNNING:
                 await self.set_agent_state_to(AgentState.RUNNING)
         elif action.source == EventSource.AGENT and action.wait_for_response:
+            logger.info(f'Awaiting user input for action: {action}')
             await self.set_agent_state_to(AgentState.AWAITING_USER_INPUT)
 
     def reset_task(self):

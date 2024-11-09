@@ -56,7 +56,7 @@ class IPythonRunCellAction(Action):
     security_risk: ActionSecurityRisk | None = None
 
     def __str__(self) -> str:
-        ret = '**IPythonRunCellAction**\n'
+        ret = f'**IPythonRunCellAction (source={self.source})**\n'
         if self.thought:
             ret += f'THOUGHT: {self.thought}\n'
         ret += f'CODE:\n{self.code}'
