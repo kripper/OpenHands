@@ -51,6 +51,8 @@ class CodeActResponseParser(ResponseParser):
     def parse_response(self, response) -> str:
         # action = response.choices[0].message.content
         action = response['choices'][0]['message']['content']
+        action = action.replace(r'\_', '_') # Mistral Large gives \_ instead of _
+        action = action.replace('```tool_code', '') # Gemini: tool_code is not a valid tag
         if action is None:
             return ''
         for lang in ['bash', 'ipython', 'browse']:
