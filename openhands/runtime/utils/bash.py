@@ -304,7 +304,10 @@ class BashSession:
                             return self._interrupt_bash(action_timeout=timeout)
                 elif index in [3, 4]:
                     self.shell.sendline('Y')
-                    full_output += output + self.shell.match.group(1)
+                    try:
+                        full_output += output + self.shell.match.group(1)
+                    except IndexError:
+                        full_output += output
                 elif index == 5:
                     full_output += self.shell.match.group(0)
                     logger.debug('Seems like asking for input.')
@@ -319,7 +322,9 @@ class BashSession:
 
         if not seeking_input:
             if not output.strip():
-                if 'grep' in command:
+                if command.startswith('cd '):
+                    pass
+                elif 'grep' in command:
                     output = '[No matching lines were found. Why did you search this term?]\r\n'
                 else:
                     output = '[Command executed successfully with no output]\r\n'
