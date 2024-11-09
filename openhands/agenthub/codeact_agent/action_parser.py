@@ -98,7 +98,9 @@ class CodeActResponseParser(ResponseParser):
                 f'Observation: {action.summarized_observations}'
             )
         elif isinstance(action, AgentFinishAction) and action.source == 'agent':
-            return action.thought
+            # Gemini: Unable to submit request because it has an empty text parameter
+            return action.thought or 'The task is done.'
+        
         return ''
 
 
