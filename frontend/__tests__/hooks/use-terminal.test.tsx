@@ -14,7 +14,7 @@ function TestTerminalComponent({
   commands,
   secrets,
 }: TestTerminalComponentProps) {
-  const ref = useTerminal(commands, secrets);
+  const {ref} = useTerminal(commands, secrets);
   return <div ref={ref} />;
 }
 

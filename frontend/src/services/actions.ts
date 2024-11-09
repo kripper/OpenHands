@@ -154,8 +154,6 @@ export function handleAssistantMessage(data: string | SocketMessage) {
     handleObservationMessage(socketMessage);
   } else if ("status_update" in socketMessage) {
     handleStatusMessage(socketMessage);
-  } else if ("observation" in socketMessage) {
-    handleObservationMessage(socketMessage);
   } else if ("log" in socketMessage) {
     store.dispatch(setCurrentStep(socketMessage.log));
   } else {

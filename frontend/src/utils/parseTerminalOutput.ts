@@ -9,8 +9,7 @@
  *
  * const parsed = parseTerminalOutput(raw);
  *
- * console.log(parsed.output); // web_scraper.py
- * console.log(parsed.symbol); // openhands@659478cb008c:/workspace $
+ * console.log(parsed); // web_scraper.py
  */
 export const parseTerminalOutput = (raw: string) => {
   const envRegex = /(.*)\[Python Interpreter: (.*)\]/s;
