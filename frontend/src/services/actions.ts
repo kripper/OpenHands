@@ -6,6 +6,7 @@ import {
 } from "#/state/chatSlice";
 import { setCode, setActiveFilepath } from "#/state/codeSlice";
 import { appendJupyterInput } from "#/state/jupyterSlice";
+import { appendInput } from "#/state/commandSlice";
 import {
   ActionSecurityRisk,
   appendSecurityAnalyzerInput,
@@ -60,6 +61,7 @@ const messageActions = {
     if (message.args.thought) {
       store.dispatch(addAssistantMessage(message.args.thought));
     }
+    store.dispatch(appendInput(message.args.command));
   },
   [ActionType.RUN_IPYTHON]: (message: ActionMessage) => {
     if (message.args.thought) {
