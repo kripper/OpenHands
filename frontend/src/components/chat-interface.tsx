@@ -106,7 +106,7 @@ export function ChatInterface() {
   }, [curAgentState]);
 
   let chatInterface = (
-    <div className="h-full flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between" style={{ height: "94%" }}>
       {messages.length === 0 && (
         <div className="flex flex-col gap-6 h-full px-4 items-center justify-center">
           <div className="flex flex-col items-center p-4 bg-neutral-700 rounded-xl w-full">
