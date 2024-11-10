@@ -24,6 +24,7 @@ class BrowsingResponseParser(ResponseParser):
         action_str = response['choices'][0]['message']['content']
         if action_str is None:
             return ''
+        action_str = action_str.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
         action_str = action_str.strip()
         start_tag = '<execute_browse>'
         end_tag = '</execute_browse>'
