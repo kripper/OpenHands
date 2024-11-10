@@ -118,6 +118,8 @@ export const useTerminal = (
           lastCommand.current = commandBuffer;
           handleEnter(commandBuffer);
           commandBuffer = "";
+        } else if (domEvent.key === "Tab") {
+          // do nothing
         } else if (domEvent.key === "Backspace") {
           if (commandBuffer.length > 0) {
             commandBuffer = handleBackspace(commandBuffer);
