@@ -761,8 +761,8 @@ class AgentController:
             bool: True if the agent is stuck, False otherwise.
         """
         # check if delegate stuck
-        if self.delegate and self.delegate._is_stuck():
-            return True
+        if self.delegate:
+            return self.delegate._is_stuck()
 
         return self._stuck_detector.is_stuck()
 
