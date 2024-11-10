@@ -65,6 +65,10 @@ ROOT_GID = 0
 INIT_COMMANDS = [
     'git config --global user.name "openhands" && git config --global user.email "openhands@all-hands.dev" && alias git="git --no-pager"',
     'export TERM=xterm-256color',
+    "set +H",
+]
+
+INIT_COMMANDS += [
     "export PATH=/openhands/poetry/$(ls /openhands/poetry | sed -n '2p')/bin:$PATH",
 ]
 
