@@ -58,7 +58,10 @@ CONCISE_INSTRUCTION = """\
 Here is another example with chain of thought of a valid action when providing a concise answer to user:
 "
 In order to accomplish my goal I need to send the information asked back to the user. This page list the information of HP Inkjet Fax Machine, which is the product identified in the objective. Its price is $279.49. I will send a message back to user with the answer.
-<execute_browse>send_msg_to_user("$279.49")</execute_browse>
+
+<execute_browse>
+send_msg_to_user("$279.49")
+</execute_browse>
 "
 """
 
@@ -81,7 +84,10 @@ def get_prompt(
 Here is an example with chain of thought of a valid action when clicking on a button:
 "
 In order to accomplish my goal I need to click on the button with bid 12
-<execute_browse>click("12")</execute_browse>
+
+<execute_browse>
+click("12")
+</execute_browse>
 "
 """.strip()
     if USE_CONCISE_ANSWER:
