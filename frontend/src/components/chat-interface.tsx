@@ -22,6 +22,11 @@ import { ScrollToBottomButton } from "./scroll-to-bottom-button";
 import { Suggestions } from "./suggestions";
 import { SUGGESTIONS } from "#/utils/suggestions";
 import BuildIt from "#/assets/build-it.svg?react";
+import { IoMdChatbubbles } from "react-icons/io";
+import beep from "#/utils/beep";
+import { I18nKey } from "#/i18n/declaration";
+import { useTranslation } from "react-i18next";
+
 
 const isErrorMessage = (
   message: Message | ErrorMessage,
@@ -42,8 +47,9 @@ export function ChatInterface() {
   >("positive");
   const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [messageToSend, setMessageToSend] = React.useState<string | null>(null);
+  const [autoMode, setAutoMode] = React.useState(false);
 
-  const handleSendMessage = async (content: string, files: File[]) => {
+  const handleSendMessage = async (content: string, dispatchContent: string = "", files: File[]) => {
     posthog.capture("user_message_sent", {
       current_message_count: messages.length,
     });
@@ -51,7 +57,7 @@ export function ChatInterface() {
     const imageUrls = await Promise.all(promises);
 
     const timestamp = new Date().toISOString();
-    dispatch(addUserMessage({ content, imageUrls, timestamp }));
+    dispatch(addUserMessage({ content: dispatchContent || content, imageUrls, timestamp }));
     send(createChatMessage(content, imageUrls, timestamp));
     setMessageToSend(null);
   };
@@ -62,7 +68,16 @@ export function ChatInterface() {
   };
 
   const handleSendContinueMsg = () => {
-    handleSendMessage("Continue", []);
+    handleSendMessage("Continue", "", []);
+  };
+  const { t } = useTranslation();
+
+  const handleAutoMsg = () => {
+    handleSendMessage(
+      t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE),
+      t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE),
+      [],
+    );
   };
 
   const onClickShareFeedbackActionButton = async (
@@ -71,8 +86,24 @@ export function ChatInterface() {
     setFeedbackModalIsOpen(true);
     setFeedbackPolarity(polarity);
   };
+  React.useEffect(() => {
+    if (autoMode && curAgentState === AgentState.AWAITING_USER_INPUT) {
+      handleAutoMsg();
+    }
+  }, [autoMode, curAgentState]);
 
-  return (
+  React.useEffect(() => {
+    if (
+      (!autoMode && curAgentState === AgentState.AWAITING_USER_INPUT) ||
+      curAgentState === AgentState.ERROR ||
+      curAgentState === AgentState.INIT ||
+      curAgentState === AgentState.FINISHED
+    ) {
+      if (document.cookie.indexOf("mute") === -1) beep();
+    }
+  }, [curAgentState]);
+
+  let chatInterface = (
     <div className="h-full flex flex-col justify-between">
       {messages.length === 0 && (
         <div className="flex flex-col gap-6 h-full px-4 items-center justify-center">
@@ -167,4 +198,25 @@ export function ChatInterface() {
       />
     </div>
   );
+  chatInterface = (
+    <div className="flex flex-col h-full bg-neutral-800">
+      <div className="flex items-center gap-2 border-b border-neutral-600 text-sm px-4 py-2">
+        <IoMdChatbubbles />
+        Chat
+    <div className="ml-auto">
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={autoMode}
+            onChange={() => setAutoMode(!autoMode)}
+            aria-label="Auto Mode"
+          />
+          <span>Auto Mode</span>
+        </label>
+        </div>
+      </div>
+      {chatInterface}
+    </div>
+  );
+  return chatInterface;
 }

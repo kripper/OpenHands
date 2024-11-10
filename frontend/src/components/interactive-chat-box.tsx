@@ -7,7 +7,7 @@ import { ImageCarousel } from "./image-carousel";
 interface InteractiveChatBoxProps {
   isDisabled?: boolean;
   mode?: "stop" | "submit";
-  onSubmit: (message: string, images: File[]) => void;
+  onSubmit: (message: string, dispatchContent: string, images: File[]) => void;
   onStop: () => void;
   value?: string;
   onChange?: (message: string) => void;
@@ -36,7 +36,7 @@ export function InteractiveChatBox({
   };
 
   const handleSubmit = (message: string) => {
-    onSubmit(message, images);
+    onSubmit(message, "", images);
     setImages([]);
   };
 
