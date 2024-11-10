@@ -105,6 +105,7 @@ export function ChatInput({
       <TextareaAutosize
         ref={textareaRef}
         name={name}
+        autoFocus={true}
         placeholder={placeholder}
         onKeyDown={handleKeyPress}
         onChange={handleChange}
