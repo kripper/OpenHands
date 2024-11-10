@@ -25,8 +25,8 @@ USE_NAV = (
     os.environ.get('USE_NAV', 'true') == 'true'
 )  # only disable NAV actions when running webarena and miniwob benchmarks
 USE_CONCISE_ANSWER = (
-    os.environ.get('USE_CONCISE_ANSWER', 'false') == 'true'
-)  # only return concise answer when running webarena and miniwob benchmarks
+    os.environ.get('USE_CONCISE_ANSWER', 'true') == 'true'
+)  # only return concise answer when running webarena and miniwob benchmarks. why?
 
 if not USE_NAV and USE_CONCISE_ANSWER:
     EVAL_MODE = True  # disabled NAV actions and only return concise answer, for webarena and miniwob benchmarks\
