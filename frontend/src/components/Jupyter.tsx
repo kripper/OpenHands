@@ -150,7 +150,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
       <div
         className="sticky bottom-0 flex p-1 "
         onKeyDown={onKeyPress}
-        style={{ bottom: 0, position: "absolute", width: "100%" }}
+        style={{ bottom: 0, position: "sticky", width: "100%" }}
       >
         <Textarea
           value={inputValue}
