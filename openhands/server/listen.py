@@ -37,7 +37,7 @@ from fastapi import (
     WebSocket,
     status,
 )
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -908,5 +908,10 @@ class SPAStaticFiles(StaticFiles):
             # FIXME: just making this HTTPException doesn't work for some reason
             return await super().get_response('index.html', scope)
 
+
+# auto redirect / to /app
+@app.get('/')
+async def redirect_to_app():
+    return RedirectResponse(url='/app')
 
 app.mount('/', SPAStaticFiles(directory='./frontend/build', html=True), name='dist')
