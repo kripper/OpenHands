@@ -59,9 +59,11 @@ class CodeActResponseParser(ResponseParser):
             # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
             if f'</execute_{lang}' in action and f'</execute_{lang}>' not in action:
                 action = action.replace(f'</execute_{lang}', f'</execute_{lang}>')
-
-            if f'<execute_{lang}>' in action and f'</execute_{lang}>' not in action:
-                action += f'</execute_{lang}>'
+            
+            open_tag = f'(?<!`)<execute_{lang}>' # not preceded by a backtick
+            close_tag = f'</execute_{lang}>'
+            if re.search(open_tag, action) and close_tag not in action:
+                action += close_tag
 
         # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
         if '</file_edit' in action and '</file_edit>' not in action:
