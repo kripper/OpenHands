@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoMdVolumeHigh, IoMdVolumeOff } from "react-icons/io";
 import beep from "#/utils/beep";
 
 function VolumeIcon(): JSX.Element {
-  const [isMuted, setIsMuted] = useState(
+  const [isMuted, setIsMuted] = React.useState(
     document.cookie.indexOf("mute") !== -1,
   );
 

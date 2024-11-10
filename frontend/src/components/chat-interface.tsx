@@ -26,6 +26,8 @@ import { IoMdChatbubbles } from "react-icons/io";
 import beep from "#/utils/beep";
 import { I18nKey } from "#/i18n/declaration";
 import { useTranslation } from "react-i18next";
+import VolumeIcon from "./VolumeIcon";
+
 
 
 const isErrorMessage = (
@@ -200,20 +202,29 @@ export function ChatInterface() {
   );
   chatInterface = (
     <div className="flex flex-col h-full bg-neutral-800">
-      <div className="flex items-center gap-2 border-b border-neutral-600 text-sm px-4 py-2">
+      <div className="flex items-center gap-2 border-b border-neutral-600 text-sm px-4 py-2"
+        style={{
+          position: "sticky",
+          top: "0px",
+          zIndex: "10",
+          background: "rgb(38 38 38 / var(--tw-bg-opacity))",
+        }}
+      >
         <IoMdChatbubbles />
         Chat
-    <div className="ml-auto">
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={autoMode}
-            onChange={() => setAutoMode(!autoMode)}
-            aria-label="Auto Mode"
+        <div className="ml-auto">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={autoMode}
+              onChange={() => setAutoMode(!autoMode)}
+              aria-label="Auto Mode"
           />
           <span>Auto Mode</span>
         </label>
         </div>
+        <VolumeIcon />
+
       </div>
       {chatInterface}
     </div>
