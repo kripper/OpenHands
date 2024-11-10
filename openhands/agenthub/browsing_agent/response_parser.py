@@ -25,6 +25,17 @@ class BrowsingResponseParser(ResponseParser):
         if action_str is None:
             return ''
         action_str = action_str.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
+        # For Gemini:
+        # ```tool_code
+        # scroll(0, 200)
+        # ```
+        if '<execute_browse>' not in action_str:
+            action_str = re.sub(
+                r'```tool_code\n(.*)\n```',
+                r'<execute_browse>\n\1\n</execute_browse>',
+                action_str,
+                re.DOTALL,
+            )
         action_str = action_str.strip()
         start_tag = '<execute_browse>'
         end_tag = '</execute_browse>'
