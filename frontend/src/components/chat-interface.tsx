@@ -101,7 +101,7 @@ export function ChatInterface() {
       curAgentState === AgentState.INIT ||
       curAgentState === AgentState.FINISHED
     ) {
-      if (document.cookie.indexOf("mute") === -1) beep();
+      if (localStorage["is_muted"] !== "true") beep();
     }
   }, [curAgentState]);
 

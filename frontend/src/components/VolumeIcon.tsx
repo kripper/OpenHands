@@ -4,16 +4,14 @@ import beep from "#/utils/beep";
 
 function VolumeIcon(): JSX.Element {
   const [isMuted, setIsMuted] = React.useState(
-    document.cookie.indexOf("mute") !== -1,
+    localStorage["is_muted"] === "true",
   );
 
   const toggleMute = () => {
-    const cookieName = "mute";
-    setIsMuted(!isMuted);
-    if (!isMuted) {
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    } else {
-      document.cookie = `${cookieName}=on;`;
+    const newIsMuted = !isMuted;
+    setIsMuted(newIsMuted);
+    localStorage["is_muted"] = newIsMuted ? "true" : "false";
+    if (newIsMuted) {
       beep();
     }
   };
