@@ -14,7 +14,7 @@ function Jupyter() {
   }, []);
 
   return (
-    <div ref={parentRef}>
+    <div ref={parentRef} style={{ height: "100%" }}>
       <JupyterEditor maxWidth={parentWidth} />
     </div>
   );

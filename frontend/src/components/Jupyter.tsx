@@ -116,7 +116,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
     }
   };
 
-  return (
+  let jupyterEditor = (
     <div className="flex-1" style={{ maxWidth }}>
       <div
         className="overflow-y-auto h-full max-h-[85%] scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
@@ -142,7 +142,16 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
           </button>
         </div>
       )}
-      <div className="sticky bottom-0 flex p-1 " onKeyDown={onKeyPress}>
+    </div>
+  );
+  jupyterEditor = (
+    <div className="JupyterEditor" style={{ height: "100%", position: "relative" }}>
+      {jupyterEditor}
+      <div
+        className="sticky bottom-0 flex p-1 "
+        onKeyDown={onKeyPress}
+        style={{ bottom: 0, position: "absolute", width: "100%" }}
+      >
         <Textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -168,6 +177,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
       </div>
     </div>
   );
+  return jupyterEditor;
 }
 
 export default JupyterEditor;
