@@ -389,7 +389,7 @@ class BashSession:
                     path = command[3:].strip()
                     if self.pwd == path:
                         output = '[You are already in this directory.]'
-                elif os.getenv('SWE_BENCH') == '1' or 1:  # TODO
+                elif os.environ["USER"] == "root":
                     if command.startswith('git blame'):
                         output = (
                             "[Don't use git commands. Just directly give the solution.]"
