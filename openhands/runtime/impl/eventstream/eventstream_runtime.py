@@ -259,11 +259,11 @@ class EventStreamRuntime(Runtime):
     def _init_docker_client() -> docker.DockerClient:
         try:
             return docker.from_env()
-        except Exception as ex:
+        except Exception as e:
             logger.error(
-                'Launch docker client failed. Please make sure you have installed docker and started docker desktop/daemon.',
+                f'Launch docker client failed. Please make sure you have installed docker and started docker desktop/daemon.| {e}',
             )
-            raise ex
+            exit(1)
 
     def _init_container(self):
         self.log('debug', 'Preparing to start container...')
