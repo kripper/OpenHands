@@ -71,6 +71,8 @@ class AppConfig:
     file_uploads_restrict_file_types: bool = False
     file_uploads_allowed_extensions: list[str] = field(default_factory=lambda: ['.*'])
     override_UI_settings: bool = False
+    runloop_api_key: str | None = None
+
     defaults_dict: ClassVar[dict] = {}
 
     def get_llm_config(self, name='llm') -> LLMConfig:
@@ -140,6 +142,7 @@ class AppConfig:
                 'jwt_secret',
                 'modal_api_token_id',
                 'modal_api_token_secret',
+                'runloop_api_key',
             ]:
                 attr_value = '******' if attr_value else None
 
