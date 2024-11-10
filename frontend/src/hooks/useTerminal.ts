@@ -80,7 +80,11 @@ export const useTerminal = (
 
   const handleEnter = (command: string) => {
     terminal.current?.write("\r\n");
-    send(getTerminalCommand(command));
+    // replace ^c character when copied from terminal
+    // eslint-disable-next-line no-control-regex
+    const cleanedCommand = command.replace(/\u0003\b/, "");
+    if (cleanedCommand.trim() === "") return;
+    send(getTerminalCommand(cleanedCommand));
   };
 
   const handleBackspace = (command: string) => {

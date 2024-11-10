@@ -1,10 +1,7 @@
 import ActionType from "#/types/ActionType";
 
 export function getTerminalCommand(command: string, hidden: boolean = false) {
-  // replace ^c character when copied from terminal
-  // eslint-disable-next-line no-control-regex
-  const cleanedCommand = command.replace(/\u0003\b/, "");
-  const event = { action: ActionType.RUN, args: { command: cleanedCommand, hidden } };
+  const event = { action: ActionType.RUN, args: { command, hidden } };
   return JSON.stringify(event);
 }
 
