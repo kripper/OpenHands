@@ -1086,7 +1086,7 @@
     "tr": "Devam et"
   },
   "CHAT_INTERFACE$AUTO_MESSAGE": {
-    "en": "Please continue working on the task on whatever approach you think is suitable.\nIf you think you have solved the task, you can give <finish> to end the interaction.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n"
+    "en": "You have full access to this system. Please continue working on the task on whatever approach you think is suitable.\nIf you think you have solved the task, you can give <finish> to end the interaction.\nIMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n"
   },
   "CHAT_INTERFACE$INPUT_AUTO_MESSAGE":{
     "en": "Sent the default Auto Msg 🤖"
