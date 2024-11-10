@@ -11,7 +11,7 @@ function VolumeIcon(): JSX.Element {
     const newIsMuted = !isMuted;
     setIsMuted(newIsMuted);
     localStorage["is_muted"] = newIsMuted ? "true" : "false";
-    if (newIsMuted) {
+    if (!newIsMuted) {
       beep();
     }
   };
