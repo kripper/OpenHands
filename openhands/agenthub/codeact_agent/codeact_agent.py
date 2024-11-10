@@ -445,7 +445,7 @@ class CodeActAgent(Agent):
                         role='user',
                         content=[
                             TextContent(
-                                text=f'WORKSPACE CONTENTS: {workspace_contents}'
+                                text=f'WORKSPACE CONTENTS: {workspace_contents}\n\n----------\n'
                             )
                         ],
                     )
