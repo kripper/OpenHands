@@ -98,7 +98,6 @@ export function ChatInterface() {
     if (
       (!autoMode && curAgentState === AgentState.AWAITING_USER_INPUT) ||
       curAgentState === AgentState.ERROR ||
-      curAgentState === AgentState.INIT ||
       curAgentState === AgentState.FINISHED
     ) {
       if (localStorage["is_muted"] !== "true") beep();
