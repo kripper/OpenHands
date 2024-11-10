@@ -33,6 +33,7 @@ class AppConfig:
         workspace_mount_rewrite: The path to rewrite the workspace mount path to.
         cache_dir: The path to the cache directory. Defaults to /tmp/cache.
         run_as_openhands: Whether to run as openhands.
+        show_workspace_contents: Whether to show the workspace contents.
         max_iterations: The maximum number of iterations.
         max_budget_per_task: The maximum budget allowed per task, beyond which the agent will stop.
         e2b_api_key: The E2B API key.
@@ -59,6 +60,7 @@ class AppConfig:
     workspace_mount_rewrite: str | None = None
     cache_dir: str = '/tmp/cache'
     run_as_openhands: bool = True
+    show_workspace_contents: bool = True
     max_iterations: int = OH_MAX_ITERATIONS
     max_budget_per_task: float | None = None
     e2b_api_key: str = ''
