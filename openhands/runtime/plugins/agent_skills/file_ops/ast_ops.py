@@ -39,9 +39,10 @@ def show_class_structure(file_path: str, class_name: str):
                     # Format the arguments as a string
                     args_str = ', '.join(args)
                     print(f'    -- {item.name}({args_str})')
-
+    else:
+        print(f'Class {class_name} not found in {file_path}')
 
 if __name__ == '__main__':
     # Usage example
-    file_name = r'C:\Users\smart\Desktop\GD\sympy\sympy\core\symbol.py'
-    show_class_structure(file_name, 'Symbol')
+    file_name = r'C:\Users\smart\Desktop\a.py'
+    show_class_structure(file_name, 'B')
