@@ -1,8 +1,7 @@
 import litellm
 import tomllib
-p=r'../.env'
 from dotenv import load_dotenv
-load_dotenv(p)
+load_dotenv()
 with open('config.toml', 'rb') as f:
     config = tomllib.load(f)
     config = config['llm']
