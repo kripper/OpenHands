@@ -177,6 +177,8 @@ class JupyterKernel:
             while not execution_done:
                 assert self.ws is not None
                 msg = await self.ws.read_message()
+                if msg is None:
+                    continue
                 msg = json_decode(msg)
                 msg_type = msg['msg_type']
                 parent_msg_id = msg['parent_header'].get('msg_id', None)
