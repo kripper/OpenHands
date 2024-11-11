@@ -16,16 +16,10 @@ except Exception as e:
 
 step_count = 0
 for i in traj:
-    print(i['role'])
     if i['role'] == 'assistant':
         step_count += 1
         print(f'Step {step_count}:')
-        tool_calls = i['tool_calls']
-        for tool_call in tool_calls:
-            arguments = tool_call['function']['arguments']
-            arguments = json.loads(arguments)
-            for k, v in arguments.items():
-                print(f'{k}: {v}')
+    print(i['role'])
     try:
       contents = i['content']
       if contents:
@@ -33,4 +27,17 @@ for i in traj:
     except Exception as e:
         print(e)
         print(i)
+
+    
+    if i['role'] == 'assistant':
+        tool_calls = i['tool_calls']
+        if tool_calls:
+            print('='*10)
+
+        for tool_call in tool_calls:
+            arguments = tool_call['function']['arguments']
+            arguments = json.loads(arguments)
+            for k, v in arguments.items():
+                print(f'{k}: {v}')
+    
     print('-'*100)
