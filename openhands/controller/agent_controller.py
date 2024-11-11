@@ -443,11 +443,12 @@ class AgentController:
         # check if agent got stuck before taking any action
         is_stuck, resolution = self._is_stuck()
         if is_stuck:
-            # This need to go BEFORE report_error to sync metrics
-            await self.set_agent_state_to(AgentState.ERROR)
-            # await self.report_error(
-            #     f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
-            # )
+            self.event_stream.add_event(
+                ErrorObservation(
+                    f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
+                ),
+                EventSource.USER,
+            )
 
         if self.delegate is not None:
             assert self.delegate != self
