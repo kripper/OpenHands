@@ -4,6 +4,7 @@ from typing import Callable
 import requests
 
 from openhands.core.config import AppConfig
+from openhands.events.action.action import Action
 from openhands.events.action.commands import CmdRunAction, IPythonRunCellAction
 from openhands.events.observation import (
     Observation,
@@ -13,11 +14,11 @@ from openhands.events.observation.commands import (
     IPythonRunCellObservation,
 )
 from openhands.events.stream import EventStream
+from openhands.runtime.impl.eventstream.eventstream_runtime import EventStreamRuntime
 from openhands.runtime.plugins import PluginRequirement
-from openhands.runtime.runtime import Runtime
 
 
-class EC2Runtime(Runtime):
+class EC2Runtime(EventStreamRuntime):
     def __init__(
         self,
         config: AppConfig,
@@ -25,14 +26,22 @@ class EC2Runtime(Runtime):
         sid: str = 'default',
         plugins: list[PluginRequirement] | None = None,
         env_vars: dict[str, str] | None = None,
-        status_message_callback: Callable | None = None,
+        status_callback: Callable | None = None,
+        attach_to_existing: bool = False,
     ):
         super().__init__(
-            config, event_stream, sid, plugins, env_vars, status_message_callback
+            config,
+            event_stream,
+            sid,
+            plugins,
+            env_vars,
+            status_callback,
+            attach_to_existing,
         )
         self.url = 'http://127.0.0.1:5000/execute'
 
     def run(self, action: CmdRunAction) -> Observation:
+        print(f'Running command in EC2Runtime: {action.command}')
         command = action.command
         # http://127.0.0.1:5000/execute
         headers = {'Content-Type': 'application/json'}
@@ -46,8 +55,17 @@ class EC2Runtime(Runtime):
 
     def run_ipython(self, action: IPythonRunCellAction) -> Observation:
         return IPythonRunCellObservation(
-            'Not implemented. Please execute bash only for now.', action.code
+            'Not implemented. Please use <execute_bash> only to run code for now.',
+            action.code,
         )
+
+    def run_action(self, action: Action) -> Observation:
+        if isinstance(action, CmdRunAction):
+            return self.run(action)
+        elif isinstance(action, IPythonRunCellAction):
+            return self.run_ipython(action)
+        else:
+            return super().run_action(action)
 
     def list_files(self, path: str | None = None) -> list[str]:
         return []

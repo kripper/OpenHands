@@ -1,13 +1,23 @@
+#! /usr/bin/env python3
+
 import subprocess
 
-import flask
+try:
+    import flask
+except ModuleNotFoundError:
+    import os
+
+    os.system('sudo apt update -y')
+    os.system('sudo apt install -y python3-pip')
+    os.system('pip install flask --break-system-packages')
+    import flask
 
 app = flask.Flask(__name__)
 
 
 @app.route('/')
 def index():
-    return 'Simple Client for OpenHands'
+    return 'Simple Client for Kevin'
 
 
 @app.route('/execute', methods=['POST'])

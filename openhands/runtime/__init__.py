@@ -19,7 +19,7 @@ def get_runtime_cls(name: str):
 
         return RemoteRuntime
     elif name == 'ec2':
-        from openhands.runtime.ec2.runtime import EC2Runtime
+        from openhands.runtime.impl.ec2.ec2_runtime import EC2Runtime
 
         return EC2Runtime
     elif name == 'modal':
