@@ -29,6 +29,8 @@ if 1 or sys.argv[1:]:
         history = []
         for d in data:
             history.extend(d['history'])
+            if d.get('error'):
+                history.append({'error': d['error']})
         # history = [i for sublist in history for i in sublist]
         # history = history[3:]
 
