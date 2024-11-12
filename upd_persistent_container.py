@@ -13,8 +13,11 @@ full_file_names = [
 ]
 client = docker.from_env()
 for c in client.containers.list():
-    if 'persisted' in c.name:
-        print(c.name)
+    name = c.name
+    if not name.startswith('kevin-'):
+        continue
+    if 'persisted' in name:
+        print(name)
         # break
         # copy the file to the container
         container_id = c.id
