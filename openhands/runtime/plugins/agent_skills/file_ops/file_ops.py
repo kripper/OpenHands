@@ -1094,6 +1094,7 @@ def custom_import(name, *args, **kwargs):
         'sympy',
         'sklearn',
         'matplotlib',
+        'django',
     ]
     if os.getenv('SWE_BENCH') == '1' and any(p in name for p in prohibited_packages):
         print(
