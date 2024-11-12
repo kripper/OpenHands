@@ -687,7 +687,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             return False
         token_count = self.get_token_count(messages=messages) + MAX_TOKEN_COUNT_PADDING
         output = token_count >= self.config.max_input_tokens
-        if output:
+        if output or 1:
             logger.info(f'Token count: {token_count}')
         return output
 
