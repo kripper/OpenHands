@@ -1,12 +1,13 @@
 import litellm
 import tomllib
 from dotenv import load_dotenv
+
 load_dotenv()
 with open('config.toml', 'rb') as f:
     config = tomllib.load(f)
     config = config['llm']
     group = 'gemini_pro'
-    group = 'nemo'
+    # group = 'nemo'
     if group in config:
         config = config[group]
 
