@@ -232,6 +232,15 @@ assert Sum(Sum(e[i, j], (i, 0, n-1)), (j, 0, n-1)).doit() != 0
         'django__django-14787': custom_test_code.format(
             cmd='tests/runtests.py decorators.tests.MethodDecoratorTests.test_new_attribute'
         ),
+        'sympy__sympy-16792': """from sympy.utilities.autowrap import autowrap
+from sympy import MatrixSymbol
+import numpy as np
+
+x = MatrixSymbol('x', 2, 1)
+expr = 1.0
+f = autowrap(expr, args=(x,), backend='cython')
+
+f(np.array([[1.0, 2.0]]))""",
     }
     return test_codes.get(instance_id, '')
 
