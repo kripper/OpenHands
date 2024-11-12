@@ -7,6 +7,7 @@ with open('config.toml', 'rb') as f:
     config = tomllib.load(f)
     config = config['llm']
     group = 'gemini_pro'
+    group = 'gemini'
     # group = 'nemo'
     if group in config:
         config = config[group]
