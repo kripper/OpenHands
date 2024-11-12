@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
 import posthog from "posthog-js";
-import { useSocket } from "#/context/socket";
 import { convertImageToBase64 } from "#/utils/convert-image-to-base-64";
 import { ChatMessage } from "./chat-message";
 import { FeedbackActions } from "./feedback-actions";
@@ -21,7 +20,6 @@ import { ContinueButton } from "./continue-button";
 import { ScrollToBottomButton } from "./scroll-to-bottom-button";
 import { Suggestions } from "./suggestions";
 import { SUGGESTIONS } from "#/utils/suggestions";
-import BuildIt from "#/assets/build-it.svg?react";
 import { IoMdChatbubbles } from "react-icons/io";
 import beep from "#/utils/beep";
 import { I18nKey } from "#/i18n/declaration";
@@ -29,13 +27,15 @@ import { useTranslation } from "react-i18next";
 import VolumeIcon from "./VolumeIcon";
 
 
+import BuildIt from "#/icons/build-it.svg?react";
+import { useWsClient } from "#/context/ws-client-provider";
 
 const isErrorMessage = (
   message: Message | ErrorMessage,
 ): message is ErrorMessage => "error" in message;
 
 export function ChatInterface() {
-  const { send } = useSocket();
+  const { send } = useWsClient();
   const dispatch = useDispatch();
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { scrollDomToBottom, onChatBodyScroll, hitBottom } =

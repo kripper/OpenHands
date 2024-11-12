@@ -8,10 +8,9 @@ import { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
 import { clearMessages } from "#/state/chatSlice";
 import { clearJupyter } from "#/state/jupyterSlice";
-// import Session from "#/services/session";
 import { clearTerminal } from "#/state/commandSlice";
 import { clearCurentStep } from "#/state/agentSlice";
-import { useSocket } from "#/context/socket";
+import { useWsClient } from "#/context/ws-client-provider";
 
 const IgnoreTaskStateMap: Record<string, AgentState[]> = {
   [AgentState.PAUSED]: [
@@ -77,7 +76,7 @@ function ActionButton({
 }
 
 function AgentControlBar() {
-  const { send } = useSocket();
+  const { send } = useWsClient();
   const { curAgentState } = useSelector((state: RootState) => state.agent);
   // const [desiredState, setDesiredState] = React.useState(AgentState.INIT);
   // const [isLoading, setIsLoading] = React.useState(false);

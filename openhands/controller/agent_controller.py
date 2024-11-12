@@ -1,5 +1,6 @@
 import asyncio
 import copy
+import os
 import traceback
 from typing import Callable, ClassVar, Type
 
@@ -267,10 +268,13 @@ class AgentController:
             observation_to_print.content = truncate_content(
                 observation_to_print.content, self.agent.llm.config.max_message_chars
             )
+        # Use info level if LOG_ALL_EVENTS is set
+        log_level = 'info' if os.getenv('LOG_ALL_EVENTS', 'true') in ('true', '1') else 'debug'
         if not isinstance(observation, NullObservation):
             self.log(
-                'info', str(observation_to_print), extra={'msg_type': 'OBSERVATION'}
+                log_level, str(observation_to_print), extra={'msg_type': 'OBSERVATION'}
             )
+       
 
         if observation.llm_metrics is not None:
             self.agent.llm.metrics.merge(observation.llm_metrics)
@@ -293,8 +297,12 @@ class AgentController:
             action (MessageAction): The message action to handle.
         """
         if action.source == EventSource.USER:
+            # Use info level if LOG_ALL_EVENTS is set
+            log_level = (
+                'info' if os.getenv('LOG_ALL_EVENTS', 'true') in ('true', '1') else 'debug'
+            )
             self.log(
-                'info',
+                log_level,
                 str(action),
                 extra={'msg_type': 'ACTION', 'event_source': EventSource.USER},
             )
@@ -519,7 +527,10 @@ class AgentController:
             self.event_stream.add_event(action, EventSource.AGENT)
 
         await self.update_state_after_step()
-        self.log('info', str(action), extra={'msg_type': 'ACTION'})
+
+        # Use info level if LOG_ALL_EVENTS is set
+        log_level = 'info' if os.getenv('LOG_ALL_EVENTS', 'true') in ('true', '1') else 'debug'
+        self.log(log_level, str(action), extra={'msg_type': 'ACTION'})
 
     async def _delegate_step(self):
         """Executes a single step of the delegate agent."""
@@ -685,7 +696,7 @@ class AgentController:
         # sanity check
         if start_id > end_id + 1:
             self.log(
-                'debug',
+                'warning',
                 f'start_id {start_id} is greater than end_id + 1 ({end_id + 1}). History will be empty.',
             )
             self.state.history = []
@@ -716,7 +727,7 @@ class AgentController:
                 # Match with most recent unmatched delegate action
                 if not delegate_action_ids:
                     self.log(
-                        'error',
+                        'warning',
                         f'Found AgentDelegateObservation without matching action at id={event.id}',
                     )
                     continue
