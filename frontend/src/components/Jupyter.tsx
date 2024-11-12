@@ -11,7 +11,8 @@ import { Cell, appendJupyterInput } from "#/state/jupyterSlice";
 import { useScrollToBottom } from "#/hooks/useScrollToBottom";
 import { I18nKey } from "#/i18n/declaration";
 import { createJupyterCode } from "#/services/chatService";
-import { useSocket } from "#/context/socket";
+import { useWsClient } from "#/context/ws-client-provider";
+
 
 interface IJupyterCell {
   cell: Cell;
@@ -93,7 +94,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { send } = useSocket();
+  const { send } = useWsClient();
   const { cells } = useSelector((state: RootState) => state.jupyter);
   const jupyterRef = React.useRef<HTMLDivElement>(null);
 
