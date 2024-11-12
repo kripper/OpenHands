@@ -67,7 +67,7 @@ ROOT_GID = 0
 INIT_COMMANDS = [
     'git config --global user.name "openhands" && git config --global user.email "openhands@all-hands.dev" && alias git="git --no-pager"',
     'export TERM=xterm-256color',
-    "set +H",
+    'set +H',
 ]
 
 INIT_COMMANDS += [
@@ -263,6 +263,10 @@ class ActionExecutor:
             if action.code.startswith('%%writefile /tmp/test_task.py'):
                 obs: Observation = ErrorObservation(
                     "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
+                )
+            elif '!python manage.py shell' in action.code:
+                obs = ErrorObservation(
+                    "[Don't use Django shell commands in Jupyter Notebook as file changes will not be reflected. Directly run the code in the terminal using <execute_bash>.]"
                 )
             elif (
                 (os.getenv('SWE_BENCH') == '1' or 1)
