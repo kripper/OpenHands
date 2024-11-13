@@ -1,7 +1,6 @@
 import os
 import re
 from collections import deque
-from itertools import islice
 
 from litellm import ModelResponse
 
@@ -109,15 +108,23 @@ class CodeActAgent(Agent):
             #     f'TOOLS loaded for CodeActAgent: {json.dumps(self.tools, indent=2)}'
             # )
             self.prompt_manager = PromptManager(
-                microagent_dir=os.path.join(os.path.dirname(__file__), 'micro'),
+                microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
+                if self.config.use_microagents
+                else None,
                 prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts', 'tools'),
+                disabled_microagents=self.config.disabled_microagents,
             )
         else:
             self.action_parser = CodeActResponseParser()
             self.prompt_manager = PromptManager(
-                microagent_dir=os.path.join(os.path.dirname(__file__), 'micro'),
-                prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts', 'default'),
+                microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
+                if self.config.use_microagents
+                else None,
+                prompt_dir=os.path.join(
+                    os.path.dirname(__file__), 'prompts', 'default'
+                ),
                 agent_skills_docs=AgentSkillsRequirement.documentation,
+                disabled_microagents=self.config.disabled_microagents,
             )
 
         self.pending_actions: deque[Action] = deque()
@@ -205,8 +212,8 @@ class CodeActAgent(Agent):
         elif isinstance(action, MessageAction):
             role = 'user' if action.source == 'user' else 'assistant'
             content = [TextContent(text=action.content or '')]
-            if self.llm.vision_is_active() and action.images_urls:
-                content.append(ImageContent(image_urls=action.images_urls))
+            if self.llm.vision_is_active() and action.image_urls:
+                content.append(ImageContent(image_urls=action.image_urls))
             return [
                 Message(
                     role=role,
@@ -437,7 +444,11 @@ class CodeActAgent(Agent):
                 ),
             )
 
-        if len(state.history) == 1 and config.run_as_openhands and config.show_workspace_contents:
+        if (
+            len(state.history) == 1
+            and config.run_as_openhands
+            and config.show_workspace_contents
+        ):
             workspace_contents = ', '.join(os.listdir(config.workspace_base))
             if workspace_contents:
                 messages.append(

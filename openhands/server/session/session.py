@@ -145,7 +145,8 @@ class Session:
         if event.source == EventSource.AGENT:
             await self.send(event_to_dict(event))
         elif event.source == EventSource.USER and isinstance(
-            event, (CmdOutputObservation, BrowserOutputObservation, IPythonRunCellObservation),
+            event,
+            (CmdOutputObservation, BrowserOutputObservation, IPythonRunCellObservation),
         ):
             await self.send(event_to_dict(event))
         elif event.source == EventSource.ENVIRONMENT and isinstance(
@@ -174,7 +175,7 @@ class Session:
             return
         event = event_from_dict(data.copy())
         # This checks if the model supports images
-        if isinstance(event, MessageAction) and event.images_urls:
+        if isinstance(event, MessageAction) and event.image_urls:
             controller = self.agent_session.controller
             if controller:
                 if controller.agent.llm.config.disable_vision:

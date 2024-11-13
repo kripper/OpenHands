@@ -1,9 +1,10 @@
+import atexit
 import os
-from pathlib import Path
 import tempfile
 import threading
 import time
 from functools import lru_cache
+from pathlib import Path
 from typing import Callable
 from zipfile import ZipFile
 
@@ -36,12 +37,22 @@ from openhands.events.serialization import event_to_dict, observation_from_dict
 from openhands.events.serialization.action import ACTION_TYPE_TO_CLASS
 from openhands.runtime.base import Runtime
 from openhands.runtime.builder import DockerRuntimeBuilder
+from openhands.runtime.impl.eventstream.containers import remove_all_containers
 from openhands.runtime.plugins import PluginRequirement
 from openhands.runtime.utils import find_available_tcp_port
 from openhands.runtime.utils.request import send_request
 from openhands.runtime.utils.runtime_build import build_runtime_image
 from openhands.utils.async_utils import call_sync_from_async
 from openhands.utils.tenacity_stop import stop_if_should_exit
+
+CONTAINER_NAME_PREFIX = 'kevin-runtime-'
+
+
+def remove_all_runtime_containers():
+    remove_all_containers(CONTAINER_NAME_PREFIX)
+
+
+atexit.register(remove_all_runtime_containers)
 
 
 class LogBuffer:
@@ -116,8 +127,6 @@ class EventStreamRuntime(Runtime):
         env_vars (dict[str, str] | None, optional): Environment variables to set. Defaults to None.
     """
 
-    container_name_prefix = 'kevin-runtime-'
-
     # Need to provide this method to allow inheritors to init the Runtime
     # without initting the EventStreamRuntime.
     def init_base_runtime(
@@ -174,7 +183,7 @@ class EventStreamRuntime(Runtime):
         self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
         self.runtime_container_image = self.config.sandbox.runtime_container_image
-        self.container_name = self.container_name_prefix + self.instance_id
+        self.container_name = CONTAINER_NAME_PREFIX + self.instance_id
         self.container = None
         self.action_semaphore = threading.Semaphore(1)  # Ensure one action at a time
 
@@ -194,10 +203,6 @@ class EventStreamRuntime(Runtime):
                 attach_to_existing = True
             except docker.errors.NotFound:
                 attach_to_existing = False
-
-        self.skip_container_logs = (
-            os.environ.get('SKIP_CONTAINER_LOGS', 'false').lower() == 'true'
-        )
 
         self.init_base_runtime(
             config,
@@ -235,13 +240,23 @@ class EventStreamRuntime(Runtime):
 
         else:
             logger.info('Using existing Docker container')
-            await call_sync_from_async(self._attach_to_container)
+            try:
+                await call_sync_from_async(self._attach_to_container)
+            except docker.errors.NotFound as e:
+                if self.attach_to_existing:
+                    self.log(
+                        'error',
+                        f'Container {self.container_name} not found.',
+                    )
+                    raise e
             self.start_docker_container()
 
         if not self.attach_to_existing:
             self.log('info', f'Waiting for client to become ready at {self.api_url}...')
-        self.send_status_message('STATUS$WAITING_FOR_CLIENT')
+            self.send_status_message('STATUS$WAITING_FOR_CLIENT')
+
         await call_sync_from_async(self._wait_until_alive)
+
         if not self.attach_to_existing:
             self.log('info', 'Runtime is ready.')
 
@@ -252,7 +267,8 @@ class EventStreamRuntime(Runtime):
             'debug',
             f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}',
         )
-        self.send_status_message(' ')
+        if not self.attach_to_existing:
+            self.send_status_message(' ')
 
     @staticmethod
     @lru_cache(maxsize=1)
@@ -360,13 +376,12 @@ class EventStreamRuntime(Runtime):
             self.log('debug', f'Container started. Server url: {self.api_url}')
             self.send_status_message('STATUS$CONTAINER_STARTED')
         except docker.errors.APIError as e:
-            # check 409 error
             if '409' in str(e):
                 self.log(
                     'warning',
                     f'Container {self.container_name} already exists. Removing...',
                 )
-                # self._close_containers(rm_all_containers=True)
+                remove_all_containers(self.container_name)
                 return self._init_container()
 
             else:
@@ -440,30 +455,18 @@ class EventStreamRuntime(Runtime):
         Parameters:
         - rm_all_containers (bool): Whether to remove all containers with the 'openhands-sandbox-' prefix
         """
-
         if self.log_buffer:
             self.log_buffer.close()
 
         if self.session:
             self.session.close()
 
-        if self.attach_to_existing:
+        if self.config.sandbox.keep_runtime_alive or self.attach_to_existing:
             return
-        containers = self.docker_client.containers.list(all=True)
-        for container in containers:
-            try:
-                # only remove the container it created
-                # otherwise all other containers with the same prefix will be removed
-                # which will mess up with parallel evaluation
-                if container.name == self.container_name:
-                    if self.persist_sandbox:
-                        if not self.fast_boot:
-                            logger.info('Stopping container')
-                            container.stop()
-                    else:
-                        container.remove(force=True)
-            except docker.errors.NotFound:
-                pass
+        close_prefix = (
+            CONTAINER_NAME_PREFIX if rm_all_containers else self.container_name
+        )
+        remove_all_containers(close_prefix)
 
     def run_action(self, action: Action) -> Observation:
         if isinstance(action, FileEditAction):
