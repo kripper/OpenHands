@@ -10,6 +10,7 @@ def check_if_resolved():
         data = json.load(f)
 
     resolved_instances = [i[0] for i in data['resolved']][:-1]
+    unresolved_instances = [i[0] for i in data['unresolved']][:-1]
 
     toml_path = 'evaluation/swe_bench/config.toml'
 
@@ -18,6 +19,9 @@ def check_if_resolved():
 
     if toml_data['selected_ids'][0] in resolved_instances:
         print('already resolved')
+        exit(0)
+    elif toml_data['selected_ids'][0] in unresolved_instances:
+        print('already marked as unresolved')
         exit(0)
 
 
