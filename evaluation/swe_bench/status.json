@@ -82,6 +82,7 @@
         ["sphinx-doc__sphinx-11445","https://www.all-hands.dev/share?share_id=268085699b2f32c465f3f313c14529ee332541abd446925a1ebe46139fd6af4f"],
         ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=2dd6574fb4fb6454516117b8f3265e628764c3bf6af166c01c8937f7f9e947ba"],
         ["pydata__xarray-4094","https://www.all-hands.dev/share?share_id=82c6160a306b52d3ba1307e1f52eef2185341525d6efe7d13f25cd5aa5f7cfea"],
+        ["sympy__sympy-16792","https://www.all-hands.dev/share?share_id=a667e3a1e2910d098c5261ba36a36e8b168b8e6ddb636e7100ad5886cd632a7c"],
         ["for ignoring trailing comma", "-"]
     ]
 }
