@@ -138,6 +138,7 @@ class EventStreamRuntime(Runtime):
         env_vars: dict[str, str] | None = None,
         status_callback: Callable | None = None,
         attach_to_existing: bool = False,
+        headless_mode: bool = True,
     ):
         super().__init__(
             config,
@@ -147,6 +148,7 @@ class EventStreamRuntime(Runtime):
             env_vars,
             status_callback,
             attach_to_existing,
+            headless_mode,
         )
 
     def __init__(
@@ -158,6 +160,7 @@ class EventStreamRuntime(Runtime):
         env_vars: dict[str, str] | None = None,
         status_callback: Callable | None = None,
         attach_to_existing: bool = False,
+        headless_mode: bool = True,
     ):
         self.config = config
         self.persist_sandbox = self.config.sandbox.persist_sandbox
@@ -176,9 +179,12 @@ class EventStreamRuntime(Runtime):
         else:
             self.instance_id = sid
             self._container_port = find_available_tcp_port()
+        self._vscode_url: str | None = None  # initial dummy value
+        self._runtime_initialized: bool = False
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
         self.session = requests.Session()
         self.status_callback = status_callback
+        self._host_port = self._container_port
 
         self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
@@ -212,6 +218,7 @@ class EventStreamRuntime(Runtime):
             env_vars,
             status_callback,
             attach_to_existing,
+            headless_mode,
         )
 
     async def connect(self):
@@ -236,7 +243,10 @@ class EventStreamRuntime(Runtime):
                 'info', f'Starting runtime with image: {self.runtime_container_image}'
             )
             await call_sync_from_async(self._init_container)
-            self.log('info', f'Container started: {self.container_name}')
+            self.log(
+                'info',
+                f'Container started: {self.container_name}. VSCode URL: {self.vscode_url}',
+            )
 
         else:
             logger.info('Using existing Docker container')
@@ -265,10 +275,11 @@ class EventStreamRuntime(Runtime):
 
         self.log(
             'debug',
-            f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}',
+            f'Container initialized with plugins: {[plugin.name for plugin in self.plugins]}. VSCode URL: {self.vscode_url}',
         )
         if not self.attach_to_existing:
             self.send_status_message(' ')
+        self._runtime_initialized = True
 
     @staticmethod
     @lru_cache(maxsize=1)
@@ -289,11 +300,11 @@ class EventStreamRuntime(Runtime):
             plugin_arg = (
                 f'--plugins {" ".join([plugin.name for plugin in self.plugins])} '
             )
-
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
 
         use_host_network = self.config.sandbox.use_host_network
         network_mode: str | None = 'host' if use_host_network else None
+
         port_mapping: dict[str, list[dict[str, str]]] | None = (
             None
             if use_host_network
@@ -315,6 +326,13 @@ class EventStreamRuntime(Runtime):
         }
         if self.config.debug or DEBUG:
             environment['DEBUG'] = 'true'
+
+        if self.vscode_enabled:
+            # vscode is on port +1 from container port
+            if isinstance(port_mapping, dict):
+                port_mapping[f'{self._container_port + 1}/tcp'] = [
+                    {'HostPort': str(self._host_port + 1)}
+                ]
 
         self.log('debug', f'Workspace Base: {self.config.workspace_base}')
         if (
@@ -659,3 +677,30 @@ class EventStreamRuntime(Runtime):
                 return port
         # If no port is found after max_attempts, return the last tried port
         return port
+
+    @property
+    def vscode_url(self) -> str | None:
+        if self.vscode_enabled and self._runtime_initialized:
+            if (
+                hasattr(self, '_vscode_url') and self._vscode_url is not None
+            ):  # cached value
+                return self._vscode_url
+
+            response = send_request(
+                self.session,
+                'GET',
+                f'{self.api_url}/vscode/connection_token',
+                timeout=10,
+            )
+            response_json = response.json()
+            assert isinstance(response_json, dict)
+            if response_json['token'] is None:
+                return None
+            self._vscode_url = f'http://localhost:{self._host_port + 1}/?tkn={response_json["token"]}&folder={self.config.workspace_mount_path_in_sandbox}'
+            self.log(
+                'debug',
+                f'VSCode URL: {self._vscode_url}',
+            )
+            return self._vscode_url
+        else:
+            return None

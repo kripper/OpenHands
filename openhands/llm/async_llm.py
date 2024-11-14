@@ -7,7 +7,7 @@ from openhands.core.exceptions import UserCancelledError
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.message import Message
 from openhands.llm.llm import LLM, LLM_RETRY_EXCEPTIONS
-from openhands.runtime.utils.shutdown_listener import should_continue
+from openhands.utils.shutdown_listener import should_continue
 
 
 class AsyncLLM(LLM):
