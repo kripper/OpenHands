@@ -241,6 +241,37 @@ expr = 1.0
 f = autowrap(expr, args=(x,), backend='cython')
 
 f(np.array([[1.0, 2.0]]))""",
+        'matplotlib__matplotlib-23476': """
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import pickle
+
+
+
+def dump_load_get_dpi(fig):
+    with open('sinus.pickle','wb') as file:
+        pickle.dump(fig, file)
+
+    with open('sinus.pickle', 'rb') as blob:
+        fig2 = pickle.load(blob)
+    return fig2, fig2.dpi
+
+
+def run():
+    fig = plt.figure()
+    x = np.linspace(0,2*np.pi)
+    y = np.sin(x)
+    initial_dpi = fig.dpi
+    for i in range(32):
+        print(f'{i}: {fig.dpi}')
+        fig, dpi = dump_load_get_dpi(fig)
+        assert fig.dpi == initial_dpi, f'Got {fig.dpi}'
+
+
+if __name__ == '__main__':
+    run()
+""",
     }
     return test_codes.get(instance_id, '')
 
