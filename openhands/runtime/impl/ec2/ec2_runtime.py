@@ -28,6 +28,7 @@ class EC2Runtime(EventStreamRuntime):
         env_vars: dict[str, str] | None = None,
         status_callback: Callable | None = None,
         attach_to_existing: bool = False,
+        headless_mode: bool = True,
     ):
         super().__init__(
             config,
@@ -37,6 +38,7 @@ class EC2Runtime(EventStreamRuntime):
             env_vars,
             status_callback,
             attach_to_existing,
+            headless_mode,
         )
         self.url = 'http://127.0.0.1:5000/execute'
 
