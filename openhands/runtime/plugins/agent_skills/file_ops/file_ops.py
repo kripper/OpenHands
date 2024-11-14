@@ -1255,6 +1255,7 @@ try:
         __all__.append('add_param_to_init_in_subclass')
 except ImportError:
     print('libcst not installed')
+    # pip install libcst
 
 if __name__ == '__main__':
     full_content = """
