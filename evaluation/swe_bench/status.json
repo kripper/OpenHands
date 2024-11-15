@@ -87,6 +87,7 @@
         ["sympy__sympy-12419","https://www.all-hands.dev/share?share_id=582346880bd0f4fc495ebbdd1532ee143f963c8b446e234120009e019ce7c6a9"],
         ["django__django-13158","https://www.all-hands.dev/share?share_id=dd8de6c1e478e56d3aeb20793057c07399cf2e563f1bdecc15d0cace64bdecdd"],
         ["astropy__astropy-14182","https://www.all-hands.dev/share?share_id=6d881b5f1951ad251f838bc81954cedb5884bc20c06ab74573de3d780fa19df5"],
+        ["matplotlib__matplotlib-23476","https://www.all-hands.dev/share?share_id=01eddc2e7ff6ffe1dc5f3a1fd15cc65c96c0380b57b398aedba1fc4fb6b8b7cb"],
         ["for ignoring trailing comma", "-"]
     ]
 }
