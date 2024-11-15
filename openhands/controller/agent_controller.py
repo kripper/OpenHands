@@ -12,6 +12,7 @@ from openhands.controller.state.state import State, TrafficControlState
 from openhands.controller.stuck import StuckDetector
 from openhands.core.config import AgentConfig, LLMConfig
 from openhands.core.exceptions import (
+    FunctionCallValidationError,
     LLMMalformedActionError,
     LLMNoActionError,
     LLMResponseError,
@@ -66,6 +67,7 @@ class AgentController:
     parent: 'AgentController | None' = None
     delegate: 'AgentController | None' = None
     _pending_action: Action | None = None
+    _closed: bool = False
     filter_out: ClassVar[tuple[type[Event], ...]] = (
         NullAction,
         NullObservation,
@@ -161,6 +163,7 @@ class AgentController:
 
         # unsubscribe from the event stream
         self.event_stream.unsubscribe(EventStreamSubscriber.AGENT_CONTROLLER, self.id)
+        self._closed = True
 
     def log(self, level: str, message: str, extra: dict | None = None):
         """Logs a message to the agent controller's logger.
@@ -195,6 +198,8 @@ class AgentController:
 
         self.log('info', 'Starting step loop...')
         while should_continue():
+            if self._closed:
+                break
             try:
                 await self._step()
             except asyncio.CancelledError:
@@ -503,7 +508,12 @@ class AgentController:
                 return
             if action is None:
                 raise LLMNoActionError('No action was returned')
-        except (LLMMalformedActionError, LLMNoActionError, LLMResponseError) as e:
+        except (
+            LLMMalformedActionError,
+            LLMNoActionError,
+            LLMResponseError,
+            FunctionCallValidationError,
+        ) as e:
             self.event_stream.add_event(
                 ErrorObservation(
                     content=str(e),

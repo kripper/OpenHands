@@ -75,7 +75,6 @@ class CodeActAgent(Agent):
         AgentSkillsRequirement(),
         JupyterRequirement(),
     ]
-    obs_prefix = 'OBSERVATION:\n'
 
     def __init__(
         self,
@@ -90,15 +89,15 @@ class CodeActAgent(Agent):
         super().__init__(llm, config)
         self.reset()
 
-        self.function_calling_active = self.config.function_calling
-        if self.function_calling_active and not self.llm.is_function_calling_active():
-            logger.warning(
-                f'Function calling not supported for model {self.llm.config.model}. '
-                'Disabling function calling.'
+        self.mock_function_calling = False
+        if not self.llm.is_function_calling_active():
+            logger.info(
+                f'Function calling not enabled for model {self.llm.config.model}. '
+                'Mocking function calling via prompting.'
             )
-            self.function_calling_active = False
+            self.mock_function_calling = True
 
-        if self.function_calling_active:
+        if self.config.function_calling:
             self.tools = codeact_function_calling.get_tools(
                 codeact_enable_browsing=self.config.codeact_enable_browsing,
                 codeact_enable_jupyter=self.config.codeact_enable_jupyter,
@@ -111,7 +110,7 @@ class CodeActAgent(Agent):
                 microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
                 if self.config.use_microagents
                 else None,
-                prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts', 'tools'),
+                prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts'),
                 disabled_microagents=self.config.disabled_microagents,
             )
         else:
@@ -168,7 +167,6 @@ class CodeActAgent(Agent):
             action,
             (
                 AgentDelegateAction,
-                CmdRunAction,
                 IPythonRunCellAction,
                 MessageAction,
                 BrowseURLAction,
@@ -176,14 +174,16 @@ class CodeActAgent(Agent):
                 FileEditAction,
                 BrowseInteractiveAction,
             ),
-        ) or (isinstance(action, AgentFinishAction) and action.source == 'agent'):
-            if self.function_calling_active:
+        ) or (
+            isinstance(action, (AgentFinishAction, CmdRunAction))
+            and action.source == 'agent'
+        ):
+            if self.config.function_calling:
                 tool_metadata = action.tool_call_metadata
                 assert tool_metadata is not None, (
                     'Tool call metadata should NOT be None when function calling is enabled. Action: '
                     + str(action)
                 )
-
                 llm_response: ModelResponse = tool_metadata.model_response
                 assistant_msg = llm_response.choices[0].message
                 # Add the LLM message (assistant) that initiated the tool calls
@@ -219,6 +219,16 @@ class CodeActAgent(Agent):
                     role=role,
                     content=content,
                     event_id=action.id,
+                )
+            ]
+        elif isinstance(action, CmdRunAction) and action.source == 'user':
+            content = [
+                TextContent(text=f'User executed the command:\n{action.command}')
+            ]
+            return [
+                Message(
+                    role='user',
+                    content=content,
                 )
             ]
         return []
@@ -265,7 +275,7 @@ class CodeActAgent(Agent):
             if obs.exit_code != 0:
                 text += f'\n[Command finished with exit code {obs.exit_code}. Why did you run this command?]'
         elif isinstance(obs, IPythonRunCellObservation):
-            text = obs_prefix + obs.content
+            text = obs.content
             # replace base64 images with a placeholder
             splitted = text.split('\n')
             for i, line in enumerate(splitted):
@@ -280,7 +290,7 @@ class CodeActAgent(Agent):
         elif isinstance(obs, BrowserOutputObservation):
             text = obs_prefix + obs.get_agent_obs_text()
         elif isinstance(obs, AgentDelegateObservation):
-            text = obs_prefix + truncate_content(
+            text = truncate_content(
                 obs.outputs['content'] if 'content' in obs.outputs else '',
                 max_message_chars,
             )
@@ -288,7 +298,7 @@ class CodeActAgent(Agent):
             text = obs_prefix + truncate_content(obs.content, max_message_chars)
             return Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, ErrorObservation):
-            text = obs_prefix + truncate_content(obs.content, max_message_chars)
+            text = truncate_content(obs.content, max_message_chars)
             text += '\n[Error occurred in processing last action]'
         elif isinstance(obs, UserRejectObservation):
             text = obs_prefix + truncate_content(obs.content, max_message_chars)
@@ -298,7 +308,7 @@ class CodeActAgent(Agent):
             # when the LLM tries to return the next message
             raise ValueError(f'Unknown observation type: {type(obs)}')
 
-        if self.function_calling_active:
+        if self.config.function_calling:
             # Update the message as tool response properly
             if (tool_call_metadata := obs.tool_call_metadata) is not None:
                 tool_call_id_to_message[tool_call_metadata.tool_call_id] = Message(
@@ -364,9 +374,10 @@ class CodeActAgent(Agent):
             'condense': True,
             'origin': 'Agent',
         }
-        if self.function_calling_active:
+        if self.config.function_calling:
             params['tools'] = self.tools
-            params['parallel_tool_calls'] = False
+            if self.mock_function_calling:
+                params['mock_function_calling'] = True
         else:
             params['stop'] = [
                 '</execute_ipython>',
@@ -375,8 +386,7 @@ class CodeActAgent(Agent):
                 '</file_edit>',
             ]
         response = self.llm.completion(**params)
-
-        if self.function_calling_active:
+        if self.config.function_calling:
             actions = codeact_function_calling.response_to_actions(response)
             for action in actions:
                 self.pending_actions.append(action)
@@ -546,8 +556,5 @@ class CodeActAgent(Agent):
                         breakpoints_remaining -= 1
                     else:
                         break
-
-        if not self.function_calling_active:
-            self.prompt_manager.add_turns_left_reminder(messages, state)
 
         return messages

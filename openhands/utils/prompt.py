@@ -18,7 +18,6 @@ class PromptManager:
 
     Attributes:
         prompt_dir (str): Directory containing prompt templates.
-        agent_skills_docs (str): Documentation of agent skills.
         microagent_dir (str): Directory containing microagent specifications.
         disabled_microagents (list[str] | None): List of microagents to disable. If None, all microagents are enabled.
     """
@@ -32,7 +31,6 @@ class PromptManager:
     ):
         self.prompt_dir: str = prompt_dir
         self.agent_skills_docs: str = agent_skills_docs
-
         self.system_template: Template = self._load_template('system_prompt')
         self.user_template: Template = self._load_template('user_prompt')
         self.microagents: dict = {}
@@ -62,10 +60,9 @@ class PromptManager:
             return Template(file.read())
 
     def get_system_message(self) -> str:
-        rendered = self.system_template.render(
-            agent_skills_docs=self.agent_skills_docs,
+        return self.system_template.render(
+            agent_skills_docs=self.agent_skills_docs
         ).strip()
-        return rendered
 
     def get_example_user_message(self) -> str:
         """This is the initial user message provided to the agent
