@@ -80,7 +80,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
         # Instruction based on Anthropic's official trajectory
         # https://github.com/eschluntz/swe-bench-experiments/tree/main/evaluation/verified/20241022_tools_claude-3-5-sonnet-updated/trajs
         instruction = (
-            f'Please resolve the following Github issue for the repository, which is already set up, and the source code is available in the /testbed directory, to which you have access.\n'
+            f'Please address the following GitHub issue for the repository, where the source code is available in the /testbed directory, which I have access to.\n'
             '# Problem Statement\n'
             f'{instance.problem_statement}\n\n'
             'The current working directory is /testbed.\n'
