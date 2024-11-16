@@ -192,9 +192,11 @@ class AgentSession:
             status_callback=self._status_callback,
             headless_mode=False,
         )
-
-        llm_prompt_logger.handlers[0].reset_counter()
-        llm_response_logger.handlers[0].reset_counter()
+        try:
+            llm_prompt_logger.handlers[0].reset_counter()
+            llm_response_logger.handlers[0].reset_counter()
+        except Exception as e:
+            logger.error(f'Error resetting LLM logger counters: {e}', exc_info=True)
 
         try:
             await self.runtime.connect()
