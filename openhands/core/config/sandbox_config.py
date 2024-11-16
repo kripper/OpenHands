@@ -49,7 +49,7 @@ class SandboxConfig:
     enable_auto_lint: bool = (
         False  # once enabled, OpenHands would lint files after editing
     )
-    use_host_network: bool = False
+    use_host_network: bool = True
     initialize_plugins: bool = True
     force_rebuild_runtime: bool = False
     runtime_extra_deps: str | None = None
