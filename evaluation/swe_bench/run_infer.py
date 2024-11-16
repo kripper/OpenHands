@@ -302,7 +302,7 @@ def initialize_runtime(
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})
     commands = [
         f'git reset --hard {instance["base_commit"]}',
-        'rm -r reproduction',
+        'rm -r testproject',
     ]
     for command in commands:
         action = CmdRunAction(command=command)
@@ -419,7 +419,7 @@ def complete_runtime(
     git_patch = None
     while n_retries < 5:
         action = CmdRunAction(
-            command=f"""git diff --cached {instance["base_commit"]} '*.py' ':(exclude)setup.py' ':(exclude)*/tests/*' ':(exclude)tests/*' ':(exclude)*/testing/*' ':(exclude)testing/*' ':(exclude)reproduction/*' """,
+            command=f"""git diff --cached {instance["base_commit"]} '*.py' ':(exclude)setup.py' ':(exclude)*/tests/*' ':(exclude)tests/*' ':(exclude)*/testing/*' ':(exclude)testing/*' ':(exclude)testproject/*' """,
             # command=f'git diff --no-color --cached {instance["base_commit"]}',
             keep_prompt=False,
         )
