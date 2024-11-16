@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
 import posthog from "posthog-js";
+import { useRouteLoaderData } from "@remix-run/react";
 import { convertImageToBase64 } from "#/utils/convert-image-to-base-64";
 import { ChatMessage } from "./chat-message";
 import { FeedbackActions } from "./feedback-actions";
@@ -28,19 +29,27 @@ import VolumeIcon from "./VolumeIcon";
 
 
 import BuildIt from "#/icons/build-it.svg?react";
-import { useWsClient } from "#/context/ws-client-provider";
+import {
+  useWsClient,
+  WsClientProviderStatus,
+} from "#/context/ws-client-provider";
+import OpenHands from "#/api/open-hands";
+import { clientLoader } from "#/routes/_oh";
+import { downloadWorkspace } from "#/utils/download-workspace";
+import { SuggestionItem } from "./suggestion-item";
 
 const isErrorMessage = (
   message: Message | ErrorMessage,
 ): message is ErrorMessage => "error" in message;
 
 export function ChatInterface() {
-  const { send, isLoadingMessages } = useWsClient();
+  const { send, status, isLoadingMessages } = useWsClient();
 
   const dispatch = useDispatch();
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { scrollDomToBottom, onChatBodyScroll, hitBottom } =
     useScrollToBottom(scrollRef);
+  const rootLoaderData = useRouteLoaderData<typeof clientLoader>("routes/_oh");
 
   const { messages } = useSelector((state: RootState) => state.chat);
   const { curAgentState } = useSelector((state: RootState) => state.agent);
@@ -51,6 +60,24 @@ export function ChatInterface() {
   const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [messageToSend, setMessageToSend] = React.useState<string | null>(null);
   const [autoMode, setAutoMode] = React.useState(false);
+  const [isDownloading, setIsDownloading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (status === WsClientProviderStatus.ACTIVE) {
+      try {
+        OpenHands.getRuntimeId().then(({ runtime_id }) => {
+          // eslint-disable-next-line no-console
+          console.log(
+            "Runtime ID: %c%s",
+            "background: #444; color: #ffeb3b; font-weight: bold; padding: 2px 4px; border-radius: 4px;",
+            runtime_id,
+          );
+        });
+      } catch (e) {
+        console.warn("Runtime ID not available in this environment");
+      }
+    }
+  }, [status]);
 
   const handleSendMessage = async (content: string, dispatchContent: string = "", files: File[]) => {
     posthog.capture("user_message_sent", {
@@ -105,6 +132,17 @@ export function ChatInterface() {
     }
   }, [curAgentState]);
 
+  const handleDownloadWorkspace = async () => {
+    setIsDownloading(true);
+    try {
+      await downloadWorkspace();
+    } catch (error) {
+      // TODO: Handle error
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   let chatInterface = (
     <div className="h-full flex flex-col justify-between" style={{ height: "94%" }}>
       {messages.length === 0 && (
@@ -139,6 +177,7 @@ export function ChatInterface() {
             <div className="w-6 h-6 border-2 border-t-[4px] border-primary-500 rounded-full animate-spin" />
           </div>
         )}
+
         {!isLoadingMessages &&
           messages.map((message, index) =>
             isErrorMessage(message) ? (
@@ -164,6 +203,34 @@ export function ChatInterface() {
               </ChatMessage>
             ),
           )}
+
+        {(curAgentState === AgentState.AWAITING_USER_INPUT ||
+          curAgentState === AgentState.FINISHED) && (
+          <div className="flex flex-col gap-2 mb-2">
+            {rootLoaderData?.ghToken ? (
+              <SuggestionItem
+                suggestion={{
+                  label: "Push to GitHub",
+                  value:
+                    "Please push the changes to GitHub and open a pull request.",
+                }}
+                onClick={(value) => {
+                  handleSendMessage(value, []);
+                }}
+              />
+            ) : (
+              <SuggestionItem
+                suggestion={{
+                  label: !isDownloading
+                    ? "Download .zip"
+                    : "Downloading, please wait...",
+                  value: "Download .zip",
+                }}
+                onClick={handleDownloadWorkspace}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-[6px] px-4 pb-4">
