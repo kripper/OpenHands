@@ -272,6 +272,9 @@ def run():
 if __name__ == '__main__':
     run()
 """,
+        'django__django-11848': custom_test_code.format(
+            cmd='tests/runtests.py utils_tests.test_http.HttpDateProcessingTests.test_parsing_rfc850'
+        ),
     }
     return test_codes.get(instance_id, '')
 
