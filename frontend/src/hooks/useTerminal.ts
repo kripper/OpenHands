@@ -22,6 +22,8 @@ export const useTerminal = (
   const lastCommandIndex = React.useRef(0);
   const lastCommand = React.useRef("");
 
+  const commandHistory = React.useRef<string[]>([]);
+  const currentCommandIndex = React.useRef<number>(-1);
   const createTerminal = () =>
     new Terminal({
       fontFamily: "Menlo, Monaco, 'Courier New', monospace",
@@ -78,15 +80,6 @@ export const useTerminal = (
     return true;
   };
 
-  const handleEnter = (command: string) => {
-    terminal.current?.write("\r\n");
-    // replace ^c character when copied from terminal
-    // eslint-disable-next-line no-control-regex
-    const cleanedCommand = command.replace(/\u0003\b/, "");
-    if (cleanedCommand.trim() === "") return;
-    send(getTerminalCommand(cleanedCommand));
-  };
-
   const handleBackspace = (command: string) => {
     terminal.current?.write("\b \b");
     return command.slice(0, -1);
@@ -108,11 +101,42 @@ export const useTerminal = (
       });
     };
 
+    const handleEnter = (command: string) => {
+      terminal.current?.write("\r\n");
+      // replace ^c character when copied from terminal
+      // eslint-disable-next-line no-control-regex
+      const cleanedCommand = command.replace(/\u0003\b/, "");
+      if (cleanedCommand.trim() === "") return;
+      send(getTerminalCommand(cleanedCommand));
+      //  Update command history using previous state
+      commandHistory.current = [...commandHistory.current, cleanedCommand];
+      currentCommandIndex.current = -1;
+    };
+    const handleUpArrow = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (commandHistory.current.length === 0) return;
+      const newIndex = currentCommandIndex.current === -1 ? commandHistory.current.length - 1 : Math.max(currentCommandIndex.current - 1, 0);
+      const command = commandHistory.current[newIndex];
+      const to_be_written = `${'\b \b'.repeat(commandBuffer.length)}${command}`
+      terminal.current?.write(to_be_written);
+      commandBuffer = command;
+      currentCommandIndex.current = newIndex;
+    };
+    const handleDownArrow = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (commandHistory.current.length === 0) return;
+      const newIndex = currentCommandIndex.current === -1 ? commandHistory.current.length - 1 : Math.min(currentCommandIndex.current + 1, commandHistory.current.length - 1);
+      const command = commandHistory.current[newIndex];
+      const to_be_written = `${'\b \b'.repeat(commandBuffer.length)}${command}`
+      terminal.current?.write(to_be_written);
+      commandBuffer = command;
+      currentCommandIndex.current = newIndex;
+    };
     if (ref.current) {
       /* Initialize the terminal in the DOM */
       initializeTerminal();
 
-      terminal.current.write("openhands@docker-desktop:/workspace $ ");
+      terminal.current.write("openhands@openhands-workspace:/workspace $ ");
       terminal.current.onKey(({ key, domEvent }) => {
         if (domEvent.key === "Enter") {
           lastCommand.current = commandBuffer;
@@ -124,6 +148,10 @@ export const useTerminal = (
           if (commandBuffer.length > 0) {
             commandBuffer = handleBackspace(commandBuffer);
           }
+        } else if (domEvent.key === "ArrowUp") {
+          handleUpArrow(domEvent);
+        } else if (domEvent.key === "ArrowDown") {
+          handleDownArrow(domEvent);
         } else {
           // Ignore paste event
           if (key.charCodeAt(0) === 22) {
