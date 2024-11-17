@@ -300,7 +300,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                             message_back = f.read()
                         with open(file_name, 'w') as f:
                             f.write('')
-                        resp = {'choices': [{'message': {'content': message_back}}]}
+                        if message_back:
+                            resp = {'choices': [{'message': {'content': message_back}}]}
             if resp:
                 pass
             else:
