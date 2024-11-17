@@ -676,8 +676,8 @@ def _edit_file_impl(
     ret_str += (
         _print_window(CURRENT_FILE, CURRENT_LINE, SMALL_WINDOW, return_str=True) + '\n'
     )
-    ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
-    # ret_str += '[File updated successfully]'
+    # ret_str += MSG_FILE_UPDATED.format(line_number=CURRENT_LINE)
+    ret_str += '[File updated successfully]'
     return ret_str
 
 
@@ -701,10 +701,21 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
         file_content = file.read()
     occurrences = file_content.count(find_string)
     file_content = file_content.replace(find_string, replace_string)
-    with open(file_name, 'w') as file:
-        file.write(file_content)
     if occurrences > 0:
-        print(f'[File updated successfully with {occurrences} occurrences replaced]')
+        ret_str = _edit_file_impl(
+            file_name,
+            start=1,
+            end=None,
+            content=file_content,
+            is_insert=False,
+            is_append=False,
+        )
+        if ret_str == '[File updated successfully]':
+            print(
+                f'[File updated successfully with {occurrences} occurrences replaced]'
+            )
+        elif ret_str is not None:
+            print(ret_str)
     else:
         print(f'[No matches found for "{find_string}" in {file_name}]')
     return
