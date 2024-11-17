@@ -1220,11 +1220,47 @@ def show_function(file_path: str, qualified_function_name: str) -> None:
         print(f"Function '{function_name}' not found in the code.")
 
 
+def show_function_at_line(file_path: str, line_number: int) -> None:
+    """
+    Show the function definition containing the given line number in the given file path.
+
+    Args:
+        file_path: str: The path to the file containing the function definition.
+        line_number: int: The line number to search for within the file.
+    """
+    with open(file_path, 'r') as file:
+        code = file.read()
+
+    tree = ast.parse(code)
+    lines = code.splitlines()
+
+    def print_function_code(node):
+        start_line = node.lineno - 1  # AST line numbers are 1-based
+        end_line = node.end_lineno  # type: ignore
+        for i in range(start_line, end_line):
+            print(f'{i + 1:3}| {lines[i]}')
+        return
+
+    # Walk through the AST and find the function containing the line_number
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            start_line = node.lineno
+            end_line = getattr(
+                node, 'end_lineno', start_line
+            )  # To handle multi-line functions
+            if start_line <= line_number < end_line:
+                print_function_code(node)
+                return
+
+    print(f'No function found for line {line_number} in the file.')
+
+
 __all__ = [
     'search_function',
     'search_class',
     'show_class',
     'show_function',
+    'show_function_at_line',
     'show_class_structure',
     # 'search_in_dir',
     # 'search_in_file',
