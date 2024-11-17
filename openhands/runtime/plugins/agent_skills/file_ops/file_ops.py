@@ -949,7 +949,7 @@ def search_in_dir(search_term: str, dir_path: str = './') -> None:
 
     Args:
         search_term: str: The term to search for.
-        dir_path: str: The path to the directory to search.
+        dir_path (optional): str: The path to the directory to search. Defaults to the current directory.
     """
     if not os.path.isdir(dir_path):
         _output_error(f'Directory {dir_path} not found')
@@ -1262,7 +1262,7 @@ __all__ = [
     'show_function',
     'show_function_at_line',
     'show_class_structure',
-    'search_in_dir',
+    # 'search_in_dir', # should use search_class
     'search_in_file',
     'open_file',
     'goto_line',
