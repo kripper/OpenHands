@@ -36,7 +36,7 @@ Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_benc
   10) [Add start and kill modes in Makefile](https://github.com/All-Hands-AI/OpenHands/pull/2850) 📳
   11) [Process interactive commands and stream output in logs](https://github.com/All-Hands-AI/OpenHands/pull/3042) 📜
   12) [Use execute tags for browsing agent too](https://github.com/SmartManoj/Kevin/commit/b2a02ce39295c33d00429937804cdd3e08d70969) 🏷️
-  13) [Feat: Regenerate message](https://github.com/SmartManoj/Kevin/commit/66b3a0d0d8904c402fb952ff17520607d8636e66) 🔄
+  13) [Feat: Regenerate message](https://github.com/SmartManoj/Kevin/commit/be74f0685c21cb8e6fc318a171676645c2f6ab6a) 🔄
   14) [Feat: Editable Notebook](https://github.com/SmartManoj/Kevin/commit/46651deeb7d4a2109f0afab0d4bbd33ba755f040) 📝
   15) [Feat: Add docker to sandbox](https://github.com/SmartManoj/Kevin/commit/c145a4d6e9b080423af995f268b09c37ebc1184a) 🐳
   16) [UI: Enable right click to paste in terminal](https://github.com/All-Hands-AI/OpenHands/pull/3162) 🖱️
