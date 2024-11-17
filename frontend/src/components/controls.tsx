@@ -54,10 +54,11 @@ export function Controls({
         )}
       </div>
 
-      <ProjectMenuCard
+
+      {/* <ProjectMenuCard
         isConnectedToGitHub={!!rootData?.ghToken}
         githubData={projectMenuCardData}
-      />
+      /> */}
     </div>
   );
 }
