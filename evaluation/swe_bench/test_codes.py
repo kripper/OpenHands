@@ -275,6 +275,9 @@ if __name__ == '__main__':
         'django__django-11848': custom_test_code.format(
             cmd='tests/runtests.py utils_tests.test_http.HttpDateProcessingTests.test_parsing_rfc850'
         ),
+        'django__django-13964': custom_test_code.format(
+            cmd='tests/runtests.py  many_to_one.tests.ManyToOneTests.test_cached_foreign_key_with_to_field_not_cleared_by_save '
+        ),
     }
     return test_codes.get(instance_id, '')
 
