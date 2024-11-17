@@ -62,6 +62,7 @@
         ["django__django-14787","https://www.all-hands.dev/share?share_id=ba6a91800a08381ef8ceb4c90aac902ab9b1ad5ca00ce9b98357d46d16ccdc49"],
         ["django__django-14608","https://www.all-hands.dev/share?share_id=d7832a28493a7a0a07acc1d06804e3708a4d33f307fe93cc6637a0aadca35e7b"],
         ["django__django-11848","https://www.all-hands.dev/share?share_id=f3db706f8a892e0f646e3efefc08485794385a00f53afb939133505ff65835da"],
+        ["django__django-13925","https://www.all-hands.dev/share?share_id=f69a770f1f26c85bf266d4a8718cd34602c0f63ae9ed630d657a663517471c35"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
@@ -89,6 +90,7 @@
         ["django__django-13158","https://www.all-hands.dev/share?share_id=dd8de6c1e478e56d3aeb20793057c07399cf2e563f1bdecc15d0cace64bdecdd"],
         ["astropy__astropy-14182","https://www.all-hands.dev/share?share_id=6d881b5f1951ad251f838bc81954cedb5884bc20c06ab74573de3d780fa19df5"],
         ["matplotlib__matplotlib-23476","https://www.all-hands.dev/share?share_id=01eddc2e7ff6ffe1dc5f3a1fd15cc65c96c0380b57b398aedba1fc4fb6b8b7cb"],
+        ["django__django-12125","https://www.all-hands.dev/share?share_id=c9ff68c78202541f46cd0812d9b749b18a9cb8570c60d0da044f8b6c2e50f0e5"],
         ["for ignoring trailing comma", "-"]
     ]
 }
