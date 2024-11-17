@@ -204,8 +204,7 @@ export function ChatInterface() {
             ),
           )}
 
-        {(curAgentState === AgentState.AWAITING_USER_INPUT ||
-          curAgentState === AgentState.FINISHED) && (
+        {(curAgentState === AgentState.FINISHED && 0) && (
           <div className="flex flex-col gap-2 mb-2">
             {rootLoaderData?.ghToken ? (
               <SuggestionItem
