@@ -88,7 +88,7 @@ class PromptManager:
         message_content = message.content[0].text
         for microagent in self.microagents.values():
             trigger = microagent.get_trigger(message_content)
-            if trigger:
+            if trigger and trigger != 'github':
                 micro_text = f'<extra_info>\nThe following information has been included based on a keyword match for "{trigger}". It may or may not be relevant to the user\'s request.'
                 micro_text += '\n\n' + microagent.content
                 micro_text += '\n</extra_info>'
