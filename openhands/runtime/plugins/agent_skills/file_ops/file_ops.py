@@ -38,7 +38,7 @@ from openhands.runtime.plugins.agent_skills.file_ops.ast_ops import (
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
-WINDOW = 500
+WINDOW = 100
 SMALL_WINDOW = 10
 
 # This is also used in unit tests!
@@ -222,7 +222,7 @@ def open_file(
         ignore_window=True,
     )
     if output.strip().endswith('more lines below)'):
-        output += '\n[Use `scroll_down` to view the next 100 lines of the file!]'
+        output += f'\n[Use `search_in_file()` or `scroll_down()` to view the next {WINDOW} lines of the file!]'
     print(output)
 
 
@@ -1021,7 +1021,7 @@ def find_file(file_name: str, dir_path: str = './') -> None:
 
     Args:
         file_name: str: The name of the file to find.
-        dir_path: str: The path to the directory to search.
+        dir_path (optional): str: The path to the directory to search. Defaults to the current directory.
     """
     if not os.path.isdir(dir_path):
         _output_error(f'Directory {dir_path} not found')
@@ -1262,8 +1262,8 @@ __all__ = [
     'show_function',
     'show_function_at_line',
     'show_class_structure',
-    # 'search_in_dir',
-    # 'search_in_file',
+    'search_in_dir',
+    'search_in_file',
     'open_file',
     'goto_line',
     'scroll_down',
