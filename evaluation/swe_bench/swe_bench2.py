@@ -83,4 +83,9 @@ AttributeError: 'NoneType' object has no attribute 'fit'"""
         return description + '\nEnable the warnings e.g., python -W always <file>.py'
     elif instance_id == 'django__django-12708':
         return description.replace('378', '411')
+    elif instance_id == 'django__django-14155':
+        return description.replace(
+            'ISTM that we can simply unwrap functools.partial objects in ResolverMatch.__init__().',
+            '',
+        )
     return description
