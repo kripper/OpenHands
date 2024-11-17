@@ -10,6 +10,7 @@ full_file_names = [
     'openhands/runtime/plugins/agent_skills/file_ops/file_utils.py',
     r'openhands/runtime/utils/bash.py',
     r'openhands/runtime/action_execution_server.py',
+    r'openhands/linter/__init__.py',
 ]
 client = docker.from_env()
 for c in client.containers.list():
