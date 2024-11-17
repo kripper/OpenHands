@@ -219,8 +219,6 @@ run:
 	@echo "$(YELLOW)Waiting for the app to start...$(RESET)"
 	@until nc -z localhost $(BACKEND_PORT); do sleep 0.1; done
 	@echo "$(GREEN)Application started successfully.$(RESET)"
-	@cd frontend && echo "$(BLUE)Starting frontend with npm...$(RESET)" && npm run start -- --port $(FRONTEND_PORT)
-	@echo "$(GREEN)Application started successfully.$(RESET)"
 
 # Start both backend and frontend servers
 start:
@@ -322,7 +320,7 @@ processes:=$$(lsof -t -i:$(BACKEND_PORT) -i:$(FRONTEND_PORT))
 # Kill all processes on port BACKEND_PORT and FRONTEND_PORT
 kill:
 	@if [ -n "$(processes)" ]; then \
-		echo "$(YELLOW)Killing all processes on port $(BACKEND_PORT) and $(FRONTEND_PORT)...$(RESET)"; \
+		echo "$(YELLOW)Killing previously running processes...$(RESET)"; \
 		kill -9 $(processes); \
 		echo "$(GREEN)Processes killed successfully.$(RESET)"; \
 	fi
