@@ -92,10 +92,10 @@ def _check_current_file(file_path: str | None = None) -> bool:
     global CURRENT_FILE
     if not file_path:
         file_path = CURRENT_FILE
-    if not file_path or not os.path.isfile(file_path):
+    if not file_path:
         return _output_error('No file open. Use the open_file function first.')
-    if not os.path.exists(file_path):
-        return _output_error(f'File {file_path} not found.')
+    if not check_file_exists(file_path):
+        return False
     return True
 
 
@@ -196,8 +196,7 @@ def open_file(
     """
     global CURRENT_FILE, CURRENT_LINE, WINDOW
 
-    if not os.path.isfile(path):
-        _output_error(f'File {path} not found.')
+    if not check_file_exists(path):
         return
 
     CURRENT_FILE = os.path.abspath(path)
@@ -486,8 +485,7 @@ def _edit_file_impl(
         _output_error('Could not access or create directories.')
         return None
 
-    if not os.path.isfile(file_name):
-        _output_error(f'File {file_name} not found.')
+    if not check_file_exists(file_name):
         return None
 
     if is_insert and is_append:
@@ -694,6 +692,9 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
         _output_error('`find_string` and `replace_string` must be different.')
         return
 
+    if not check_file_exists(file_name):
+        return
+
     if is_test_file(file_name):
         return
     with open(file_name, 'r') as file:
@@ -708,10 +709,6 @@ def find_and_replace(file_name: str, find_string: str, replace_string: str) -> N
         print(f'[No matches found for "{find_string}" in {file_name}]')
     return
     # # FIXME: support replacing *all* occurrences
-
-    # if not os.path.isfile(file_name):
-    #     _output_error(f'File {file_name} not found.')
-    #     return None
 
     # # search for `find_string` in the file
     # # if found, replace it with `replace_string`
@@ -984,6 +981,20 @@ def search_in_dir(search_term: str, dir_path: str = './') -> None:
     print(f'[End of matches for "{search_term}" in {dir_path}]')
 
 
+def check_file_exists(file_path: str) -> bool:
+    if not os.path.isfile(file_path):
+        is_extension_missing = '.' not in file_path
+        extra_info = (
+            ' (Did you forget to include the file extension?)'
+            if is_extension_missing
+            else ''
+        )
+        _output_error(f'File {file_path} not found.{extra_info}')
+        return False
+
+    return True
+
+
 def search_in_file(search_term: str, file_path: str | None = None) -> None:
     """Searches for search_term in file. If file is not provided, searches in the current open file.
 
@@ -997,8 +1008,7 @@ def search_in_file(search_term: str, file_path: str | None = None) -> None:
     if file_path is None:
         _output_error('No file specified or open. Use the open_file function first.')
         return
-    if not os.path.isfile(file_path):
-        _output_error(f'File {file_path} not found.')
+    if not check_file_exists(file_path):
         return
 
     matches = []
