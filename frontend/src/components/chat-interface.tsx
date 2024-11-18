@@ -6,9 +6,9 @@ import { convertImageToBase64 } from "#/utils/convert-image-to-base-64";
 import { ChatMessage } from "./chat-message";
 import { FeedbackActions } from "./feedback-actions";
 import { ImageCarousel } from "./image-carousel";
-import { createChatMessage } from "#/services/chatService";
+import { createChatMessage, createRegenerateLastMessage } from "#/services/chatService";
 import { InteractiveChatBox } from "./interactive-chat-box";
-import { addUserMessage } from "#/state/chatSlice";
+import { addUserMessage, removeLastAssistantMessage } from "#/state/chatSlice";
 import { RootState } from "#/store";
 import AgentState from "#/types/AgentState";
 import { generateAgentStateChangeEvent } from "#/services/agentStateService";
@@ -26,6 +26,7 @@ import beep from "#/utils/beep";
 import { I18nKey } from "#/i18n/declaration";
 import { useTranslation } from "react-i18next";
 import VolumeIcon from "./VolumeIcon";
+import { FaSyncAlt } from "react-icons/fa";
 
 
 import BuildIt from "#/icons/build-it.svg?react";
@@ -108,6 +109,11 @@ export function ChatInterface() {
       t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE),
       [],
     );
+  };
+
+  const handleRegenerateClick = () => {
+    dispatch(removeLastAssistantMessage());
+    send(createRegenerateLastMessage());
   };
 
   const onClickShareFeedbackActionButton = async (
@@ -204,7 +210,7 @@ export function ChatInterface() {
             ),
           )}
 
-        {(curAgentState === AgentState.FINISHED && 0) && (
+        {(curAgentState === AgentState.FINISHED && false) && (
           <div className="flex flex-col gap-2 mb-2">
             {rootLoaderData?.ghToken ? (
               <SuggestionItem
@@ -242,6 +248,13 @@ export function ChatInterface() {
               onClickShareFeedbackActionButton("negative")
             }
           />
+          <button
+            type="button"
+            onClick={handleRegenerateClick}
+            className="p-1 bg-neutral-700 border border-neutral-600 rounded hover:bg-neutral-500"
+          >
+            {<FaSyncAlt className="inline mr-2 w-3 h-3" />}
+          </button>
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0">
             {messages.length > 2 &&
               curAgentState === AgentState.AWAITING_USER_INPUT && (

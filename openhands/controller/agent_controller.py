@@ -239,8 +239,18 @@ class AgentController:
         if isinstance(action, ChangeAgentStateAction):
             await self.set_agent_state_to(action.agent_state)  # type: ignore
         elif isinstance(action, RegenerateAction):
-            logger.info(action, extra={'msg_type': 'ACTION'})
             self.event_stream.remove_latest_event()
+            count = 0
+            for event in self.state.history[::-1]:
+                if isinstance(event, Action):
+                    count += 1
+                    if count == 3:
+                        break
+                    self.state.history.pop()
+
+            self.state.iteration -= 1
+            self.state.local_iteration -= 1
+
             await self.set_agent_state_to(AgentState.RUNNING)
         elif isinstance(action, MessageAction):
             await self._handle_message_action(action)

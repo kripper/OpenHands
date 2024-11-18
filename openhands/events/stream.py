@@ -8,6 +8,7 @@ from typing import Callable, Iterable
 
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.utils import json
+from openhands.events.action.action import Action
 from openhands.events.event import Event, EventSource
 from openhands.events.serialization.event import event_from_dict, event_to_dict
 from openhands.storage import FileStore
@@ -225,10 +226,15 @@ class EventStream:
 
     def remove_latest_event(self):
         # Remove NullObservation, RegenerateAction, AgentStateChangedObservation, NullObservation and the previous Action
-        for _ in range(5):
-            logger.debug(f'Removing latest event id={self._cur_id - 1}')
-            logger.debug(f'Removing event: {self.get_latest_event()}')
+        count = 0
+        while True:
+            event = self.get_latest_event()
+            # logger.info(f'Removing latest event: {event} with id={event.id}')
 
+            if isinstance(event, Action):
+                count += 1
+                if count == 3:
+                    break
             self.file_store.delete(self._get_filename_for_id(self._cur_id - 1))
             self._cur_id -= 1
 
