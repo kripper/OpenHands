@@ -249,6 +249,9 @@ export function ChatInterface() {
             }
           />
           <button
+            style={{
+              width: "7%",
+            }}
             type="button"
             onClick={handleRegenerateClick}
             className="p-1 bg-neutral-700 border border-neutral-600 rounded hover:bg-neutral-500"
