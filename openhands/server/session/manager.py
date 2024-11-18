@@ -28,7 +28,7 @@ class SessionManager:
         c = Conversation(sid, file_store=self.file_store, config=self.config)
         await c.connect()
         end_time = time.time()
-        logger.info(
+        logger.debug(
             f'Conversation {c.sid} connected in {end_time - start_time} seconds'
         )
         return c
