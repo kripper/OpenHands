@@ -118,7 +118,7 @@ function JupyterEditor({ maxWidth }: JupyterEditorProps) {
   };
 
   let jupyterEditor = (
-    <div className="flex-1" style={{ maxWidth }}>
+    <div className="flex-1" style={{ maxWidth, height: "85%" }}>
       <div
         className="overflow-y-auto h-full max-h-[85%] scrollbar-custom scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-white/10 dark:hover:scrollbar-thumb-white/20"
         ref={jupyterRef}
