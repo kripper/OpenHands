@@ -129,7 +129,7 @@ function App() {
               </Container>
               {/* Terminal uses some API that is not compatible in a server-environment. For this reason, we lazy load it to ensure
                * that it loads only in the client-side. */}
-              <Container className="h-1/3 overflow-scroll" label="Terminal">
+              <Container className="h-1/3 overflow-auto" label="Terminal">
                 <React.Suspense fallback={<div className="h-full" />}>
                   <Terminal secrets={secrets} />
                 </React.Suspense>

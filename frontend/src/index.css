@@ -13,6 +13,10 @@
   --bg-neutral-muted: #afb8c133;
 }
 
+.xterm-viewport {
+  overflow-y: auto !important;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, "SF Pro", BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
