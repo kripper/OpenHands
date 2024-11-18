@@ -15,7 +15,7 @@ for line in output.splitlines():
 
 custom_pytest_code = """
 import subprocess
-cmd = 'pytest {file_name}'
+cmd = 'pytest -x {file_name}'
 print('Running:', cmd)
 return_code = subprocess.run(cmd, shell=True).returncode
 assert return_code == 0
@@ -286,6 +286,9 @@ if __name__ == '__main__':
         ),
         'django__django-15695': custom_test_code.format(
             cmd='tests/runtests.py migrations.test_operations.OperationTests.test_rename_index_unnamed_index && tests/runtests.py migrations.test_operations.OperationTests.test_rename_index_unknown_unnamed_index'
+        ),
+        'astropy__astropy-14365': custom_pytest_code.format(
+            file_name='astropy/io/ascii/tests/test_qdp.py'
         ),
     }
     return test_codes.get(instance_id, '')
