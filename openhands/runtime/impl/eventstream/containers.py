@@ -2,9 +2,8 @@ import docker
 
 
 def remove_all_containers(prefix: str):
-    docker_client = docker.from_env()
-
     try:
+        docker_client = docker.from_env()
         containers = docker_client.containers.list(all=True)
         for container in containers:
             try:
@@ -15,5 +14,5 @@ def remove_all_containers(prefix: str):
                 pass
             except docker.errors.NotFound:
                 pass
-    except docker.errors.NotFound:  # yes, this can happen!
+    except docker.errors.DockerException:
         pass
