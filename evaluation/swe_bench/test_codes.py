@@ -284,6 +284,9 @@ if __name__ == '__main__':
         'django__django-14534': custom_test_code.format(
             cmd='tests/runtests.py forms_tests.tests.test_forms.FormsTestCase.test_iterable_boundfield_select'
         ),
+        'django__django-15695': custom_test_code.format(
+            cmd='tests/runtests.py migrations.test_operations.OperationTests.test_rename_index_unnamed_index'
+        ),
     }
     return test_codes.get(instance_id, '')
 
