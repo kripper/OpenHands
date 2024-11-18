@@ -495,7 +495,7 @@ class CodeActAgent(Agent):
                     tool_call_id_to_message=tool_call_id_to_message,
                 )
             elif isinstance(event, LogEvent):
-                message = None
+                continue
             else:
                 raise ValueError(f'Unknown event type: {type(event)}')
 
