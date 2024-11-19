@@ -161,7 +161,7 @@ export function ChatInterface() {
           </div>
           <Suggestions
             suggestions={Object.entries(SUGGESTIONS.repo)
-              .slice(0, 4)
+              .slice(0, 0)
               .map(([label, value]) => ({
                 label,
                 value,
