@@ -290,6 +290,9 @@ if __name__ == '__main__':
         'astropy__astropy-14365': custom_pytest_code.format(
             file_name='astropy/io/ascii/tests/test_qdp.py'
         ),
+        'matplotlib__matplotlib-23299': custom_pytest_code.format(
+            file_name='lib/matplotlib/tests/test_rcparams.py'
+        ),
     }
     return test_codes.get(instance_id, '')
 
