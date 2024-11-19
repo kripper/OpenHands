@@ -240,24 +240,28 @@ export function ChatInterface() {
 
       <div className="flex flex-col gap-[6px] px-4 pb-4">
         <div className="flex justify-between relative">
-          <FeedbackActions
-            onPositiveFeedback={() =>
-              onClickShareFeedbackActionButton("positive")
-            }
-            onNegativeFeedback={() =>
-              onClickShareFeedbackActionButton("negative")
-            }
-          />
-          <button
-            style={{
-              width: "7%",
-            }}
-            type="button"
-            onClick={handleRegenerateClick}
-            className="p-1 bg-neutral-700 border border-neutral-600 rounded hover:bg-neutral-500"
-          >
-            {<FaSyncAlt className="inline mr-2 w-3 h-3" />}
-          </button>
+          <div className="flex gap-1">
+            <FeedbackActions
+              onPositiveFeedback={() =>
+                onClickShareFeedbackActionButton("positive")
+              }
+              onNegativeFeedback={() =>
+                onClickShareFeedbackActionButton("negative")
+              }
+            />
+            <button
+              style={{
+                width: "25%",
+              }}
+              type="button"
+              onClick={handleRegenerateClick}
+              className="p-1 bg-neutral-700 border border-neutral-600 rounded hover:bg-neutral-500"
+            >
+              <div style={{ top: "-2px", position: "relative" }}>
+                {<FaSyncAlt className="inline mr-2 w-3 h-3" />}
+              </div>
+            </button>
+          </div>
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0">
             {messages.length > 2 &&
               curAgentState === AgentState.AWAITING_USER_INPUT && (
