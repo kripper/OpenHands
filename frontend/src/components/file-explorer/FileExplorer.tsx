@@ -277,6 +277,8 @@ function FileExplorer({ error, isOpen, onToggle }: FileExplorerProps) {
           {isOpen && (
             <button
               type="button"
+              // display: none;
+              style={{ display: "none" }}
               onClick={handleVSCodeClick}
               disabled={
                 curAgentState === AgentState.INIT ||
