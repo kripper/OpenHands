@@ -329,7 +329,7 @@ class AgentController:
             if self.get_agent_state() != AgentState.RUNNING:
                 await self.set_agent_state_to(AgentState.RUNNING)
         elif action.source == EventSource.AGENT and action.wait_for_response:
-            logger.info(f'Awaiting user input for action: {action}')
+            # logger.info(f'Awaiting user input for action: {action}')
             await self.set_agent_state_to(AgentState.AWAITING_USER_INPUT)
 
     def reset_task(self):
