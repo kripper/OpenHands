@@ -1283,7 +1283,7 @@ __all__ = [
     'show_function',
     'show_function_at_line',
     'show_class_structure',
-    # 'search_in_dir', # should use search_class
+    'search_in_dir',
     'search_in_file',
     'open_file',
     'goto_line',
