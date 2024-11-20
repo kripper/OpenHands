@@ -563,10 +563,7 @@ class AgentController:
 
         await self.update_state_after_step()
 
-        # Use info level if LOG_ALL_EVENTS is set
-        log_level = (
-            'info' if os.getenv('LOG_ALL_EVENTS', 'true') in ('true', '1') else 'debug'
-        )
+        log_level = 'info'
         self.log(log_level, str(action), extra={'msg_type': 'ACTION'})
 
     async def _delegate_step(self):
