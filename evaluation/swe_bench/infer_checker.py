@@ -20,7 +20,7 @@ def check_if_resolved():
     if toml_data['selected_ids'][0] in resolved_instances:
         print('already resolved')
         exit(0)
-    elif toml_data['selected_ids'][0] in unresolved_instances:
+    elif toml_data['selected_ids'][0] in unresolved_instances and 0:
         print('already marked as unresolved')
         exit(0)
 
