@@ -293,6 +293,9 @@ if __name__ == '__main__':
         'matplotlib__matplotlib-23299': custom_pytest_code.format(
             file_name='lib/matplotlib/tests/test_rcparams.py'
         ),
+        'sympy__sympy-18698': custom_test_code.format(
+            cmd='bin/test sympy/polys/tests/test_polytools.py'
+        ),
     }
     return test_codes.get(instance_id, '')
 
