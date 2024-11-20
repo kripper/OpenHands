@@ -86,10 +86,11 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
             'The current working directory is /testbed.\n'
             'Do not provide suggestions or workarounds. Directly fix the issue by modifying the source code.\n'
             'Plan:\n'
-            # "*) Reproduce the issue in the test code before fixing it;\n"
+            '*) Reproduce the issue in the test code before fixing it;\n'
             "*) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
             '*) Use search_class instead of search_in_dir when searching for classes to modify;\n'
-            '*) Generate the fix.\n'
+            '*) Generate a robust fix.\n'
+            'Ensure the solution is robust, adheres to best practices, and supports framework customizations and extensibility.\n'
             '*) Verify the fix.\n'
             '\n'
             'Add your valuable thoughts to every action you take.\n'
