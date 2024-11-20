@@ -158,3 +158,25 @@ class CondenserMixin:
         action_response = response.choices[0].message.content
         print(f'summarize_messages gpt reply: {action_response}')
         return action_response
+
+
+if __name__ == '__main__':
+    # config
+    from openhands.core.config import LLMConfig
+    from openhands.llm.llm import LLM
+
+    config = LLMConfig()
+    config.model = 'gemini/gemini-1.5-flash-exp-0827'
+    import os
+
+    config.api_key = os.environ['GEMINI_API_KEY']
+    config.max_input_tokens = 2700
+    llm = LLM(config=config)
+    llm.condense(
+        messages=[
+            Message(role='user', content=[TextContent(text='Hello, how are you?')]),
+            Message(
+                role='assistant', content=[TextContent(text='I am fine, thank you.')]
+            ),
+        ]
+    )

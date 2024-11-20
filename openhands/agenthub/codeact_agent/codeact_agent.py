@@ -370,7 +370,7 @@ class CodeActAgent(Agent):
             print(e)
 
         params: dict = {
-            'messages': self.llm.format_messages_for_llm(messages),
+            'messages': messages,
             'condense': True,
             'origin': 'Agent',
         }
