@@ -59,6 +59,7 @@ export function FeedbackForm({ onClose, polarity }: FeedbackFormProps) {
     setIsSubmitting(true);
 
     const email = formData.get("email")?.toString() || "";
+    localStorage.setItem("feedback-email", email);
     const permissions = (formData.get("permissions")?.toString() ||
       "private") as "private" | "public";
 
@@ -78,6 +79,7 @@ export function FeedbackForm({ onClose, polarity }: FeedbackFormProps) {
     setIsSubmitting(false);
   };
 
+  const email = localStorage.getItem("feedback-email") || "";
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
       <label className="flex flex-col gap-2">
@@ -88,6 +90,7 @@ export function FeedbackForm({ onClose, polarity }: FeedbackFormProps) {
           type="email"
           placeholder="Please enter your email"
           className="bg-[#27272A] px-3 py-[10px] rounded"
+          defaultValue={email}
         />
       </label>
 
