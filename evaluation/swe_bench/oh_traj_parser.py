@@ -21,23 +21,28 @@ for i in traj:
         print(f'Step {step_count}:')
     print(i['role'])
     try:
-      contents = i['content']
-      if contents:
-        print(contents[0]['text'].replace('\r', ''))
+        contents = i['content']
+        if contents:
+            print(
+                contents[0]['text']
+                .replace('\r', '')
+                .replace(
+                    '[Python Interpreter: /opt/miniconda3/envs/testbed/bin/python]', ''
+                )
+            )
     except Exception as e:
         print(e)
         print(i)
 
-    
     if i['role'] == 'assistant':
         tool_calls = i['tool_calls']
         if tool_calls:
-            print('='*10)
+            print('=' * 10)
 
         for tool_call in tool_calls:
             arguments = tool_call['function']['arguments']
             arguments = json.loads(arguments)
             for k, v in arguments.items():
                 print(f'{k}: {v}')
-    
-    print('-'*100)
+
+    print('-' * 100)
