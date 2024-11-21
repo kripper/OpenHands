@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Any, Literal, Optional
 
 import requests
@@ -32,6 +33,15 @@ def store_feedback(feedback: FeedbackDataModel) -> dict[str, str]:
     if 'token' in display_feedback:
         display_feedback['token'] = 'elided'
     logger.debug(f'Got feedback: {display_feedback}')
+    config = {
+        'action': 'initialize',
+        'args': {
+            'LLM_MODEL': os.environ['OPENHANDS_MODEL'],
+            'AGENT': os.environ['OPENHANDS_AGENT'],
+            'LANGUAGE': os.environ['OPENHANDS_LANGUAGE'],
+        },
+    }
+    feedback.trajectory = [config] + feedback.trajectory if feedback.trajectory else []
     # Start actual request
     response = requests.post(
         FEEDBACK_URL,

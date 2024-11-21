@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 
 from fastapi import WebSocket, WebSocketDisconnect
@@ -117,6 +118,10 @@ class Session:
         llm = LLM(config=self.config.get_llm_config_from_agent(agent_cls))
         agent_config = self.config.get_agent_config(agent_cls)
         agent = Agent.get_cls(agent_cls)(llm, agent_config)
+        # store agent, language, model in environmnet for feeedback
+        os.environ['OPENHANDS_AGENT'] = agent_cls
+        os.environ['OPENHANDS_LANGUAGE'] = args.get(ConfigType.LANGUAGE, 'en')
+        os.environ['OPENHANDS_MODEL'] = config2.model
 
         try:
             await self.agent_session.start(
