@@ -100,12 +100,11 @@ export function FeedbackForm({ onClose, polarity }: FeedbackFormProps) {
             name="permissions"
             value="private"
             type="radio"
-            defaultChecked
           />
           Private
         </label>
         <label className="flex gap-2 cursor-pointer">
-          <input name="permissions" value="public" type="radio" />
+          <input name="permissions" value="public" type="radio" defaultChecked />
           Public
         </label>
       </div>
