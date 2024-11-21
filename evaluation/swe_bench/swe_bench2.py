@@ -88,4 +88,32 @@ AttributeError: 'NoneType' object has no attribute 'fit'"""
             'ISTM that we can simply unwrap functools.partial objects in ResolverMatch.__init__().',
             '',
         )
+    elif instance_id == 'scikit-learn__scikit-learn-14087':
+        actual = """~/.pyenv/versions/3.6.7/envs/jupyter/lib/python3.6/site-packages/sklearn/linear_model/logistic.py in fit(self, X, y, sample_weight)
+   2192                 else:
+   2193                     w = np.mean([coefs_paths[:, i, best_indices[i], :]
+-> 2194                                  for i in range(len(folds))], axis=0)
+   2195
+   2196                 best_indices_C = best_indices % len(self.Cs_)
+
+~/.pyenv/versions/3.6.7/envs/jupyter/lib/python3.6/site-packages/sklearn/linear_model/logistic.py in <listcomp>(.0)
+   2192                 else:
+   2193                     w = np.mean([coefs_paths[:, i, best_indices[i], :]
+-> 2194                                  for i in range(len(folds))], axis=0)
+   2195
+   2196                 best_indices_C = best_indices % len(self.Cs_)"""
+        expected = """~/.pyenv/versions/3.6.7/envs/jupyter/lib/python3.6/site-packages/sklearn/linear_model/logistic.py in fit(self, X, y, sample_weight)
+   2176                 else:
+   2177                     w = np.mean([coefs_paths[:, i, best_indices[i], :]
+-> 2178                                  for i in range(len(folds))], axis=0)
+   2179
+   2180                 best_indices_C = best_indices % len(self.Cs_)
+
+~/.pyenv/versions/3.6.7/envs/jupyter/lib/python3.6/site-packages/sklearn/linear_model/logistic.py in <listcomp>(.0)
+   2176                 else:
+   2177                     w = np.mean([coefs_paths[:, i, best_indices[i], :]
+-> 2178                                  for i in range(len(folds))], axis=0)
+   2179
+   2180                 best_indices_C = best_indices % len(self.Cs_)"""
+        return description.replace(actual, expected)
     return description
