@@ -14,7 +14,10 @@ with warnings.catch_warnings():
     warnings.simplefilter('ignore')
     import litellm
 
-    litellm.suppress_debug_info = True
+    if os.getenv('DEBUG_LITTELM'):
+        litellm.set_verbose = True
+    else:
+        litellm.suppress_debug_info = True
 from litellm import ModelInfo, PromptTokensDetails
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
