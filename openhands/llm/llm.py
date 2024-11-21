@@ -206,8 +206,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         )
         def wrapper(*args, **kwargs):
             """Wrapper for the litellm completion function. Logs the input and output of the completion function."""
-
             messages: list[Message] | Message = []
+
             mock_function_calling = kwargs.pop('mock_function_calling', False)
 
             # some callers might send the model and messages directly
