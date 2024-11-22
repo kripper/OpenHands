@@ -128,6 +128,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 # Safe fallback for any potentially viable model
                 self.config.max_input_tokens = 4096
 
+        # call init_model_info to initialize config.max_output_tokens
+        # which is used in partial function
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             self.init_model_info()
