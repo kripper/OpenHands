@@ -459,12 +459,22 @@ if 1:
     # l = (set(resolved_instances) - set(r))
     # print(len(l))
     # print(len(r))
-    if 1:
+    if 0:
         new_set = set(r) - set(resolved_instances) - set(unresolved_instances)
         new_list = list(sorted(new_set))
         print(new_list)
         print(len(new_list))
 
+    if 1:
+        new_set = (
+            set(swe_verified_lite) - set(resolved_instances) - set(unresolved_instances)
+        )
+        print(f'{"Total:":<20}', len(swe_verified_lite))
+        print(f'{"Resolved:":<20}', len(set(resolved_instances)))
+        print(f'{"Unresolved:":<20}', len(set(unresolved_instances)))
+        print(
+            f'{"Resolved ratio:":<20} {len(resolved_instances)/len(swe_verified_lite):.2%}'
+        )
     # if new_instance in unresolved_instances:
     #     print('new instance is unresolved')
     # if new_instance in resolved_instances:
