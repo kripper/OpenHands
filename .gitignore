@@ -242,3 +242,4 @@ evaluation/swe_bench/gru_traj.json
 llm_debugger.py
 **/node_modules/
 evaluation/swe_bench/oh_traj.json
+evaluation/swe_bench/swe_verified_lite.py
