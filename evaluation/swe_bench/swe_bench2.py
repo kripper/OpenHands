@@ -82,7 +82,15 @@ AttributeError: 'NoneType' object has no attribute 'fit'"""
     elif instance_id == 'matplotlib__matplotlib-24970':
         return description + '\nEnable the warnings e.g., python -W always <file>.py'
     elif instance_id == 'django__django-12708':
-        return description.replace('378', '411')
+        description = description.replace('378', '411')
+        traceback = """Traceback (most recent call last):
+  ...
+  File "/testbed/django/db/backends/base/schema.py", line 396, in alter_index_together
+    self._delete_composed_index(model, fields, {'index': True}, self.sql_delete_index)
+  File "/testbed/django/db/backends/base/schema.py", line 414, in _delete_composed_index
+    ", ".join(columns),
+ValueError: Found wrong number (2) of constraints for my_app_mymodel(field1, field2)"""
+        return description + '\n' + traceback
     elif instance_id == 'django__django-14155':
         return description.replace(
             'ISTM that we can simply unwrap functools.partial objects in ResolverMatch.__init__().',
