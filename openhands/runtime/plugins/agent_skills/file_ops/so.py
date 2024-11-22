@@ -83,6 +83,15 @@ api = StackOverflowAPI()
 
 
 def search_stack_overflow(query):
+    """
+    Search Stack Overflow for a query and return the most relevant answer.
+
+    Args:
+        query (str): The query to search for.
+
+    Returns:
+        str: The most relevant answer to the query.
+    """
     # Search for the query
     search_results = api.search(query)
 
