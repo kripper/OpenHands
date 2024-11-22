@@ -4,6 +4,7 @@ import time
 
 from fastapi import WebSocket, WebSocketDisconnect
 
+import openhands.core.config2 as config2
 from openhands.controller.agent import Agent
 from openhands.core.config import AppConfig
 from openhands.core.const.guide_url import TROUBLESHOOTING_URL
@@ -106,7 +107,6 @@ class Session:
             default_llm_config.model = args.get(
                 ConfigType.LLM_MODEL, default_llm_config.model
             )
-            import openhands.core.config2 as config2
 
             config2.model = default_llm_config.model
             default_llm_config.api_key = args.get(
