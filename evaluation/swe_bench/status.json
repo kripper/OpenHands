@@ -1,8 +1,11 @@
 {
+    "resolved_non_lite": [
+        ["sphinx-doc__sphinx-8713","https://www.all-hands.dev/share?share_id=a20cd2b1315477ed79ef1c8e02603c0927f5a55ab0744042c8114ceaa4b9874c"],
+        ["astropy__astropy-13236","https://www.all-hands.dev/share?share_id=f09c6292699398ace674feb91dc58e81c49fddedbbe1206a36b70ed3a660cf83"],
+        ["astropy__astropy-14309","https://www.all-hands.dev/share?share_id=9d07b2aff05da39a8765152145aa260bf8e1e5bdfb829b99795decd62511600c"]
+    ],
     "resolved": [
         ["astropy__astropy-12907","https://www.all-hands.dev/share?share_id=691fd73f531ecbd8162ad1fc6c286d33dfbb94d0b955f37f4b69d77f4aaff80a","gemini-1.5-pro-latest"],
-        ["astropy__astropy-13236","https://www.all-hands.dev/share?share_id=f09c6292699398ace674feb91dc58e81c49fddedbbe1206a36b70ed3a660cf83"],
-        ["astropy__astropy-14309","https://www.all-hands.dev/share?share_id=9d07b2aff05da39a8765152145aa260bf8e1e5bdfb829b99795decd62511600c"],
         ["astropy__astropy-14995","https://www.all-hands.dev/share?share_id=08bca0f5cd50a836e327c9e7537f66ead03b33a59cdf695bb68a3fe0ba09850e"],
         ["django__django-10914","https://www.all-hands.dev/share?share_id=55366c779119d7188f0c91523acd25c531bb7a6d72a79c8b200edb951a6998a6"],
         ["django__django-11099","https://www.all-hands.dev/share?share_id=568ef716158476f2a062be1857176c0a22258b6fb9f1f79d4cac28876d64c96e"],
@@ -46,7 +49,7 @@
         ["sympy__sympy-24066","https://www.all-hands.dev/share?share_id=22c039fcff5a529139cc23b0f0b63795fbc27241941ed211f19c45b2d13989f9"],
         ["django__django-17087","https://www.all-hands.dev/share?share_id=4c6a5ccdcad9a2c1586fd319dcb4d64199f8f4a6cc67e442dbd5b05e18e96b19"],
         ["sphinx-doc__sphinx-8595","https://www.all-hands.dev/share?share_id=8f0116a444c11aa9e6888802b4e0750fc206b06333db77abbdf2149efbe4d7a4"],
-        ["sphinx-doc__sphinx-8713","https://www.all-hands.dev/share?share_id=a20cd2b1315477ed79ef1c8e02603c0927f5a55ab0744042c8114ceaa4b9874c"],
+
         ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=1069a43d3faee7e62c030fe2631e7f9df8219678e438e497ec657772c4ff752f"],
         ["sympy__sympy-18189","https://www.all-hands.dev/share?share_id=c0305693cba105ddf40189db94446cb3e31c152a188fd8e3b1afeede553bcb04"],
         ["sympy__sympy-20154","https://www.all-hands.dev/share?share_id=5e28a8a6fa6705f425e68711d9e942300f90aeec2916ca2dfa9503f4182c491a"],
@@ -65,27 +68,22 @@
         ["django__django-13925","https://www.all-hands.dev/share?share_id=f69a770f1f26c85bf266d4a8718cd34602c0f63ae9ed630d657a663517471c35"],
         ["django__django-14155","https://www.all-hands.dev/share?share_id=02cde475ea2723d8dd5d3c4402ac50c2bf543e8c78507eeb54c7382bf0e1d4c1"],
         ["django__django-14534","https://www.all-hands.dev/share?share_id=cc793fd1dacb898cc4212b512475884e8df3f47fb85e02ee343a82588eb4104d"],
+        ["matplotlib__matplotlib-25311","https://www.all-hands.dev/share?share_id=2227e28c1cae58c115c10b74282da859ccb55501407534767e1744a52848aab1"],
         ["for ignoring trailing comma", "-"]
     ],
     "unresolved": [
-        ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"],
-        ["scikit-learn__scikit-learn-13142","https://www.all-hands.dev/share?share_id=459b458cbc219fb63a012cc77da2dba199cca7eb0aee9d311c907934b77dd8c1"],
-        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=be62c10948f32f996523bfb518bb81b9392ad21db2c1b99bfeb614ec6f812ed2"],
+        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=5d8a09b5c8c8517d1250549d185519cc6026158b9e1b1af261e8ce3962869507"],
         ["django__django-12308","https://www.all-hands.dev/share?share_id=30eab9f836bcb08e21b949ec1ff877724d60f0a0cec5aba6a63f45a4c3533d07"],
         ["django__django-12708","https://www.all-hands.dev/share?share_id=7e55ce31073a0c1cd4e18a3a60dcc65f22dd74950bbd50c16b9640176f4d4e70"],
-        ["django__django-17087","https://www.all-hands.dev/share?share_id=e14ba574b99f6cc9492480503a565397daf8776009e7723541a7bdae7d333078"],
         ["matplotlib__matplotlib-24970","https://www.all-hands.dev/share?share_id=fa33b86cd798d170f4893a1b06d1e84087f244956331dfa92cbdb272546e80c0"],
         ["matplotlib__matplotlib-25332","https://www.all-hands.dev/share?share_id=bf85d126b0065382311361ffd4d14c938c3afcddb760f92af5217a727b1fb31a"],
-        ["django__django-12308","https://www.all-hands.dev/share?share_id=96cdd34367f53f58015fcef3bcf72721bf2d322f4c2bc268f022702c65440617"],
         ["pytest-dev__pytest-7432","https://www.all-hands.dev/share?share_id=5ee546dfe1d04172b9ed07299b0ea19ad33bdbd1720df95e0e4e44a03bd2669b"],
         ["sympy__sympy-21379","https://www.all-hands.dev/share?share_id=dd5fd9d295d9abbe183cf5a852d8510d14008f821b3eaa28d091b90de135df34"],
-        ["sympy__sympy-12481","https://www.all-hands.dev/share?share_id=e06e3fd8bd7e718c928afdc21ebc906afc82eaf7294d7fdeed206bf26d31b995"],
         ["sympy__sympy-13031","https://www.all-hands.dev/share?share_id=7f9b5a98c6f0043adcc5e6e96c2bdb4c0583514e40156ca638e06972bff12eb1"],
         ["sympy__sympy-15345","https://www.all-hands.dev/share?share_id=5fbf50f648efdd7e6d8d70b25d94d99404ea4610c78c16c99560c85a993933f3"],
         ["sympy__sympy-18199","https://www.all-hands.dev/share?share_id=8e4b7ee2f62aa688926bf97c476e3bf5f362a64e66f7bb121acb4f17fe14f5d1"],
         ["sympy__sympy-17630","https://www.all-hands.dev/share?share_id=ff4c71cf80b51ca276e34f50153f115d02acff34ebbe523d117857009b518f38"],
         ["sphinx-doc__sphinx-11445","https://www.all-hands.dev/share?share_id=268085699b2f32c465f3f313c14529ee332541abd446925a1ebe46139fd6af4f"],
-        ["scikit-learn__scikit-learn-14087","https://www.all-hands.dev/share?share_id=2dd6574fb4fb6454516117b8f3265e628764c3bf6af166c01c8937f7f9e947ba"],
         ["pydata__xarray-4094","https://www.all-hands.dev/share?share_id=82c6160a306b52d3ba1307e1f52eef2185341525d6efe7d13f25cd5aa5f7cfea"],
         ["sympy__sympy-16792","https://www.all-hands.dev/share?share_id=a667e3a1e2910d098c5261ba36a36e8b168b8e6ddb636e7100ad5886cd632a7c"],
         ["sympy__sympy-12419","https://www.all-hands.dev/share?share_id=582346880bd0f4fc495ebbdd1532ee143f963c8b446e234120009e019ce7c6a9"],
@@ -94,6 +92,20 @@
         ["matplotlib__matplotlib-23476","https://www.all-hands.dev/share?share_id=01eddc2e7ff6ffe1dc5f3a1fd15cc65c96c0380b57b398aedba1fc4fb6b8b7cb"],
         ["django__django-12125","https://www.all-hands.dev/share?share_id=c9ff68c78202541f46cd0812d9b749b18a9cb8570c60d0da044f8b6c2e50f0e5"],
         ["django__django-13964","https://www.all-hands.dev/share?share_id=8a4f071d9b4c307b0ad8569d494c7427bce3bc899566385b1c78c38a4c2d95a1"],
+        ["django__django-15695","https://www.all-hands.dev/share?share_id=a5579fa065c5b7a0206a5503eb4047e604339f64cb0aa437f5be849031d6e407"],
+        ["django__django-15252","https://www.all-hands.dev/share?share_id=19b83518760bd2014d5e32d2c6c4868b1a6836551629955a20adaa4c07c4eab0"],
+        ["astropy__astropy-14365","https://www.all-hands.dev/share?share_id=0e2cfe20283844d4896d504e2bc0ecec2abf980045b43ec5a16555cf758b574d"],
+        ["sympy__sympy-21612","https://www.all-hands.dev/share?share_id=8f09f092c7b122264d0a3d9daacbaf2446f27f8a891d334fc0df0b88c3cb29e6"],
+        ["matplotlib__matplotlib-23299","https://www.all-hands.dev/share?share_id=abf3bfd9e80a691e6849d71896892b28c983a9c708f41196d288ef93bcf04a72"],
+        ["pytest-dev__pytest-7490","https://www.all-hands.dev/share?share_id=0df1d9b72d177317a80af3106a6d2b43a40be79baa652e64af6f5037a470876c"],
+        ["sympy__sympy-18698","https://www.all-hands.dev/share?share_id=c3710c69d37078243941ba57a64f88f7a9db3844a9be33aaf3badd0fa2682b02"],
+        ["django__django-13551","https://www.all-hands.dev/share?share_id=aeb2f666cda432726c887b51c514077318a3560496637a5e4dcf68eb6a01e818"],
+        ["django__django-11964","https://www.all-hands.dev/share?share_id=298453e42c3a7ede054fbe5db3b5c3a223bdfe55cfe46362139bf8569df463f7"],
+        ["pylint-dev__pylint-7080","https://www.all-hands.dev/share?share_id=eebb52318d935c88ea61b5303179b73501f17795b086d953e3a3ff02f7367074"],
         ["for ignoring trailing comma", "-"]
+    ],
+    "unresolved_non_lite": [
+        ["astropy__astropy-14539","https://www.all-hands.dev/share?share_id=","numpy 1.24.2"]
     ]
+
 }
