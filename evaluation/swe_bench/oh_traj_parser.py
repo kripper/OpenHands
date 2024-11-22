@@ -35,7 +35,7 @@ for i in traj:
         print(i)
 
     if i['role'] == 'assistant':
-        tool_calls = i['tool_calls']
+        tool_calls = i.get('tool_calls', [])
         if tool_calls:
             print('=' * 10)
 
