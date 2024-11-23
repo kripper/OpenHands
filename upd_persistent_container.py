@@ -9,6 +9,7 @@ full_file_names = [
     'openhands/runtime/plugins/agent_skills/file_ops/ast_ops.py',
     'openhands/runtime/plugins/agent_skills/file_ops/file_utils.py',
     'openhands/runtime/plugins/agent_skills/file_ops/so.py',
+    'openhands/runtime/plugins/vscode/__init__.py',
     r'openhands/runtime/utils/bash.py',
     r'openhands/runtime/action_execution_server.py',
     r'openhands/linter/__init__.py',
