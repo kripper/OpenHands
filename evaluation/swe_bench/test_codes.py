@@ -197,6 +197,21 @@ if not cond:
         'django__django-12708': custom_test_code.format(
             cmd='/testbed/tests/runtests.py test migrations.test_operations.OperationTests.test_alter_unique_together  --parallel 1'
         ),
+        'pydata__xarray-4094': """import xarray as xr
+import numpy as np
+
+arr = xr.DataArray(
+    np.arange(3),
+    coords=[("x", [0, 1, 2])],
+)
+data = xr.Dataset({"a": arr, "b": arr})
+stacked = data.to_stacked_array('y', sample_dims=['x'])
+unstacked = stacked.to_unstacked_dataset('y')
+print(unstacked)
+"""
+        + custom_pytest_code.format(
+            file_name='xarray/tests/test_dataset.py::TestDataset::test_to_stacked_array_to_unstacked_dataset_different_dimension'
+        ),
         # 'matplotlib__matplotlib-24970': default_test_code,
         'sympy__sympy-12419': """
 from sympy import *
