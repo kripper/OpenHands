@@ -192,7 +192,7 @@ if not cond:
 """,
         'pytest-dev__pytest-7432': default_test_code,
         'matplotlib__matplotlib-25332': custom_pytest_code.format(
-            file_name='lib/matplotlib/tests/test_pickle.py::test_shared'
+            file_name='lib/matplotlib/tests/test_pickle.py'
         ),
         'django__django-12708': custom_test_code.format(
             cmd='/testbed/tests/runtests.py test migrations.test_operations.OperationTests.test_alter_unique_together  --parallel 1'
