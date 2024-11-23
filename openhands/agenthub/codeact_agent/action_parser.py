@@ -55,8 +55,10 @@ class CodeActResponseParser(ResponseParser):
             return ''
 
         action = action.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
+        execute_ipython_tag = '<execute_ipython>'
         action = action.replace(
-            '```tool_code', '<execute_ipython>'
+            '```tool_code',
+            execute_ipython_tag if execute_ipython_tag not in action else '',
         )  # Gemini: tool_code is not a valid tag
 
         for lang in ['bash', 'ipython', 'browse']:
