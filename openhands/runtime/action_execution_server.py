@@ -287,6 +287,9 @@ class ActionExecutor:
                 obs.content = obs.content.rstrip()
                 self.last_code = action.code
                 self.is_last_code_error = 'Traceback' in obs.content
+                if os.getenv('SWE_BENCH') != '1':
+                    if 'Error' in obs.content:
+                        obs.content += '\n[Use `search_in_stack_overflow(error_message)` to search for solutions.]'
             # obs.content += f'\n[Jupyter current working directory: {self.bash_session.pwd}]'
             # obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
             return obs

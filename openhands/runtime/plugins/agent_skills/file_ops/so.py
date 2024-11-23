@@ -82,7 +82,7 @@ class StackOverflowAPI:
 api = StackOverflowAPI()
 
 
-def search_stack_overflow(query):
+def search_in_stack_overflow(query):
     """
     Search Stack Overflow for a query and return the most relevant answer.
 
@@ -115,4 +115,4 @@ def search_stack_overflow(query):
 
 if __name__ == '__main__':
     query = "ImportError: cannot import name 'VectorStoreIndex' from 'llama_index' (unknown location)"
-    print(search_stack_overflow(query))
+    print(search_in_stack_overflow(query))
