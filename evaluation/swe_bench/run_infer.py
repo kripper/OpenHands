@@ -95,6 +95,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
                 '*) Generate a robust fix.\n'
                 'Ensure the solution is robust, adheres to best practices, and supports framework customizations and extensibility.\n'
                 '*) Verify the fix.\n'
+                '*) Add similar functions too for better handling of edgecases\n'
                 '\n'
                 'Add your valuable thoughts to every action you take.\n'
                 'For every thought: add previous logic and the new logic.\n'
