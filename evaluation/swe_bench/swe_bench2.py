@@ -124,4 +124,7 @@ ValueError: Found wrong number (2) of constraints for my_app_mymodel(field1, fie
    2179
    2180                 best_indices_C = best_indices % len(self.Cs_)"""
         return description.replace(actual, expected)
+    elif instance_id == 'sympy__sympy-15345':
+        # https://www.all-hands.dev/share?share_id=550481ee897e24d342e376406560794315d09b6a16b2dd1ab1c1ab46a30db88b
+        return description.replace('x,2', '2,x')
     return description
