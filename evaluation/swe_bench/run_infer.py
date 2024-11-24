@@ -101,7 +101,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
                 'Do one file operation at a time.\n'
                 'Examine the traceback and understand the values of the variables in the traceback.\n'
                 # 'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
-                # 'Think about edgecases and make sure your fix handles them as well\n'
+                'Think about edgecases and make sure your fix handles them as well\n'
                 # "Please don't blabber\n"
             )
         else:
