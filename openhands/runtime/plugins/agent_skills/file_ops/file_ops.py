@@ -35,7 +35,6 @@ from openhands.linter import DefaultLinter, LintResult
 from openhands.runtime.plugins.agent_skills.file_ops.ast_ops import (
     show_class_structure,
 )
-from openhands.runtime.plugins.agent_skills.file_ops.so import search_in_stack_overflow
 
 CURRENT_FILE: str | None = None
 CURRENT_LINE = 1
@@ -1300,7 +1299,6 @@ __all__ = [
     'append_file',
     'replace_line_content',
     'replace_lines_content',
-    'search_in_stack_overflow',
     # 'replace_full_file_content',
     'find_file',
     'kill_port',
@@ -1313,6 +1311,10 @@ try:
         from .cst_ops import add_param_to_init_in_subclass  # noqa
 
         __all__.append('add_param_to_init_in_subclass')
+    else:
+        from .so import search_in_stack_overflow  # noqa
+
+        __all__.append('search_in_stack_overflow')
 except ImportError:
     print('libcst not installed')
     # pip install libcst
