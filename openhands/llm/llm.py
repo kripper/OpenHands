@@ -26,6 +26,7 @@ from litellm import completion_cost as litellm_completion_cost
 from litellm.exceptions import (
     APIConnectionError,
     APIError,
+    ContextWindowExceededError,
     InternalServerError,
     RateLimitError,
     ServiceUnavailableError,
@@ -33,9 +34,6 @@ from litellm.exceptions import (
 from litellm.types.utils import CostPerToken, ModelResponse, Usage
 
 from openhands.condenser.condenser import CondenserMixin
-from openhands.core.exceptions import (
-    ContextWindowLimitExceededError,
-)
 from openhands.core.logger import LOG_DIR
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.metrics import Metrics
@@ -244,7 +242,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     summary_action = self.condense(messages=messages)
                     return summary_action
                 else:
-                    raise ContextWindowLimitExceededError()
+                    raise ContextWindowExceededError()
 
             kwargs.pop('condense', None)
             if isinstance(messages[0], Message):
