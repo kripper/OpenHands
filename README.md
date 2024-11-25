@@ -103,7 +103,7 @@ system requirements and more information.
 docker pull docker.all-hands.dev/all-hands-ai/runtime:0.14-nikolaik
 
 docker run -it --pull=always \
-    --network host
+    -e SANDBOX_USE_HOST_NETWORK=true \
     -e SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.14-nikolaik \
     -e LOG_ALL_EVENTS=true \
     -v /var/run/docker.sock:/var/run/docker.sock \
