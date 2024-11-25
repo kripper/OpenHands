@@ -81,7 +81,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
         # https://github.com/eschluntz/swe-bench-experiments/tree/main/evaluation/verified/20241022_tools_claude-3-5-sonnet-updated/trajs
         instruction = (
             f'Please address the following GitHub issue for the repository, where the source code is available in the /testbed directory, which I have access to.\n'
-            '# Problem Statement\n'
+            '# Title\n'
             f'{instance.problem_statement}\n\n'
             'The current working directory is /testbed.\n'
         )
@@ -101,7 +101,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
                 'For every thought: add previous logic and the new logic.\n'
                 'Do one file operation at a time.\n'
                 'Examine the traceback and understand the values of the variables in the traceback.\n'
-                # 'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
+                'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
                 'Think about edgecases and make sure your fix handles them as well\n'
                 # "Please don't blabber\n"
             )
