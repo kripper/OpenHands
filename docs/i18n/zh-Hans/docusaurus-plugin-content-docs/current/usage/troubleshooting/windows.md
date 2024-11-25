@@ -57,7 +57,6 @@ make build
 ```sh
 [wsl2]
 networkingMode=mirrored
-localhostForwarding=true
 ```
 
 * 保存 `.wslconfig` 文件。

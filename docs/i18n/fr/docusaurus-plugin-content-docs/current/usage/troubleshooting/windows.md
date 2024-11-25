@@ -57,7 +57,6 @@ Si vous rencontrez des problèmes liés au réseau, tels que `NoneType object ha
 ```sh
 [wsl2]
 networkingMode=mirrored
-localhostForwarding=true
 ```
 
 * Enregistrez le fichier `.wslconfig`.
