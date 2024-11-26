@@ -23,6 +23,7 @@ Functions:
 """
 
 import ast
+import getpass
 import os
 import re
 import shutil
@@ -1312,7 +1313,7 @@ __all__ = [
 ]
 
 try:
-    if os.environ.get('USER') == 'root':
+    if getpass.getuser() == 'root':
         from .cst_ops import add_param_to_init_in_subclass  # noqa
 
         __all__.append('add_param_to_init_in_subclass')
