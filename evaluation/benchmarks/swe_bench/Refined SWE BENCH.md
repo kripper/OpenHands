@@ -7,3 +7,8 @@ Refined SWE BENCH
 2) Traceback using old version of code is not good.
 
 [Unnecessary computation is needed to resolve that](https://www.all-hands.dev/share?share_id=7736d944a65ac24868a313ec66592e228ff729e3ba8749309479202ad0e42ea0)
+
+3) The M in MRE should be justified.
+
+[Sample MRE](https://chatgpt.com/share/6745a583-11b8-8010-b0c9-e61dd1f5ccbd) for this [issue](https://github.com/sympy/sympy/issues/12300)
+
