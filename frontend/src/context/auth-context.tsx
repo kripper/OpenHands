@@ -36,7 +36,7 @@ function AuthProvider({ children }: React.PropsWithChildren) {
   const setGitHubToken = (token: string | null) => {
     setGitHubTokenState(token);
 
-    if (token) localStorage.setItem("ghToken", token);
+    if (token) localStorage.setItem("ghToken", token.trim());
     else localStorage.removeItem("ghToken");
   };
 
