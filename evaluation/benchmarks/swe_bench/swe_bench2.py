@@ -145,4 +145,16 @@ ValueError: Found wrong number (2) of constraints for my_app_mymodel(field1, fie
 xarray.core.merge.MergeError: conflicting values for variable 'y' on objects to be combined. You can skip this check by specifying compat='override'.
 """
         return description # + '\n' + traceback
+    elif instance_id == 'sympy__sympy-12419':
+        return '''
+from sympy import Identity, symbols
+
+n = 3
+i, j = symbols('i j', integer=True)
+I = Identity(n)
+
+print(I[0, 0])  # Correctly returns 1
+print(I[0, 1])  # Correctly returns 0
+print(I[i, j])  # Incorrectly returns 0 for symbolic indices
+'''
     return description
