@@ -84,6 +84,7 @@ class ModalRuntime(EventStreamRuntime):
 
         self.config = config
         self.sandbox = None
+        self.sid = sid
 
         self.modal_client = modal.Client.from_credentials(
             config.modal_api_token_id, config.modal_api_token_secret
