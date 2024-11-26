@@ -1149,6 +1149,9 @@ def search_function(function_name: str):
     Args:
         function_name: str: The name of the function to search for.
     """
+    # workaround for search_function("DataArray.to_unstacked_dataset")
+    function_name = function_name.split('.')[-1]
+
     if not search_symbol(function_name, 'def', '('):
         print(f"Function '{function_name}' not found in the repository.")
 
