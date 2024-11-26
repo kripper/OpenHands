@@ -40,6 +40,7 @@ class SandboxConfig:
     remote_runtime_api_url: str = 'http://localhost:8000'
     local_runtime_url: str = 'http://localhost'
     keep_runtime_alive: bool = True
+    rm_all_containers: bool = False
     api_key: str | None = None
     base_container_image: str = 'nikolaik/python-nodejs:python3.12-nodejs22'  # default to nikolaik/python-nodejs:python3.12-nodejs22 for eventstream runtime
     runtime_container_image: str | None = None
@@ -59,6 +60,7 @@ class SandboxConfig:
     fast_boot: bool = True
     port: int = 63710
     platform: str | None = None
+    close_delay: int = 15
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""
