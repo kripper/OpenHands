@@ -144,5 +144,5 @@ ValueError: Found wrong number (2) of constraints for my_app_mymodel(field1, fie
     raise MergeError(
 xarray.core.merge.MergeError: conflicting values for variable 'y' on objects to be combined. You can skip this check by specifying compat='override'.
 """
-        return description + '\n' + traceback
+        return description # + '\n' + traceback
     return description
