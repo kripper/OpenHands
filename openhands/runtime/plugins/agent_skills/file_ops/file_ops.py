@@ -792,6 +792,7 @@ def find_and_replace_regex(file_name: str, pattern: str, replacement: str) -> No
 
 def insert_content_before_line(file_name: str, line_number: int, content: str) -> None:
     """Insert content before the given line number in a file. Remeber line number start from 1."""
+    line_number = int(line_number)
     ret_str = _edit_file_impl(
         file_name,
         start=line_number,
@@ -806,6 +807,7 @@ def insert_content_before_line(file_name: str, line_number: int, content: str) -
 
 def insert_content_after_line(file_name: str, line_number: int, content: str) -> None:
     """Insert content after the given line number in a file. Remeber line number start from 1."""
+    line_number = int(line_number)
     line_number += 1
     ret_str = _edit_file_impl(
         file_name,
@@ -1149,7 +1151,7 @@ def search_function(function_name: str):
     Args:
         function_name: str: The name of the function to search for.
     """
-    # workaround for search_function("DataArray.to_unstacked_dataset")
+    # workaround for class methods; search_function("DataArray.to_unstacked_dataset")
     function_name = function_name.split('.')[-1]
 
     if not search_symbol(function_name, 'def', '('):
