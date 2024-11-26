@@ -127,4 +127,22 @@ ValueError: Found wrong number (2) of constraints for my_app_mymodel(field1, fie
     elif instance_id == 'sympy__sympy-15345':
         # https://www.all-hands.dev/share?share_id=550481ee897e24d342e376406560794315d09b6a16b2dd1ab1c1ab46a30db88b
         return description.replace('x,2', '2,x')
+    elif instance_id == 'pydata__xarray-4094':
+        traceback = """Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/testbed/xarray/core/dataarray.py", line 1972, in to_unstacked_dataset
+    return Dataset(data_dict)
+  File "/testbed/xarray/core/dataset.py", line 543, in __init__
+    variables, coord_names, dims, indexes, _ = merge_data_and_coords(
+  File "/testbed/xarray/core/merge.py", line 466, in merge_data_and_coords
+    return merge_core(
+  File "/testbed/xarray/core/merge.py", line 597, in merge_core
+    variables, out_indexes = merge_collected(collected, prioritized, compat=compat)
+  File "/testbed/xarray/core/merge.py", line 228, in merge_collected
+    merged_vars[name] = unique_variable(name, variables, compat)
+  File "/testbed/xarray/core/merge.py", line 142, in unique_variable
+    raise MergeError(
+xarray.core.merge.MergeError: conflicting values for variable 'y' on objects to be combined. You can skip this check by specifying compat='override'.
+"""
+        return description + '\n' + traceback
     return description
