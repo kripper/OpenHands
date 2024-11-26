@@ -2,7 +2,7 @@ import { NavLink } from "@remix-run/react";
 import clsx from "clsx";
 import React from "react";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import IconButton from "./IconButton";
+import IconButton from "./icon-button";
 
 function BetaBadge() {
   return (

@@ -4,7 +4,7 @@ import { IoIosGlobe } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { I18nKey } from "#/i18n/declaration";
 import { RootState } from "#/store";
-import { updateBrowserTabUrl } from "#/services/browseService";
+import { updateBrowserTabUrl } from "#/services/browse-service";
 
 function BrowserPanel() {
   const { t } = useTranslation();
