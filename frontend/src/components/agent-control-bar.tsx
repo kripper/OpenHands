@@ -5,10 +5,10 @@ import PauseIcon from "#/assets/pause";
 import PlayIcon from "#/assets/play";
 import { generateAgentStateChangeEvent } from "#/services/agent-state-service";
 import { RootState } from "#/store";
-import { clearMessages } from "#/state/chatSlice";
-import { clearJupyter } from "#/state/jupyterSlice";
-import { clearTerminal } from "#/state/commandSlice";
-import { clearCurentStep } from "#/state/agentSlice";
+import { clearMessages } from "#/state/chat-slice";
+import { clearJupyter } from "#/state/jupyter-slice";
+import { clearTerminal } from "#/state/command-slice";
+import { clearCurrentStep } from "#/state/agent-slice";
 import AgentState from "#/types/agent-state";
 import { useWsClient } from "#/context/ws-client-provider";
 
@@ -95,7 +95,7 @@ function AgentControlBar() {
   //     store.dispatch(clearMessages());
   //     store.dispatch(clearJupyter());
   //     store.dispatch(clearTerminal());
-  //     store.dispatch(clearCurentStep());
+  //     store.dispatch(clearCurrentStep());
   //     // clearTerminal();
   //   } else {
   //     setIsLoading(true);

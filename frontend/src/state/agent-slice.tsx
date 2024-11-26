@@ -14,13 +14,13 @@ export const agentSlice = createSlice({
     setCurrentStep: (state, action) => {
       state.currentStep = action.payload;
     },
-    clearCurentStep: (state) => {
+    clearCurrentStep: (state) => {
       state.currentStep = "";
     },
   },
 });
 
-export const { setCurrentAgentState, setCurrentStep, clearCurentStep } =
+export const { setCurrentAgentState, setCurrentStep, clearCurrentStep } =
   agentSlice.actions;
 
 export default agentSlice.reducer;
