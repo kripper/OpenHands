@@ -4,6 +4,6 @@ INSTANCE_ID=django__django-11179
 DATASET_NAME=princeton-nlp/SWE-bench_Verified
 SPLIT=test
 
-./evaluation/swe_bench/scripts/eval_infer.sh $YOUR_OUTPUT_JSONL $INSTANCE_ID $DATASET_NAME $SPLIT
+./evaluation/benchmarks/swe_bench/scripts/eval_infer.sh $YOUR_OUTPUT_JSONL $INSTANCE_ID $DATASET_NAME $SPLIT
 
 # espeak 'e'

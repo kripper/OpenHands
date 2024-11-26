@@ -167,7 +167,7 @@ cython_debug/
 # evaluation
 evaluation/evaluation_outputs
 evaluation/outputs
-evaluation/swe_bench/eval_workspace*
+evaluation/benchmarks/swe_bench/eval_workspace*
 evaluation/SWE-bench/data
 evaluation/webarena/scripts/webarena_env.sh
 evaluation/bird/data
@@ -239,8 +239,7 @@ sc.py
 t.py
 containers/runtime/code
 api_keys.py
-evaluation/swe_bench/gru_traj.json
 llm_debugger.py
 **/node_modules/
-evaluation/swe_bench/oh_traj.json
-evaluation/swe_bench/swe_verified_lite.py
+evaluation/benchmarks/swe_bench/*.json
+evaluation/benchmarks/swe_bench/swe_verified_lite.py

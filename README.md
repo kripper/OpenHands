@@ -18,7 +18,7 @@ The vision is to leverage SLMs effectively and work towards solving most of the 
  ID: `sympy__sympy-22714`
  [openai/nvidia/llama-3.1-nemotron-70b-instruct](https://www.all-hands.dev/share?share_id=95f9ada5e76b767a07018497a412f876f5ffbe5debb578bcc72d52ab1036555f)
 
-Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_bench\status.json](evaluation/swe_bench/status.json)
+Remaining using `gemini/gemini-1.5-pro-002` is mentioned in [evaluation\swe_bench\status.json](evaluation/benchmarks/swe_bench/status.json)
 
 ### Kevin Changelogs:
 

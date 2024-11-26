@@ -4,7 +4,7 @@ import toml
 
 
 def check_if_resolved():
-    status_path = 'evaluation/swe_bench/status.json'
+    status_path = 'evaluation/benchmarks/swe_bench/status.json'
 
     with open(status_path, 'r') as f:
         data = json.load(f)
@@ -12,7 +12,7 @@ def check_if_resolved():
     resolved_instances = [i[0] for i in data['resolved']][:-1]
     unresolved_instances = [i[0] for i in data['unresolved']][:-1]
 
-    toml_path = 'evaluation/swe_bench/config.toml'
+    toml_path = 'evaluation/benchmarks/swe_bench/config.toml'
 
     with open(toml_path, 'r') as f:
         toml_data = toml.load(f)

@@ -275,7 +275,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 if self.reload_counter < continue_on_step:
                     model_config = os.getenv('model_config')
                     if model_config:
-                        with open('evaluation/swe_bench/config.toml', 'r') as f:
+                        with open('evaluation/benchmarks/swe_bench/config.toml', 'r') as f:
                             environ = f.read()
                             import toml
 

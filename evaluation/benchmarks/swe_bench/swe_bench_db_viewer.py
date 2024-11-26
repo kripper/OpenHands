@@ -5,7 +5,7 @@ from pprint import pprint
 import toml
 from datasets import load_dataset
 
-from evaluation.swe_bench.swe_bench2 import update_issue_description
+from evaluation.benchmarks.swe_bench.swe_bench2 import update_issue_description
 from sandbox_checker import execute_action, run, run_ipython
 
 with open(r'evaluation\swe_bench\config.toml', 'r') as f:

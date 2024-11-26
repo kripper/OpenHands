@@ -334,7 +334,7 @@ class LlmFileHandler(logging.FileHandler):
             if model_config is None:
                 self.session = 'default'
             else:
-                with open('evaluation/swe_bench/config.toml', 'r') as f:
+                with open('evaluation/benchmarks/swe_bench/config.toml', 'r') as f:
                     environ = f.read()
                     import toml
 

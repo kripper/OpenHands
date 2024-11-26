@@ -18,5 +18,5 @@ num_workers=1
 dataset=princeton-nlp/SWE-bench_Verified
 split=test
 export SWE_BENCH=1
-./evaluation/swe_bench/scripts/run_infer.sh $model_config $git_version $agent $eval_limit $max_iter $num_workers $dataset $split
+./evaluation/benchmarks/swe_bench/scripts/run_infer.sh $model_config $git_version $agent $eval_limit $max_iter $num_workers $dataset $split
 # espeak 'e'

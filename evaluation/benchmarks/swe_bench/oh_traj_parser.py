@@ -7,11 +7,11 @@ try:
     traj = json.loads(traj_content)
     if not isinstance(traj, list):
         raise Exception('Invalid trajectory')
-    with open('evaluation/swe_bench/oh_traj.json', 'w') as f:
+    with open('evaluation/benchmarks/swe_bench/oh_traj.json', 'w') as f:
         f.write(traj_content)
 except Exception as e:
     print(e)
-    with open('evaluation/swe_bench/oh_traj.json', 'r') as f:
+    with open('evaluation/benchmarks/swe_bench/oh_traj.json', 'r') as f:
         traj = json.load(f)
 
 step_count = 0
