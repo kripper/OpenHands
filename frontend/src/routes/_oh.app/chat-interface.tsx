@@ -37,7 +37,11 @@ export function ChatInterface() {
   const [feedbackModalIsOpen, setFeedbackModalIsOpen] = React.useState(false);
   const [messageToSend, setMessageToSend] = React.useState<string | null>(null);
 
-  const handleSendMessage = async (content: string, files: File[]) => {
+  const handleSendMessage = async (
+    content: string,
+    dispatchContent: string,
+    files: File[],
+  ) => {
     posthog.capture("user_message_sent", {
       current_message_count: messages.length,
     });
@@ -56,7 +60,7 @@ export function ChatInterface() {
   };
 
   const handleSendContinueMsg = () => {
-    handleSendMessage("Continue", []);
+    handleSendMessage("Continue", "", []);
   };
 
   const onClickShareFeedbackActionButton = async (
@@ -94,7 +98,9 @@ export function ChatInterface() {
 
         {isWaitingForUserInput && (
           <ActionSuggestions
-            onSuggestionsClick={(value) => handleSendMessage(value, [])}
+            onSuggestionsClick={(value) =>
+              handleSendMessage(value, "", [])
+            }
           />
         )}
       </div>

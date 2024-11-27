@@ -1,5 +1,7 @@
 import warnings
 
+from fastapi.responses import RedirectResponse
+
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
 
@@ -40,6 +42,10 @@ app.add_middleware(
 async def health():
     return 'OK'
 
+# auto redirect / to /app
+@app.get('/')
+async def redirect_to_app():
+    return RedirectResponse(url='/app')
 
 app.include_router(auth_api_router)
 app.include_router(public_api_router)
