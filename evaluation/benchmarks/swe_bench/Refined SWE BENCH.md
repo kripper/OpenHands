@@ -11,4 +11,6 @@ Refined SWE BENCH
 3) The M in MRE should be justified.
 
 [Sample MRE](https://chatgpt.com/share/6745a583-11b8-8010-b0c9-e61dd1f5ccbd) for this [issue](https://github.com/sympy/sympy/issues/12300)
+[Reduction](https://chatgpt.com/share/6746b1b0-f00c-8010-9335-714427732b5d) for this [issue](https://github.com/sympy/sympy/issues/17624)
+
 
