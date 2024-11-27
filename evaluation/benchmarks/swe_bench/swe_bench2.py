@@ -157,4 +157,10 @@ print(I[0, 0])  # Correctly returns 1
 print(I[0, 1])  # Correctly returns 0
 print(I[i, j])  # Incorrectly returns 0 for symbolic indices
 '''
+    elif instance_id == 'sympy__sympy-17630':
+        return '''from sympy import *
+z = ZeroMatrix(2, 2)
+print(type(Add(z, z)))
+# Should return ZeroMatrix but returns <class 'sympy.core.numbers.Zero'>
+'''
     return description
