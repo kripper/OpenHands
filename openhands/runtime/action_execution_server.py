@@ -8,6 +8,7 @@ NOTE: this will be executed inside the docker sandbox.
 import argparse
 import asyncio
 import base64
+import getpass
 import io
 import mimetypes
 import os
@@ -272,7 +273,7 @@ class ActionExecutor:
                     "[Don't use Django shell commands in Jupyter Notebook as file changes will not be reflected. Directly run the code in the terminal using <execute_bash>.]"
                 )
             elif (
-                (os.getenv('SWE_BENCH') == '1' or 1)
+                (getpass.getuser() == "root")
                 and action.code == self.last_code
                 and self.is_last_code_error
             ):
@@ -289,7 +290,7 @@ class ActionExecutor:
                 self.is_last_code_error = (
                     'Traceback (most recent call last)' in obs.content
                 )
-                if os.getenv('SWE_BENCH') != '1':
+                if getpass.getuser() != "root":
                     if 'Traceback (most recent call last)' in obs.content:
                         obs.content += '\n\n[Hint: Use `search_in_stack_overflow(error_message)` to search for solutions.]'
             # obs.content += f'\n[Jupyter current working directory: {self.bash_session.pwd}]'
