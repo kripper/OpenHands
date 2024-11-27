@@ -77,7 +77,7 @@ else:
 #
 print('base_commit', ins['base_commit'])
 print('environment_setup_commit', ins['environment_setup_commit'])
-# print(ins['hints_text'])
+print('Hints', ins['hints_text'])
 
 print(['problem_statement'])
 # print(ins['problem_statement'][0])
