@@ -18,6 +18,7 @@ with warnings.catch_warnings():
         litellm.set_verbose = True
     else:
         litellm.suppress_debug_info = True
+from litellm import Message as LiteLLMMessage
 from litellm import ModelInfo, PromptTokensDetails
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
@@ -384,26 +385,13 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
 
-            # log for evals or other scripts that need the raw completion
-            if self.config.log_completions:
-                assert self.config.log_completions_folder is not None
-                # log_file = os.path.join(
-                #     self.config.log_completions_folder,
-                #     # use the metric model name (for draft editor)
-                #     f'{self.metrics.model_name}-{time.time()}.json',
-                # )
-                # with open(log_file, 'w') as f:
-                #     json.dump(
-                #         {
-                #             'messages': messages,
-                #             'response': resp,
-                #             'args': args,
-                #             'kwargs': kwargs,
-                #             'timestamp': time.time(),
-                #             'cost': self._completion_cost(resp),
-                #         },
-                #         f,
-                #     )
+                message_back: str = resp['choices'][0]['message']['content']
+                tool_calls = resp['choices'][0]['message'].get('tool_calls', [])
+                if tool_calls:
+                    for tool_call in tool_calls:
+                        fn_name = tool_call.function.name
+                        fn_args = tool_call.function.arguments
+                        message_back += f'\nFunction call: {fn_name}({fn_args})'
 
             # log the LLM response
             self.log_response(message_back)

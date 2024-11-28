@@ -18,6 +18,7 @@ from openhands.events.action import (
     AgentFinishAction,
     AgentSummarizeAction,
     BrowseInteractiveAction,
+    BrowseURLAction,
     CmdRunAction,
     FileEditAction,
     IPythonRunCellAction,
@@ -173,6 +174,7 @@ class CodeActAgent(Agent):
                 AgentSummarizeAction,
                 FileEditAction,
                 BrowseInteractiveAction,
+                BrowseURLAction,
             ),
         ) or (
             isinstance(action, (AgentFinishAction, CmdRunAction))
