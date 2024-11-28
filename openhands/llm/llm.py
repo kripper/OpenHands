@@ -385,7 +385,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
 
-                message_back: str = resp['choices'][0]['message']['content']
+                message_back: str = resp['choices'][0]['message']['content'] or ''
                 tool_calls = resp['choices'][0]['message'].get('tool_calls', [])
                 if tool_calls:
                     for tool_call in tool_calls:
