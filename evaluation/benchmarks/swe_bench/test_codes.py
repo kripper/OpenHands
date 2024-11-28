@@ -313,6 +313,9 @@ p = (x**2 + 1) * (x - 1)**2 * (x - 2)**3 * (x - 3)**3
 result = (1, [(x**2 + 1, 1), (x - 1, 2), (x**2 - 5*x + 6, 3)])
 assert sqf_list(p) == result, f'Got {sqf_list(p)}'
 """,
+        'matplotlib__matplotlib-23299': custom_pytest_code.format(
+            file_name='lib/matplotlib/tests/test_rcparams.py::test_rcparams'
+        ),
     }
     return test_codes.get(instance_id, '')
 
