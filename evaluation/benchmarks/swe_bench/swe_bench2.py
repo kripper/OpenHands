@@ -163,4 +163,12 @@ z = ZeroMatrix(2, 2)
 print(type(Add(z, z)))
 # Should return ZeroMatrix but returns <class 'sympy.core.numbers.Zero'>
 '''
+    elif instance_id == 'sympy__sympy-21612':
+        return '''>>> from sympy.parsing.latex import parse_latex
+>>> parse_latex("\\frac{a}{\\frac{1}{b}}")
+a/1/b
+
+Expected:
+a/(1/b)
+'''
     return description
