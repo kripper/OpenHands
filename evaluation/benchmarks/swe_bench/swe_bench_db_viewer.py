@@ -22,10 +22,19 @@ def count_hunks_from_patch(patch):
 
 # print(config)
 # instance_id = 'astropy__astropy-14539'
+def validate_instance_id(instance_id):
+    regex = r'^[a-zA-Z0-9]+__[a-zA-Z0-9]+-[0-9]+$'
+    if not re.match(regex, instance_id):
+        return False
+    return True
+
 go = 1
 if go:
     from pyperclip import paste
     instance_id = paste()
+    if not validate_instance_id(instance_id):
+        instance_id = None
+
 if not instance_id:
     go = 0
     instance_id = config['selected_ids'][0]
