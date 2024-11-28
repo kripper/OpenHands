@@ -316,6 +316,9 @@ assert sqf_list(p) == result, f'Got {sqf_list(p)}'
         'matplotlib__matplotlib-23299': custom_pytest_code.format(
             file_name='lib/matplotlib/tests/test_rcparams.py::test_rcparams lib/matplotlib/tests/test_rcparams.py::test_rcparams_update'
         ),
+        'django__django-15252': custom_test_code.format(
+            cmd='tests/runtests.py backends.base.test_creation'
+        ),
     }
     return test_codes.get(instance_id, '')
 
