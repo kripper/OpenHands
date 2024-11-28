@@ -22,11 +22,21 @@ def count_hunks_from_patch(patch):
 
 # print(config)
 # instance_id = 'astropy__astropy-14539'
-instance_id = config['selected_ids'][0]
+go = 1
+if go:
+    from pyperclip import paste
+    instance_id = paste()
+if not instance_id:
+    go = 0
+    instance_id = config['selected_ids'][0]
 repo, issue_id = instance_id.rsplit('-', 1)
 repo = repo.replace('__', '/')
-url = f'https://github.com/{repo}/issues/{issue_id}'
+url = f'https://github.com/{repo}/pull/{issue_id}'
 print(url)
+if go:
+    import webbrowser
+    webbrowser.open(url)
+    exit()
 
 
 def get_instance(instance_id):
@@ -104,4 +114,4 @@ if 0:
     print(['TEST PASS_TO_PASS'])
     pprint(ins['PASS_TO_PASS'][0])
     print(['TEST FAIL_TO_PASS'])
-    pprint(ins['FAIL_TO_PASS'][0])
+    print(ins['FAIL_TO_PASS'][0])
