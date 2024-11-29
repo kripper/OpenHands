@@ -99,7 +99,7 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
                 'Always include comprehensive error handling in code modifications.\n'
                 # '*) Verify the fix.\n'
                 '*) Add similar functions too for better handling of edgecases\n'
-                '*) Final step: Parameterize the existing test cases instead of adding a new function to verify the fix\n'
+                # '*) Final step: Parameterize the existing test cases instead of adding a new function to verify the fix\n'
                 '\n'
                 'Add your valuable thoughts to every action you take.\n'
                 'For every thought: add previous logic and the new logic.\n'
