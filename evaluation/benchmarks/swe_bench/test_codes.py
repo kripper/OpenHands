@@ -314,7 +314,7 @@ result = (1, [(x**2 + 1, 1), (x - 1, 2), (x**2 - 5*x + 6, 3)])
 assert sqf_list(p) == result, f'Got {sqf_list(p)}'
 """,
         'matplotlib__matplotlib-23299': custom_pytest_code.format(
-            file_name='lib/matplotlib/tests/test_rcparams.py::test_rcparams lib/matplotlib/tests/test_rcparams.py::test_rcparams_update'
+            file_name='lib/matplotlib/tests/test_rcparams.py::test_rcparams'
         ),
         'django__django-15252': custom_test_code.format(
             cmd='tests/runtests.py backends.base.test_creation'
