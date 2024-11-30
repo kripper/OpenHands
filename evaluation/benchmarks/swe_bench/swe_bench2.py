@@ -171,4 +171,35 @@ a/1/b
 Expected:
 a/(1/b)
 '''
+    elif instance_id == 'pylint-dev__pylint-7080':
+        return '''% cat src/gen/test.py 
+import bla
+
+% pylint --version
+pylint 2.13.9
+astroid 2.11.5
+Python 3.9.13 (main, May 24 2022, 21:28:31) 
+[Clang 13.1.6 (clang-1316.0.21.2)]
+
+% cat pyproject.toml 
+[tool.pylint.MASTER]
+ignore-paths = [
+  # Auto generated
+  "^src/gen/.*$", 
+]
+
+
+## Succeeds as expected                                                                                                                                                                                                                                                                           
+% pylint --recursive=y src/
+
+## Fails for some reason
+% pylint --recursive=y .   
+************* Module test
+src/gen/test.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/gen/test.py:1:0: E0401: Unable to import 'bla' (import-error)
+src/gen/test.py:1:0: W0611: Unused import bla (unused-import)
+
+------------------------------------------------------------------
+The issue is that pylint is failing when run recursively from the root directory (`.`) but succeeds when run from the `src/` directory.
+'''
     return description
