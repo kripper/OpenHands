@@ -319,6 +319,9 @@ assert sqf_list(p) == result, f'Got {sqf_list(p)}'
         'django__django-15252': custom_test_code.format(
             cmd='tests/runtests.py backends.base.test_creation'
         ),
+        'sphinx-doc__sphinx-11445': custom_pytest_code.format(
+            file_name='tests/test_util_rst.py'
+        ),
     }
     return test_codes.get(instance_id, '')
 
