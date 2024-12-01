@@ -1,6 +1,6 @@
 ### [Refined SWE BENCH Verified Lite](evaluation/benchmarks/swe_bench/Refined_SWE_BENCH.md)
 
-Gemini Models solves all 93 issues in this category. Checkout the results at [evaluation\swe_bench\status.json](evaluation/benchmarks/swe_bench/status.json)
+Gemini Models solves all 93 issues in this category. Checkout the results [here](evaluation/benchmarks/swe_bench/swe_bench_verified_lite_result.md)
 
  ID: `sympy__sympy-22714`
  [openai/nvidia/llama-3.1-nemotron-70b-instruct](https://www.all-hands.dev/share?share_id=95f9ada5e76b767a07018497a412f876f5ffbe5debb578bcc72d52ab1036555f)
