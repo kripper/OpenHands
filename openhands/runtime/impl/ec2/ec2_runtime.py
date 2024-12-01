@@ -14,11 +14,11 @@ from openhands.events.observation.commands import (
     IPythonRunCellObservation,
 )
 from openhands.events.stream import EventStream
-from openhands.runtime.impl.eventstream.eventstream_runtime import EventStreamRuntime
+from openhands.runtime.base import Runtime
 from openhands.runtime.plugins import PluginRequirement
 
 
-class EC2Runtime(EventStreamRuntime):
+class EC2Runtime(Runtime):
     def __init__(
         self,
         config: AppConfig,
@@ -41,6 +41,9 @@ class EC2Runtime(EventStreamRuntime):
             headless_mode,
         )
         self.url = 'http://127.0.0.1:5000/execute'
+
+    async def connect(self):
+        pass
 
     def run(self, action: CmdRunAction) -> Observation:
         print(f'Running command in EC2Runtime: {action.command}')
