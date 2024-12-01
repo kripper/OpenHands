@@ -161,8 +161,11 @@ async def main():
     event_stream.subscribe(EventStreamSubscriber.MAIN, on_event, str(uuid4()))
 
     await runtime.connect()
-
-    asyncio.create_task(prompt_for_next_task())
+    if args.task:
+        action = MessageAction(content=args.task)
+        event_stream.add_event(action, EventSource.USER)
+    else:
+        asyncio.create_task(prompt_for_next_task())
 
     await run_agent_until_done(
         controller, runtime, [AgentState.STOPPED, AgentState.ERROR]
