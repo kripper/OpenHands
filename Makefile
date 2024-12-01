@@ -94,11 +94,15 @@ check-nodejs:
 
 check-docker:
 	@echo "$(YELLOW)Checking Docker installation...$(RESET)"
-	@if command -v docker > /dev/null; then \
-		echo "$(BLUE)$(shell docker --version) is already installed.$(RESET)"; \
+	@if [ -n "${RUN_WITHOUT_DOCKER}" ]; then \
+		echo "$(BLUE)Skipping Docker installation check since RUN_WITHOUT_DOCKER is set.$(RESET)"; \
 	else \
-		echo "$(RED)Docker is not installed. Please install Docker to continue.$(RESET)"; \
-		exit 1; \
+		if command -v docker > /dev/null; then \
+			echo "$(BLUE)$(shell docker --version) is already installed.$(RESET)"; \
+		else \
+			echo "$(RED)Docker is not installed. Please install Docker to continue.$(RESET)"; \
+			exit 1; \
+		fi; \
 	fi
 
 check-poetry:
