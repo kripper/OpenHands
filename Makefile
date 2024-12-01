@@ -137,7 +137,12 @@ install-python-dependencies:
 		export HNSWLIB_NO_NATIVE=1; \
 		poetry run pip install chroma-hnswlib; \
 	fi
-	@poetry install --without llama-index
+
+	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
+		poetry install --without llama-index; \
+	else \
+		poetry install --without llama-index --quiet; \
+	fi
 	@if [ -f "/etc/manjaro-release" ]; then \
 		echo "$(BLUE)Detected Manjaro Linux. Installing Playwright dependencies...$(RESET)"; \
 		poetry run pip install playwright; \
