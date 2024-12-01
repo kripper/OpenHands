@@ -25,12 +25,14 @@ from openhands.events.action import (
     FileEditAction,
     MessageAction,
 )
+from openhands.events.action.commands import IPythonRunCellAction
 from openhands.events.event import Event
 from openhands.events.observation import (
     AgentStateChangedObservation,
     CmdOutputObservation,
     FileEditObservation,
 )
+from openhands.events.observation.commands import IPythonRunCellObservation
 from openhands.llm.llm import LLM
 from openhands.runtime import get_runtime_cls
 from openhands.runtime.base import Runtime
@@ -74,6 +76,10 @@ def display_event(event: Event):
         display_file_edit(event)
     if isinstance(event, FileEditObservation):
         display_file_edit(event)
+    if isinstance(event, IPythonRunCellAction):
+        display_command(event.code)
+    if isinstance(event, IPythonRunCellObservation):
+        display_command_output(event.content)
 
 
 async def main():
