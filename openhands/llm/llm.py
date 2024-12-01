@@ -143,6 +143,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         logger.info(f'{self.config.model=}')
         logger.info(f'{self.config.max_input_tokens=}')
         logger.info(f'{self.config.max_output_tokens=}')
+        if os.environ.get('DEBUG_API_KEY'):
+            logger.info(f'{self.config.api_key=}')
         if self.config.drop_params:
             litellm.drop_params = self.config.drop_params
 
