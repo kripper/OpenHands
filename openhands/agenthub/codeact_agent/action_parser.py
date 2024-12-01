@@ -55,11 +55,6 @@ class CodeActResponseParser(ResponseParser):
             return ''
 
         action = action.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
-        execute_ipython_tag = '<execute_ipython>'
-        action = action.replace(
-            '```tool_code',
-            execute_ipython_tag if execute_ipython_tag not in action else '',
-        )  # Gemini: tool_code is not a valid tag
 
         for lang in ['bash', 'ipython', 'browse']:
             # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
@@ -191,6 +186,9 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         self.python_code = re.search(
             r'<execute_ipython>(.*\S.*)</execute_ipython>', action_str, re.DOTALL
         )
+        if self.python_code is None:
+            # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
+            self.python_code = re.search(r'^```(?:python|tool_code)(.*)```$', action_str, re.DOTALL)
         return self.python_code is not None
 
     def parse(self, action_str: str) -> Action:
