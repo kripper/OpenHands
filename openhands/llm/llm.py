@@ -18,7 +18,6 @@ with warnings.catch_warnings():
         litellm.set_verbose = True
     else:
         litellm.suppress_debug_info = True
-from litellm import Message as LiteLLMMessage
 from litellm import ModelInfo, PromptTokensDetails
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
@@ -278,7 +277,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 if self.reload_counter < continue_on_step:
                     model_config = os.getenv('model_config')
                     if model_config:
-                        with open('evaluation/benchmarks/swe_bench/config.toml', 'r') as f:
+                        with open(
+                            'evaluation/benchmarks/swe_bench/config.toml', 'r'
+                        ) as f:
                             environ = f.read()
                             import toml
 
@@ -338,7 +339,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         #         **fn_call_response_message
                         #     )
                         # resp.choices[0].message = fn_call_response_message
-                    message_back = resp['choices'][0]['message']['content']
+                    message_back = resp['choices'][0]['message']['content'] or ''
                     self_analyse = int(os.environ.get('SELF_ANALYSE', '0'))
                     if self_analyse:
                         logger.info(f'{self_analyse=}')
@@ -387,12 +388,11 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
 
-                message_back: str = resp['choices'][0]['message']['content'] or ''
-                tool_calls = resp['choices'][0]['message'].get('tool_calls', [])
+                tool_calls = resp['choices'][0]['message'].get('tool_calls', [])  # type: ignore
                 if tool_calls:
                     for tool_call in tool_calls:
-                        fn_name = tool_call.function.name
-                        fn_args = tool_call.function.arguments
+                        fn_name: str = tool_call.function.name  # type: ignore
+                        fn_args: str = tool_call.function.arguments  # type: ignore
                         message_back += f'\nFunction call: {fn_name}({fn_args})'
 
             # log the LLM response

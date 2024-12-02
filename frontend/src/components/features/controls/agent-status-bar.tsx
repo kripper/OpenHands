@@ -8,7 +8,7 @@ import { AGENT_STATUS_MAP } from "../../agent-status-map.constant";
 
 export function AgentStatusBar() {
   const { t, i18n } = useTranslation();
-  const { curAgentState } = useSelector((state: RootState) => state.agent);
+  const { curAgentState, currentStep } = useSelector((state: RootState) => state.agent);
   const { curStatusMessage } = useSelector((state: RootState) => state.status);
 
   const [statusMessage, setStatusMessage] = React.useState<string>("");
@@ -47,6 +47,9 @@ export function AgentStatusBar() {
           className={`w-2 h-2 rounded-full animate-pulse ${AGENT_STATUS_MAP[curAgentState].indicator}`}
         />
         <span className="text-sm text-stone-400">{t(statusMessage)}</span>
+        {currentStep && (
+          <span className="text-sm text-stone-400 ml-2">{currentStep}</span>
+        )}
       </div>
     </div>
   );

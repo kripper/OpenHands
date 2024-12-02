@@ -1,54 +1,34 @@
 import atexit
 import os
-import tempfile
 import threading
-import time
-from functools import lru_cache
 from pathlib import Path
 from typing import Callable
-from zipfile import ZipFile
 
 import docker
-import requests
-import tenacity
 
 from openhands.core.config import AppConfig
-from openhands.core.logger import DEBUG
-from openhands.core.logger import openhands_logger as logger
 from openhands.events import EventStream
 from openhands.events.action import (
-    ActionConfirmationStatus,
     BrowseInteractiveAction,
     BrowseURLAction,
     CmdRunAction,
-    FileEditAction,
     FileReadAction,
     FileWriteAction,
     IPythonRunCellAction,
 )
 from openhands.events.action.action import Action
 from openhands.events.observation import (
-    ErrorObservation,
-    NullObservation,
     Observation,
-    UserRejectObservation,
 )
-from openhands.events.observation.commands import CmdOutputObservation, IPythonRunCellObservation
-from openhands.events.serialization import event_to_dict, observation_from_dict
-from openhands.events.serialization.action import ACTION_TYPE_TO_CLASS
+from openhands.events.observation.commands import (
+    CmdOutputObservation,
+    IPythonRunCellObservation,
+)
 from openhands.runtime.base import (
     Runtime,
-    RuntimeDisconnectedError,
-    RuntimeNotFoundError,
 )
-from openhands.runtime.builder import DockerRuntimeBuilder
 from openhands.runtime.impl.eventstream.containers import remove_all_containers
 from openhands.runtime.plugins import PluginRequirement
-from openhands.runtime.utils import find_available_tcp_port
-from openhands.runtime.utils.request import send_request
-from openhands.runtime.utils.runtime_build import build_runtime_image
-from openhands.utils.async_utils import call_sync_from_async
-from openhands.utils.tenacity_stop import stop_if_should_exit
 
 CONTAINER_NAME_PREFIX = 'kevin-runtime-'
 
@@ -236,6 +216,4 @@ class LocalRuntime(Runtime):
 
     def copy_from(self, path: str) -> Path:
         """Zip all files in the sandbox and return as a stream of bytes."""
-        pass
-
-    
+        return Path('')
