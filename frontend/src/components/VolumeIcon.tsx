@@ -2,7 +2,7 @@ import React from "react";
 import { IoMdVolumeHigh, IoMdVolumeOff } from "react-icons/io";
 import beep from "#/utils/beep";
 
-function VolumeIcon(): JSX.Element {
+export function VolumeIcon(): JSX.Element {
   const [isMuted, setIsMuted] = React.useState(
     localStorage["is_muted"] === "true",
   );
@@ -25,5 +25,3 @@ function VolumeIcon(): JSX.Element {
     </div>
   );
 }
-
-export default VolumeIcon;

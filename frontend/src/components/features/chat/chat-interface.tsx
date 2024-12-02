@@ -22,12 +22,13 @@ import { IoMdChatbubbles } from "react-icons/io";
 import beep from "#/utils/beep";
 import { I18nKey } from "#/i18n/declaration";
 import { useTranslation } from "react-i18next";
-import VolumeIcon from "./VolumeIcon";
+import { VolumeIcon } from "#/components/VolumeIcon";
 import { FaSyncAlt } from "react-icons/fa";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
 
 export function ChatInterface() {
   const { send, isLoadingMessages } = useWsClient();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
