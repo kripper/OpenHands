@@ -63,7 +63,7 @@ class CodeActResponseParser(ResponseParser):
             if f'</execute_{lang}' in action and f'</execute_{lang}>' not in action:
                 action = action.replace(f'</execute_{lang}', f'</execute_{lang}>')
 
-            open_tag = f'(?<!`)<execute_{lang}>'  # not preceded by a backtick
+            open_tag = f'<execute_{lang}>(?!`)'  # not followed by a backtick
             close_tag = f'</execute_{lang}>'
             if re.search(open_tag, action) and close_tag not in action:
                 action += close_tag
