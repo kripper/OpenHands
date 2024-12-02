@@ -1,4 +1,3 @@
-import getpass
 import os
 import re
 
@@ -81,6 +80,7 @@ class BashSession:
             echo=False,
         )
         self._init_bash_shell(work_dir)
+        self.username = username
 
     def close(self):
         self.shell.close()
@@ -390,7 +390,7 @@ class BashSession:
                     path = command[3:].strip()
                     if self.pwd == path:
                         output = '[You are already in this directory.]'
-                elif getpass.getuser() == "root":
+                elif self.username == 'root':
                     if command.startswith('git blame'):
                         output = (
                             "[Don't use git commands. Just directly give the solution.]"
