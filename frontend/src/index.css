@@ -57,6 +57,6 @@ code {
   padding: 0.1rem 1rem;
 }
 
-[aria-label="Open in VS Code"], [data-testid="suggestion"] {
+[aria-label="Open in VS Code"], [data-testid="suggestion"], [data-testid="suggestions"] {
   display: none;
 }
