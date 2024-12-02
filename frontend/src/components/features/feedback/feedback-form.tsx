@@ -36,16 +36,13 @@ export function FeedbackForm({ onClose, polarity }: FeedbackFormProps) {
         <a
           data-testid="toast-share-url"
           className="text-blue-500 underline"
-          onClick={() => onPressToast(password)}
           href={link}
           target="_blank"
           rel="noreferrer"
         >
           Go to shared feedback
         </a>
-        <span onClick={() => onPressToast(password)} className="cursor-pointer">
-          Password: {password} <span className="text-gray-500">(copy)</span>
-        </span>
+
       </div>,
       { duration: 10000 },
     );
