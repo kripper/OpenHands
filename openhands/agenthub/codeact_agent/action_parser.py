@@ -55,7 +55,9 @@ class CodeActResponseParser(ResponseParser):
             return ''
 
         action = action.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
-
+        three_backticks = '```'
+        if action.count(three_backticks) % 2 == 1:
+            action += three_backticks
         for lang in ['bash', 'ipython', 'browse']:
             # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
             if f'</execute_{lang}' in action and f'</execute_{lang}>' not in action:
@@ -188,7 +190,9 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         )
         if self.python_code is None:
             # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
-            self.python_code = re.search(r'^```(?:python|tool_code)(.*)```$', action_str, re.DOTALL)
+            self.python_code = re.search(
+                r'^```(?:python|tool_code)(.*)```$', action_str, re.DOTALL
+            )
         return self.python_code is not None
 
     def parse(self, action_str: str) -> Action:
