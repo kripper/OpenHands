@@ -42,6 +42,16 @@ def store_feedback(feedback: FeedbackDataModel) -> dict[str, str]:
         },
     }
     feedback.trajectory = [config] + feedback.trajectory if feedback.trajectory else []
+    for idx, item in enumerate(feedback.trajectory[::-1]):
+        if item.get('observation') == 'agent_state_changed':
+            if item.get('extras', {}).get('agent_state') in [
+                'loading',
+                'init',
+                'running',
+                'finished',
+            ]:
+                # pop the item
+                feedback.trajectory.pop(idx)
     for idx, item in enumerate(feedback.trajectory):
         if item.get('log'):
             item = {'step': item['log'].split()[-1]}
