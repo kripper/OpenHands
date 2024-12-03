@@ -56,7 +56,7 @@ class CodeActResponseParser(ResponseParser):
 
         action = action.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
         three_backticks = '```'
-        if action.count(three_backticks) % 2 == 1:
+        if action.count(three_backticks) % 2 == 1 and not '<execute_' in action:
             action += three_backticks
         for lang in ['bash', 'ipython', 'browse']:
             # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
