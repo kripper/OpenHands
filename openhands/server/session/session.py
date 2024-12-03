@@ -94,7 +94,8 @@ class Session:
             default_llm_config.base_url = args.get(
                 ConfigType.LLM_BASE_URL, default_llm_config.base_url
             )
-
+        else:
+            config2.model = default_llm_config.model
         # TODO: override other LLM config & agent config groups (#2075)
 
         llm = LLM(config=self.config.get_llm_config_from_agent(agent_cls))
