@@ -1,5 +1,6 @@
 import atexit
 import os
+import sys
 import tempfile
 import threading
 import time
@@ -173,7 +174,9 @@ class EventStreamRuntime(Runtime):
         self.persist_sandbox = self.config.sandbox.persist_sandbox
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
-            if self.config.run_as_openhands:
+            if 'resolve_issue' in sys.argv[1]:
+                self._container_port = 63709
+            elif self.config.run_as_openhands:
                 user = 'oh'
                 self._container_port = self.config.sandbox.port
             else:
