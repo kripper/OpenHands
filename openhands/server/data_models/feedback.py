@@ -42,7 +42,8 @@ def store_feedback(feedback: FeedbackDataModel) -> dict[str, str]:
         },
     }
     feedback.trajectory = [config] + feedback.trajectory if feedback.trajectory else []
-    for idx, item in enumerate(feedback.trajectory[::-1]):
+    for idx in reversed(range(len(feedback.trajectory))):
+        item = feedback.trajectory[idx]
         if item.get('observation') == 'agent_state_changed':
             if item.get('extras', {}).get('agent_state') in [
                 'loading',
