@@ -258,7 +258,7 @@ class EventStreamRuntime(Runtime):
             )
 
         else:
-            logger.info('Using existing Docker container')
+            logger.info(f'Using existing Docker container: {self.container_name}')
             try:
                 await call_sync_from_async(self._attach_to_container)
             except docker.errors.NotFound as e:
