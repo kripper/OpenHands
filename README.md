@@ -13,11 +13,13 @@ The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.
 
 The vision is to leverage SLMs effectively and work towards solving most of the issues on the SWE-Bench Lite evaluation.
 
-### Sample Examples using `groq/llama3-8b-8192`
+### Sample Examples
 
  1) Create an application in flask that can convert AWS cloudformation stack format from json to yaml and use curl to test ; don't do anything extra please.
- [Event history link](https://www.all-hands.dev/share?share_id=870d002486313bbbff706d62376412930ab6c95384dbb3d5c35205acdc946c3f)
+ [groq/llama3-8b-8192](https://www.all-hands.dev/share?share_id=870d002486313bbbff706d62376412930ab6c95384dbb3d5c35205acdc946c3f)
 
+ 2) Gather S&P500 daily OHLC data for 1d and print it's close.
+[openrouter/qwen/qwen-2.5-coder-32b-instruct](https://www.all-hands.dev/share?share_id=bb050c605e8e7316a2da1f8aea18c52362dc4588906b04a634efab57e5dc34ca), [openrouter/google/gemma-2-27b-it:free](https://www.all-hands.dev/share?share_id=9d856bbfae61a62017b1e737fa2a802d69efd080047d87f41db3dabb883801c0), [openrouter/meta-llama/llama-3.2-11b-vision-instruct](https://www.all-hands.dev/share?share_id=626abc444d0053663d4fd3ebe15fe0ed45a4247a08b873e2ec1b0bb542e0033c), [openrouter/microsoft/phi-3-medium-128k-instruct](https://www.all-hands.dev/share?share_id=f44bbd7ebcf4c4e4735f363663dac537d629dbfd486c5013d84ec40e12cc5851)
 
 To be updated:
 
