@@ -490,14 +490,12 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             if self.model_info is not None:
                 # max_output_tokens has precedence over max_tokens, if either exists.
                 # litellm has models with both, one or none of these 2 parameters!
-                if 'max_output_tokens' in self.model_info and isinstance(
-                    self.model_info['max_output_tokens'], int
-                ):
-                    self.config.max_output_tokens = self.model_info['max_output_tokens']
-                elif 'max_tokens' in self.model_info and isinstance(
+                if 'max_tokens' in self.model_info and isinstance(
                     self.model_info['max_tokens'], int
                 ):
-                    self.config.max_output_tokens = self.model_info['max_tokens']
+                    self.config.max_output_tokens = (
+                        self.model_info['max_tokens'] - self.config.max_input_tokens
+                    )
 
     def vision_is_active(self) -> bool:
         with warnings.catch_warnings():
