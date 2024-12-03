@@ -146,10 +146,10 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
                             llm_config = LLMConfig.from_dict(nested_value)
                             cfg.set_llm_config(llm_config, nested_key)
                 elif key is not None and key.lower() == 'security':
-                    non_dict_fields = {
-                        k: v for k, v in value.items() if not isinstance(v, dict)
-                    }
-                    security_config = SecurityConfig(**non_dict_fields)
+                    logger.openhands_logger.debug(
+                        'Attempt to load security config from config toml'
+                    )
+                    security_config = SecurityConfig.from_dict(value)
                     cfg.security = security_config
                 elif not key.startswith('sandbox') and key.lower() != 'core':
                     logger.openhands_logger.warning(

@@ -26,11 +26,19 @@ import { VolumeIcon } from "#/components/VolumeIcon";
 import { FaSyncAlt } from "react-icons/fa";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
 
+function getEntryPoint(
+  hasRepository: boolean | null,
+  hasImportedProjectZip: boolean | null,
+): string {
+  if (hasRepository) return "github";
+  if (hasImportedProjectZip) return "zip";
+  return "direct";
+}
+
 export function ChatInterface() {
   const { send, isLoadingMessages } = useWsClient();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const { scrollDomToBottom, onChatBodyScroll, hitBottom } =
     useScrollToBottom(scrollRef);
@@ -45,20 +53,36 @@ export function ChatInterface() {
   const [messageToSend, setMessageToSend] = React.useState<string | null>(null);
   const [autoMode, setAutoMode] = React.useState(false);
 
+  const { selectedRepository, importedProjectZip } = useSelector(
+    (state: RootState) => state.initalQuery,
+  );
 
-  const handleSendMessage = async (
-    content: string,
-    dispatchContent: string = "",
-    files: File[],
-  ) => {
-    posthog.capture("user_message_sent", {
-      current_message_count: messages.length,
-    });
+  const handleSendMessage = async (content: string, files: File[]) => {
+    if (messages.length === 0) {
+      posthog.capture("initial_query_submitted", {
+        entry_point: getEntryPoint(
+          selectedRepository !== null,
+          importedProjectZip !== null,
+        ),
+        query_character_length: content.length,
+        uploaded_zip_size: importedProjectZip?.length,
+      });
+    } else {
+      posthog.capture("user_message_sent", {
+        session_message_count: messages.length,
+        current_message_length: content.length,
+      });
+    }
     const promises = files.map((file) => convertImageToBase64(file));
     const imageUrls = await Promise.all(promises);
 
     const timestamp = new Date().toISOString();
-    dispatch(addUserMessage({ content: dispatchContent || content, imageUrls, timestamp }));
+    if (content == t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE)) {
+      dispatch(addUserMessage({ content: t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE), imageUrls, timestamp }));
+    }
+    else {
+      dispatch(addUserMessage({ content, imageUrls, timestamp }));
+    }
     send(createChatMessage(content, imageUrls, timestamp));
     setMessageToSend(null);
   };
@@ -69,13 +93,12 @@ export function ChatInterface() {
   };
 
   const handleSendContinueMsg = () => {
-    handleSendMessage("Continue", "", []);
+    handleSendMessage("Continue", []);
   };
 
   const handleAutoMsg = () => {
     handleSendMessage(
       t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE),
-      t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE),
       [],
     );
   };
@@ -140,7 +163,7 @@ export function ChatInterface() {
         {isWaitingForUserInput && (
           <ActionSuggestions
             onSuggestionsClick={(value) =>
-              handleSendMessage(value, "", [])
+              handleSendMessage(value, [])
             }
           />
         )}
