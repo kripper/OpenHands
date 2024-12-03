@@ -35,8 +35,8 @@ class CodeActResponseParser(ResponseParser):
         super().__init__()
         self.action_parsers = [
             CodeActActionParserFileEdit(),
-            CodeActActionParserCmdRun(),
             CodeActActionParserIPythonRunCell(),
+            CodeActActionParserCmdRun(),
             CodeActActionParserAgentDelegate(),
             CodeActActionParserFinish(),
         ]
@@ -159,7 +159,7 @@ class CodeActActionParserCmdRun(ActionParser):
         )
         if self.bash_command is None:
             # Gemini flash not providing the tag and returns as code wrap in backticks
-            self.bash_command = re.search(r'^```bash(.*)```$', action_str, re.DOTALL)
+            self.bash_command = re.search(r'^```bash(.*)```', action_str, re.DOTALL)
         return self.bash_command is not None
 
     def parse(self, action_str: str) -> Action:
@@ -191,7 +191,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         if self.python_code is None:
             # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
             self.python_code = re.search(
-                r'^```(?:python|tool_code)(.*)```$', action_str, re.DOTALL
+                r'^```(?:python|tool_code)(.*)```', action_str, re.DOTALL
             )
         return self.python_code is not None
 
