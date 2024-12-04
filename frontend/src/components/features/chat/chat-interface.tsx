@@ -77,13 +77,13 @@ export function ChatInterface() {
     const imageUrls = await Promise.all(promises);
 
     const timestamp = new Date().toISOString();
-    if (content == t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE)) {
-      dispatch(addUserMessage({ content: t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE), imageUrls, timestamp }));
-    }
-    else {
-      dispatch(addUserMessage({ content, imageUrls, timestamp }));
-    }
+    const pending = true;
+
     send(createChatMessage(content, imageUrls, timestamp));
+    if (content == t(I18nKey.CHAT_INTERFACE$AUTO_MESSAGE)) {
+      content = t(I18nKey.CHAT_INTERFACE$INPUT_AUTO_MESSAGE);
+    }
+    dispatch(addUserMessage({ content, imageUrls, timestamp, pending }));
     setMessageToSend(null);
   };
 
