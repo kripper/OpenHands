@@ -554,7 +554,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         )
         return model_name_supported
 
-    def _post_completion(self, response: ModelResponse) -> None:
+    def _post_completion(self, response: ModelResponse) -> float:
         """Post-process the completion response.
 
         Logs the cost and usage stats of the completion call.
@@ -611,6 +611,8 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         # log the stats
         # if stats:
         #     logger.debug(stats)
+
+        return cur_cost
 
     def get_token_count(self, messages=None, text=None) -> int:
         """Get the number of tokens in a list of messages.

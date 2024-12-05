@@ -105,17 +105,17 @@ See the [Installation](https://docs.all-hands.dev/modules/usage/installation) gu
 system requirements and more information.
 
 ```bash
-docker pull docker.all-hands.dev/all-hands-ai/runtime:0.14-nikolaik
+docker pull docker.all-hands.dev/all-hands-ai/runtime:0.15-nikolaik
 
 docker run -it --pull=always \
-    -e SANDBOX_USE_HOST_NETWORK=true \
-    -e SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.14-nikolaik \
+    -e SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.15-nikolaik \
     -e LOG_ALL_EVENTS=true \
+    -e SANDBOX_USE_HOST_NETWORK=true \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -p 3000:3000 \
     --add-host host.docker.internal:host-gateway \
     --name openhands-app \
-    docker.all-hands.dev/all-hands-ai/openhands:0.14
+    docker.all-hands.dev/all-hands-ai/openhands:0.15
 ```
 
 You'll find OpenHands running at [http://localhost:3000](http://localhost:3000)!

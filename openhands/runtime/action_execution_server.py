@@ -9,8 +9,10 @@ import argparse
 import asyncio
 import base64
 import io
+import json
 import mimetypes
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -263,11 +265,14 @@ class ActionExecutor:
             jupyter_pwd = getattr(self, '_jupyter_pwd', None)
             if self.bash_session.pwd != jupyter_pwd:
                 await self.chdir()
-
+            obs: Observation | None = None
             if action.code.startswith('%%writefile /tmp/test_task.py'):
-                obs: Observation = ErrorObservation(
+                obs = ErrorObservation(
                     "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
                 )
+                
+
+                
             elif action.code.startswith('!python'):
                 obs = ErrorObservation(
                     "[Don't use Django shell commands in Jupyter Notebook as file changes will not be reflected. Directly run the code in the terminal using <execute_bash>.]"
@@ -280,19 +285,40 @@ class ActionExecutor:
                 obs = ErrorObservation(
                     '[You are trying to run the same code twice. Please focus and run the correct code.]'
                 )
-            else:
-                action.code = action.code.replace('!pip', '%pip')
-                obs = await _jupyter_plugin.run(action)
-                if 'pip install' in action.code:
-                    obs.content = self.parse_pip_output(action.code, obs.content)
-                obs.content = obs.content.rstrip()
-                self.last_code = action.code
-                self.is_last_code_error = (
-                    'Traceback (most recent call last)' in obs.content
-                )
-                if self.username != 'root':
-                    if 'Traceback (most recent call last)' in obs.content:
-                        obs.content += '\n\n[Hint: Use `search_in_stack_overflow(error_message)` to search for solutions.]'
+            
+            if obs:
+                return obs
+            action.code = action.code.replace('!pip', '%pip')
+            obs = await _jupyter_plugin.run(action)
+            if 'pip install' in action.code:
+                obs.content = self.parse_pip_output(action.code, obs.content)
+            obs.content = obs.content.rstrip()
+            matches = re.findall(
+            r'<oh_aci_output>(.*?)</oh_aci_output>', obs.content, re.DOTALL
+        )
+            if matches:
+                results = []
+                for match in matches:
+                    try:
+                        result_dict = json.loads(match)
+                        results.append(
+                            result_dict.get('formatted_output_and_error', '')
+                        )
+                    except json.JSONDecodeError:
+                        # Handle JSON decoding errors if necessary
+                        results.append(
+                            f"Invalid JSON in 'openhands-aci' output: {match}"
+                        )
+
+                # Combine the results (e.g., join them) or handle them as required
+                obs.content = '\n'.join(results)
+            self.last_code = action.code
+            self.is_last_code_error = (
+                'Traceback (most recent call last)' in obs.content
+            )
+            if self.username != 'root':
+                if 'Traceback (most recent call last)' in obs.content:
+                    obs.content += '\n\n[Hint: Use `search_in_stack_overflow(error_message)` to search for solutions.]'
             # obs.content += f'\n[Jupyter current working directory: {self.bash_session.pwd}]'
             # obs.content += f'\n[Jupyter Python interpreter: {_jupyter_plugin.python_interpreter_path}]'
             return obs
