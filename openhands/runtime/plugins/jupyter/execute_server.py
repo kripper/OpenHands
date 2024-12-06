@@ -198,7 +198,7 @@ class JupyterKernel:
                 elif msg_type == 'stream':
                     outputs.append(msg['content']['text'])
                 elif msg_type in ['execute_result', 'display_data']:
-                    outputs.append(msg['content']['data']['text/plain'])
+                    outputs.append(msg['content']['data'].get('text/plain', ''))
                     if 'image/png' in msg['content']['data']:
                         # use markdone to display image (in case of large image)
                         outputs.append(
