@@ -57,6 +57,9 @@ def store_feedback(feedback: FeedbackDataModel) -> dict[str, str]:
         if item.get('log'):
             item = {'step': item['log'].split()[-1]}
             feedback.trajectory[idx] = item
+        if item.get('observation') == 'error':
+            item = {'error': item['content']}
+            feedback.trajectory[idx] = item
     # Start actual request
     response = requests.post(
         FEEDBACK_URL,

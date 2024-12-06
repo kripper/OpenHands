@@ -193,11 +193,15 @@ class AgentController:
         e: Exception,
     ):
         await self.set_agent_state_to(AgentState.ERROR)
+        err = f'{e.__class__.__name__}: {e}'
         if self.status_callback is not None:
             err_id = ''
             if isinstance(e, litellm.AuthenticationError):
                 err_id = 'STATUS$ERROR_LLM_AUTHENTICATION'
-            self.status_callback('error', err_id, str(e))
+            # self.status_callback('error', err_id, err)
+        self.event_stream.add_event(
+            ErrorObservation(err), EventSource.ENVIRONMENT
+        )
 
     async def start_step_loop(self):
         """The main loop for the agent's step-by-step execution."""
