@@ -1,5 +1,6 @@
 import asyncio
 import os
+from copy import deepcopy
 import time
 
 import socketio
@@ -25,6 +26,7 @@ from openhands.events.serialization import event_from_dict, event_to_dict
 from openhands.events.stream import EventStreamSubscriber
 from openhands.llm.llm import LLM
 from openhands.server.session.agent_session import AgentSession
+from openhands.server.session.session_init_data import SessionInitData
 from openhands.storage.files import FileStore
 
 ROOM_KEY = 'room:{sid}'
@@ -38,7 +40,6 @@ class Session:
     agent_session: AgentSession
     loop: asyncio.AbstractEventLoop
     config: AppConfig
-    settings: dict | None
 
     def __init__(
         self,
@@ -56,46 +57,33 @@ class Session:
         self.agent_session.event_stream.subscribe(
             EventStreamSubscriber.SERVER, self.on_event, self.sid
         )
-        self.config = config
+        # Copying this means that when we update variables they are not applied to the shared global configuration!
+        self.config = deepcopy(config)
         self.loop = asyncio.get_event_loop()
-        self.settings = None
 
     def close(self):
         self.is_alive = False
         self.agent_session.close()
 
-    async def initialize_agent(self, data: dict):
-        self.settings = data
+    async def initialize_agent(self, session_init_data: SessionInitData):
         self.agent_session.event_stream.add_event(
             AgentStateChangedObservation('', AgentState.LOADING),
             EventSource.ENVIRONMENT,
         )
         # Extract the agent-relevant arguments from the request
-        args = {key: value for key, value in data.get('args', {}).items()}
-        agent_cls = args.get(ConfigType.AGENT, self.config.default_agent)
-        self.config.security.confirmation_mode = args.get(
-            ConfigType.CONFIRMATION_MODE, self.config.security.confirmation_mode
-        )
-        self.config.security.security_analyzer = data.get('args', {}).get(
-            ConfigType.SECURITY_ANALYZER, self.config.security.security_analyzer
-        )
-        max_iterations = args.get(ConfigType.MAX_ITERATIONS, self.config.max_iterations)
+        agent_cls = session_init_data.agent or self.config.default_agent
+        self.config.security.confirmation_mode = self.config.security.confirmation_mode if session_init_data.confirmation_mode is None else session_init_data.confirmation_mode
+        self.config.security.security_analyzer = session_init_data.security_analyzer or self.config.security.security_analyzer
+        max_iterations = session_init_data.max_iterations or self.config.max_iterations
         # override default LLM config
+        
+
         default_llm_config = self.config.get_llm_config()
         if not self.config.override_UI_settings:
-            default_llm_config.model = args.get(
-                ConfigType.LLM_MODEL, default_llm_config.model
-            )
-
-            config2.model = default_llm_config.model
-            default_llm_config.api_key = args.get(
-                ConfigType.LLM_API_KEY, default_llm_config.api_key
-            )
-            default_llm_config.base_url = args.get(
-                ConfigType.LLM_BASE_URL, default_llm_config.base_url
-            )
-        else:
-            config2.model = default_llm_config.model
+            default_llm_config.model = session_init_data.llm_model or default_llm_config.model
+            default_llm_config.api_key = session_init_data.llm_api_key or default_llm_config.api_key
+            default_llm_config.base_url = session_init_data.llm_base_url or default_llm_config.base_url
+        config2.model = default_llm_config.model
         # TODO: override other LLM config & agent config groups (#2075)
 
         llm = LLM(config=self.config.get_llm_config_from_agent(agent_cls))
@@ -103,7 +91,7 @@ class Session:
         agent = Agent.get_cls(agent_cls)(llm, agent_config)
         # store agent, language, model in environmnet for feeedback
         os.environ['OPENHANDS_AGENT'] = agent_cls
-        os.environ['OPENHANDS_LANGUAGE'] = args.get(ConfigType.LANGUAGE, 'en')
+        os.environ['OPENHANDS_LANGUAGE'] = session_init_data.language
         os.environ['OPENHANDS_MODEL'] = config2.model
 
         try:
