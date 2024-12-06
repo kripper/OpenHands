@@ -493,14 +493,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 if 'max_tokens' in self.model_info and isinstance(
                     self.model_info['max_tokens'], int
                 ):
-                    self.config.max_output_tokens = (
-                        self.model_info['max_tokens'] - self.config.max_input_tokens
-                    )
-                    if self.config.max_output_tokens < 0:
-                        self.config.max_output_tokens = 100
-                        self.config.max_input_tokens = (
-                            self.model_info['max_tokens'] - 100
-                        )
+                    self.config.max_output_tokens = self.model_info['max_tokens']
 
     def vision_is_active(self) -> bool:
         with warnings.catch_warnings():
