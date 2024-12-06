@@ -29,7 +29,7 @@ This should be a client-only app with no backend. The list should persist in loc
 Please add tests for all of the above and make sure they pass`;
 
 const KEY_3 = "Write a Python script that shows the top story on Hacker News";
-const VALUE_3 = `Please write a Python script which displays the top story on Hacker News. It should show the title, the link, and the number of points.`;
+const VALUE_3 = `Please write a Python script that displays the top story on Hacker News. It should show the title, the link, and the number of points.`;
 
 export const NON_REPO_SUGGESTIONS: Record<string, string> = {
   [KEY_1]: VALUE_1,
