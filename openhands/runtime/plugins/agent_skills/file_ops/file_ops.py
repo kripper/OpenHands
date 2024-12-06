@@ -428,13 +428,21 @@ def _edit_impl(lines, start, end, content):
     if end is None:
         end = len(lines)  # Default to the end
     # Check arguments
-    if not (1 <= start <= len(lines)):
+    if start < 1:
         raise LineNumberError(
-            f'Invalid start line number: {start}. Line numbers must be between 1 and {len(lines)} (inclusive).'
+            f'Start line number should be positive.'
         )
-    if not (1 <= end <= len(lines)):
+    if end < 1:
         raise LineNumberError(
-            f'Invalid end line number: {end}. Line numbers must be between 1 and {len(lines)} (inclusive).'
+            f'End line number should be positive.'
+        )
+    if not (start <= len(lines)):
+        raise LineNumberError(
+            f'Invalid start line number: {start}. Total number of lines is {len(lines)} only.'
+        )
+    if not (end <= len(lines)):
+        raise LineNumberError(
+            f'Invalid end line number: {end}. Total number of lines is {len(lines)} only.'
         )
     if start > end:
         raise LineNumberError(
