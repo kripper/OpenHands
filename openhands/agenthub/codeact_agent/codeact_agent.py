@@ -176,10 +176,7 @@ class CodeActAgent(Agent):
                 BrowseInteractiveAction,
                 BrowseURLAction,
             ),
-        ) or (
-            isinstance(action, (AgentFinishAction, CmdRunAction))
-            and action.source == 'agent'
-        ):
+        ) or (isinstance(action, CmdRunAction) and action.source == 'agent'):
             if self.config.function_calling:
                 tool_metadata = action.tool_call_metadata
                 assert tool_metadata is not None, (
@@ -188,6 +185,7 @@ class CodeActAgent(Agent):
                 )
                 llm_response: ModelResponse = tool_metadata.model_response
                 assistant_msg = llm_response.choices[0].message
+
                 # Add the LLM message (assistant) that initiated the tool calls
                 # (overwrites any previous message with the same response_id)
                 pending_tool_call_action_messages[llm_response.id] = Message(
@@ -211,6 +209,40 @@ class CodeActAgent(Agent):
                         content=content,
                     )
                 ]
+        elif isinstance(action, AgentFinishAction):
+            role = 'user' if action.source == 'user' else 'assistant'
+            if not self.config.function_calling:
+                content = [TextContent(text=self.action_parser.action_to_str(action))]
+                return [
+                    Message(
+                        role='user' if action.source == 'user' else 'assistant',
+                        content=content,
+                    )
+                ]
+            # when agent finishes, it has tool_metadata
+            # which has already been executed, and it doesn't have a response
+            # when the user finishes (/exit), we don't have tool_metadata
+            tool_metadata = action.tool_call_metadata
+            if tool_metadata is not None:
+                # take the response message from the tool call
+                assistant_msg = tool_metadata.model_response.choices[0].message
+                content = assistant_msg.content or ''
+
+                # save content if any, to thought
+                if action.thought:
+                    if action.thought != content:
+                        action.thought += '\n' + content
+                else:
+                    action.thought = content
+
+                # remove the tool call metadata
+                action.tool_call_metadata = None
+            return [
+                Message(
+                    role=role,
+                    content=[TextContent(text=action.thought)],
+                )
+            ]
         elif isinstance(action, MessageAction):
             role = 'user' if action.source == 'user' else 'assistant'
             content = [TextContent(text=action.content or '')]
