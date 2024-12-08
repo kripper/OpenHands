@@ -27,7 +27,7 @@ class CondenserMixin:
         token_counts = [
             self.get_token_count([message])  # type: ignore
             for message in messages
-            if message.condensable
+            if message['condensable']
         ]
         message_buffer_token_count = sum(token_counts)  # no system and example message
 
@@ -38,11 +38,11 @@ class CondenserMixin:
         candidate_messages_to_summarize = []
         tokens_so_far = 0
         for message in messages:
-            if message.condensable:
+            if message['condensable']:
                 candidate_messages_to_summarize.append(message)
                 tokens_so_far += self.get_token_count([message])  # type: ignore
             if tokens_so_far > desired_token_count_to_summarize:
-                last_summarized_event_id = message.event_id
+                last_summarized_event_id = message['event_id']
                 break
 
         # TODO: Add functionality for preserving last N messages

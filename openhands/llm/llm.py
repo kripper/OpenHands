@@ -242,7 +242,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 messages[0].role = 'user'
 
             if self.is_over_token_limit(messages):
-                if kwargs['condense']:
+                if kwargs['condense'] and 0:
                     summary_action = self.condense(messages=messages)
                     return summary_action
                 else:
