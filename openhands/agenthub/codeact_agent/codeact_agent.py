@@ -169,8 +169,6 @@ class CodeActAgent(Agent):
             (
                 AgentDelegateAction,
                 IPythonRunCellAction,
-                MessageAction,
-                BrowseURLAction,
                 AgentSummarizeAction,
                 FileEditAction,
                 BrowseInteractiveAction,
@@ -404,7 +402,7 @@ class CodeActAgent(Agent):
             print(e)
 
         params: dict = {
-            'messages': messages,
+            'messages': [message.model_dump() for message in messages],
             'condense': True,
             'origin': 'Agent',
         }

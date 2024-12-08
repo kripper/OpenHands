@@ -9,6 +9,7 @@ import requests
 
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
+from openhands.llm.fn_call_converter import STOP_WORDS, convert_fncall_messages_to_non_fncall_messages, convert_non_fncall_messages_to_fncall_messages
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -21,7 +22,7 @@ with warnings.catch_warnings():
 from litellm import ModelInfo, PromptTokensDetails
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
-
+from litellm import Message as LiteLLMMessage
 # from litellm.caching import Cache
 from litellm.exceptions import (
     APIConnectionError,
@@ -229,12 +230,12 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 assert (
                     'tools' in kwargs
                 ), "'tools' must be in kwargs when mock_function_calling is True"
-                # messages = convert_fncall_messages_to_non_fncall_messages(
-                #     messages, kwargs['tools']
-                # )  # type: ignore
-                # kwargs['messages'] = messages
-                # kwargs['stop'] = STOP_WORDS
-                # mock_fncall_tools = kwargs.pop('tools')
+                messages = convert_fncall_messages_to_non_fncall_messages(
+                    messages, kwargs['tools']
+                )  # type: ignore
+                kwargs['messages'] = messages
+                kwargs['stop'] = STOP_WORDS
+                mock_fncall_tools = kwargs.pop('tools')
 
             if self.config.model.split('/')[-1].startswith('o1-'):
                 # Message types: user and assistant messages only, system messages are not supported.
@@ -326,19 +327,19 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     if mock_function_calling:
                         # assert len(resp.choices) == 1
                         assert mock_fncall_tools is not None
-                        # non_fncall_response_message = resp.choices[0].message
-                        # fn_call_messages_with_response = (
-                        #     convert_non_fncall_messages_to_fncall_messages(
-                        #         messages + [non_fncall_response_message],
-                        #         mock_fncall_tools,
-                        #     )
-                        # )  # type: ignore
-                        # fn_call_response_message = fn_call_messages_with_response[-1]
-                        # if not isinstance(fn_call_response_message, LiteLLMMessage):
-                        #     fn_call_response_message = LiteLLMMessage(
-                        #         **fn_call_response_message
-                        #     )
-                        # resp.choices[0].message = fn_call_response_message
+                        non_fncall_response_message = resp.choices[0].message
+                        fn_call_messages_with_response = (
+                            convert_non_fncall_messages_to_fncall_messages(
+                                messages + [non_fncall_response_message],
+                                mock_fncall_tools,
+                            )
+                        )  # type: ignore
+                        fn_call_response_message = fn_call_messages_with_response[-1]
+                        if not isinstance(fn_call_response_message, LiteLLMMessage):
+                            fn_call_response_message = LiteLLMMessage(
+                                **fn_call_response_message
+                            )
+                        resp.choices[0].message = fn_call_response_message
                     message_back = resp['choices'][0]['message']['content'] or ''
                     self_analyse = int(os.environ.get('SELF_ANALYSE', '0'))
                     if self_analyse:
