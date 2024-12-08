@@ -53,12 +53,14 @@ const messageActions = {
     } else {
       store.dispatch(addAssistantMessage(message.args.content));
     }
-    store.dispatch(appendInput(message.args.command));
   },
   [ActionType.RUN_IPYTHON]: (message: ActionMessage) => {
     if (message.args.confirmation_state !== "rejected") {
       store.dispatch(appendJupyterInput(message.args.code));
     }
+  },
+  [ActionType.RUN]: (message: ActionMessage) => {
+    store.dispatch(appendInput(message.args.command));
   },
 };
 

@@ -200,7 +200,6 @@ export const useTerminal = (
       for (let i = lastCommandIndex.current; i < commands.length; i += 1) {
         // eslint-disable-next-line prefer-const
         let { content, type } = commands[i];
-        if (content === undefined) continue;
         secrets.forEach((secret) => {
           content = content.replaceAll(secret, "*".repeat(10));
         });
