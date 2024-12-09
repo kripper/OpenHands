@@ -246,7 +246,11 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     summary_action = self.condense(messages=messages)
                     return summary_action
                 else:
-                    raise ContextWindowExceededError()
+                    raise ContextWindowExceededError(
+                        message='Context window exceeded',
+                        model=self.config.model.split('/',1)[1],
+                        llm_provider=self.config.model.split('/',1)[0],
+                    )
 
             kwargs.pop('condense', None)
             if isinstance(messages[0], Message):
