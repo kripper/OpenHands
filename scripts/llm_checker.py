@@ -1,3 +1,4 @@
+import os
 import litellm
 import tomllib
 from dotenv import load_dotenv
@@ -25,6 +26,8 @@ args = (
     if base_url
     else {}
 )
+if base_url and model.startswith('ollama'):
+    os.environ['OLLAMA_API_BASE'] = base_url
 has_vision = litellm.supports_vision(model)
 if has_vision:
     print('Model supports vision')
