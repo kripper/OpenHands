@@ -480,19 +480,10 @@ class AgentController:
             await asyncio.sleep(1)
             return
 
-        # check if agent got stuck before taking any action
-        is_stuck, resolution = self._is_stuck()
-        if is_stuck:
-            self.event_stream.add_event(
-                ErrorObservation(
-                    f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
-                ),
-                EventSource.USER,
-            )
-
         if self.delegate is not None:
             assert self.delegate != self
             if self.delegate.get_agent_state() == AgentState.PAUSED:
+                # no need to check too often
                 await asyncio.sleep(1)
             else:
                 await self._delegate_step()
@@ -521,6 +512,16 @@ class AgentController:
                 )
         if stop_step:
             return
+
+         # check if agent got stuck before taking any action
+        is_stuck, resolution = self._is_stuck()
+        if is_stuck:
+            self.event_stream.add_event(
+                ErrorObservation(
+                    f'You are almost stuck in a loop. This is your last attempt. Follow the following resolution: {resolution}'
+                ),
+                EventSource.USER,
+            )
 
         self.update_state_before_step()
         action: Action = NullAction()
