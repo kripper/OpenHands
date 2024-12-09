@@ -395,7 +395,7 @@ class BashSession:
                         output = (
                             "[Don't use git commands. Just directly give the solution.]"
                         )
-                    elif 'pip install' in command:
+                    elif 'pip install' in command and os.getenv('NO_PIP_INSTALL') == '1':
                         output = '[Use the current packages only.]'
 
                     elif (
