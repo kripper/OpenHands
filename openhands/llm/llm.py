@@ -16,7 +16,7 @@ with warnings.catch_warnings():
     import litellm
 
     if os.getenv('DEBUG_LITTELM'):
-        litellm.set_verbose = True
+        os.environ['LITELLM_LOG'] = 'DEBUG'
     else:
         litellm.suppress_debug_info = True
 from litellm import ModelInfo, PromptTokensDetails
