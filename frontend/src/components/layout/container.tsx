@@ -8,7 +8,7 @@ import { NavTab } from "./nav-tab";
 interface ContainerProps {
   label?: string;
   labels?: {
-    label: string;
+    label: string | React.ReactNode;
     to: string;
     icon?: React.ReactNode;
     isBeta?: boolean;
@@ -65,7 +65,7 @@ export function Container({
           )}
         </div>
       )}
-      <div className="overflow-auto h-full rounded-b-xl">{children}</div>
+      <div className="overflow-hidden h-full rounded-b-xl">{children}</div>
     </div>
   );
 }
