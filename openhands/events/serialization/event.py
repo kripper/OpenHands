@@ -88,6 +88,9 @@ def event_to_dict(event: 'Event') -> dict:
     elif 'observation' in d:
         d['content'] = props.pop('content', '')
         d['extras'] = props
+        # Include success field for CmdOutputObservation
+        if hasattr(event, 'success'):
+            d['success'] = event.success
     elif 'log' in d:
         pass
     else:

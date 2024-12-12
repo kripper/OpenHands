@@ -51,6 +51,7 @@ class SandboxConfig:
         False  # once enabled, OpenHands would lint files after editing
     )
     use_host_network: bool = True
+    runtime_extra_build_args: list[str] | None = None
     initialize_plugins: bool = True
     force_rebuild_runtime: bool = False
     runtime_extra_deps: str | None = None
