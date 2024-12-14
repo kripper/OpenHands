@@ -570,6 +570,11 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 self.metrics.accumulated_cost,
             )
 
+        # Add latency to stats if available
+        if self.metrics.response_latencies:
+            latest_latency = self.metrics.response_latencies[-1]
+            stats += 'Response Latency: %.3f seconds\n' % latest_latency.latency
+
         usage: Usage | None = response.get('usage')
 
         if usage:

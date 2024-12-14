@@ -175,27 +175,7 @@ class CodeActAgent(Agent):
                 BrowseURLAction,
             ),
         ) or (isinstance(action, CmdRunAction) and action.source == 'agent'):
-            if self.config.function_calling:
-                tool_metadata = action.tool_call_metadata
-                assert tool_metadata is not None, (
-                    'Tool call metadata should NOT be None when function calling is enabled. Action: '
-                    + str(action)
-                )
-                llm_response: ModelResponse = tool_metadata.model_response
-                assistant_msg = llm_response.choices[0].message
-
-                # Add the LLM message (assistant) that initiated the tool calls
-                # (overwrites any previous message with the same response_id)
-                pending_tool_call_action_messages[llm_response.id] = Message(
-                    role=assistant_msg.role,
-                    # tool call content SHOULD BE a string
-                    content=[TextContent(text=assistant_msg.content or '')]
-                    if assistant_msg.content is not None
-                    else [],
-                    tool_calls=assistant_msg.tool_calls,
-                )
-                return []
-            else:
+            if not self.config.function_calling:
                 assert not isinstance(action, BrowseInteractiveAction), (
                     'BrowseInteractiveAction is not supported in non-function calling mode. Action: '
                     + str(action)
@@ -207,6 +187,21 @@ class CodeActAgent(Agent):
                         content=content,
                     )
                 ]
+            llm_response: ModelResponse = tool_metadata.model_response
+            assistant_msg = llm_response.choices[0].message
+
+            # Add the LLM message (assistant) that initiated the tool calls
+            # (overwrites any previous message with the same response_id)
+            logger.debug(f'Tool calls type: {type(assistant_msg.tool_calls)}, value: {assistant_msg.tool_calls}')
+            pending_tool_call_action_messages[llm_response.id] = Message(
+                role=assistant_msg.role,
+                # tool call content SHOULD BE a string
+                content=[TextContent(text=assistant_msg.content or '')]
+                if assistant_msg.content is not None
+                else [],
+                tool_calls=assistant_msg.tool_calls,
+            )
+            return []
         elif isinstance(action, AgentFinishAction):
             role = 'user' if action.source == 'user' else 'assistant'
             if not self.config.function_calling:

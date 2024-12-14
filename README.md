@@ -114,11 +114,12 @@ For the most up-to-date development version, you can use `docker.all-hands.dev/a
 ```bash
 docker pull docker.all-hands.dev/all-hands-ai/runtime:0.15-nikolaik
 
-docker run -it --pull=always \
+docker run -it --rm --pull=always \
     -e SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.15-nikolaik \
     -e LOG_ALL_EVENTS=true \
     -e SANDBOX_USE_HOST_NETWORK=true \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -v ~/.openhands:/home/openhands/.openhands \
     -p 3000:3000 \
     --add-host host.docker.internal:host-gateway \
     --name openhands-app \
