@@ -65,7 +65,7 @@ export function Container({
           )}
         </div>
       )}
-      <div className="overflow-hidden h-full rounded-b-xl">{children}</div>
+      <div className="overflow-auto h-full rounded-b-xl">{children}</div>
     </div>
   );
 }
