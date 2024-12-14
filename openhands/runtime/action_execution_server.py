@@ -270,13 +270,11 @@ class ActionExecutor:
                 obs = ErrorObservation(
                     "[The content in this file is absolutely correct. Also, you can't modify this test file. You must pass this test case. You should correct the codebase instead.]"
                 )
-                
-
-                
-            elif action.code.startswith('!python'):
-                obs = ErrorObservation(
-                    "[Don't use Django shell commands in Jupyter Notebook as file changes will not be reflected. Directly run the code in the terminal using <execute_bash>.]"
-                )
+            # not a shell command; false positive
+            # elif action.code.startswith('!python'):
+            #     obs = ErrorObservation(
+            #         "[Don't use Django shell commands in Jupyter Notebook as file changes will not be reflected. Directly run the code in the terminal using <execute_bash>.]"
+            #     )
             elif (
                 (self.username == 'root')
                 and action.code == self.last_code
