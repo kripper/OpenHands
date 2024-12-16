@@ -83,16 +83,44 @@ class StuckDetector:
 
         return last_actions, last_observations
 
-    def is_stuck(self) -> tuple[bool, str | None]:
-        # filter out MessageAction with source='user' from history
+    def is_stuck(self, headless_mode: bool = True):
+        """Checks if the agent is stuck in a loop.
+
+        Args:
+            headless_mode: Matches AgentController's headless_mode.
+                          If True: Consider all history (automated/testing)
+                          If False: Consider only history after last user message (interactive)
+
+        Returns:
+            bool: True if the agent is stuck in a loop, False otherwise.
+        """
+        if not headless_mode:
+            # In interactive mode, only look at history after the last user message
+            last_user_msg_idx = -1
+            for i, event in enumerate(reversed(self.state.history)):
+                if (
+                    isinstance(event, MessageAction)
+                    and event.source == EventSource.USER
+                ):
+                    last_user_msg_idx = len(self.state.history) - i - 1
+                    break
+
+            history_to_check = self.state.history[last_user_msg_idx + 1 :]
+        else:
+            # In headless mode, look at all history
+            history_to_check = self.state.history
+
+        # Filter out user messages and null events
         filtered_history = [
             event
-            for event in self.state.history
+            for event in history_to_check
             if not (
+                # Filter works elegantly in both modes:
+                # - In headless: actively filters out user messages from full history
+                # - In non-headless: no-op since we already sliced after last user message
                 (isinstance(event, MessageAction) and event.source == EventSource.USER)
-                or
                 # there might be some NullAction or NullObservation in the history at least for now
-                isinstance(event, (NullAction, NullObservation))
+                or isinstance(event, (NullAction, NullObservation))
             )
         ]
         step_count = 2

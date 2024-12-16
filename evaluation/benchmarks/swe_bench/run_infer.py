@@ -11,7 +11,6 @@ from datasets import load_dataset
 
 import openhands.agenthub
 from evaluation.benchmarks.swe_bench.infer_checker import check_if_resolved
-from evaluation.benchmarks.swe_bench.prompt import CODEACT_SWE_PROMPT
 from evaluation.benchmarks.swe_bench.swe_bench2 import update_issue_description
 from evaluation.benchmarks.swe_bench.test_codes import get_test_code
 from evaluation.utils.shared import (
@@ -50,7 +49,6 @@ RUN_WITH_BROWSING = os.environ.get('RUN_WITH_BROWSING', 'false').lower() == 'tru
 
 AGENT_CLS_TO_FAKE_USER_RESPONSE_FN = {
     'CodeActAgent': codeact_user_response,
-    'CodeActSWEAgent': codeact_user_response,
 }
 
 
@@ -64,64 +62,51 @@ def get_instruction(instance: pd.Series, metadata: EvalMetadata):
         instance.problem_statement, instance.instance_id
     )
     # Prepare instruction
-    if metadata.agent_class == 'CodeActSWEAgent':
-        instruction = (
-            'We are currently solving the following issue within our repository. Here is the issue text:\n'
-            '--- BEGIN ISSUE ---\n'
-            f'{instance.problem_statement}\n'
-            '--- END ISSUE ---\n\n'
-        )
-        if USE_HINT_TEXT and instance.hints_text:
-            instruction += (
-                f'--- BEGIN HINTS ---\n{instance.hints_text}\n--- END HINTS ---\n'
-            )
-        instruction += CODEACT_SWE_PROMPT.format(workspace_dir_name=workspace_dir_name)
-    else:
-        # Instruction based on Anthropic's official trajectory
-        # https://github.com/eschluntz/swe-bench-experiments/tree/main/evaluation/verified/20241022_tools_claude-3-5-sonnet-updated/trajs
-        instruction = (
-            f'Please address the following GitHub issue for the repository, where the source code is available in the /testbed directory, which I have access to.\n'
-            '# Title\n'
-            f'{instance.problem_statement}\n\n'
-            'The current working directory is /testbed.\n'
-        )
-        if 1:
-            instruction += (
-                'Do not provide suggestions or workarounds. Directly fix the issue by modifying the source code.\n'
-                'Plan:\n'
-                # '*) Reproduce the issue in the test code before fixing it;\n'
-                "*) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
-                '*) Use search_class instead of search_in_dir when searching for classes to modify;\n'
-                '*) Generate a robust fix.\n'
-                'Ensure the solution is robust, adheres to best practices, and supports framework customizations and extensibility.\n'
-                'Always preserve context and avoid resetting to defaults unless explicitly necessary.\n'
-                'Always use a dynamic approach wherever possible to ensure flexibility, compatibility, and robustness.\n'
-                'Always include comprehensive error handling in code modifications.\n'
-                # '*) Verify the fix.\n'
-                '*) Add similar functions too for better handling of edgecases\n'
-                '*) Update complementary functions too for robust functionality.\n'
-                # '*) Final step: Parameterize the existing test cases instead of adding a new function to verify the fix\n'
-                '\n'
-                'Add your valuable thoughts to every action you take.\n'
-                'For every thought: add previous logic and the new logic.\n'
-                'Do one file operation at a time.\n'
-                'Examine the traceback and understand the values of the variables in the traceback.\n'
-                'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
-                'Think about edgecases and make sure your fix handles them as well\n'
-                # "Please don't blabber\n"
-            )
-        else:
-            instruction += 'Just reproduce the issue only.'
-        if (
-            USE_HINT_TEXT
-            and instance.hints_text
-            and instance.instance_id != 'astropy__astropy-14365'
-        ):
-            instruction += f'# Hints\n{instance.hints_text}\n\n'
+    # Instruction based on Anthropic's official trajectory
+    # https://github.com/eschluntz/swe-bench-experiments/tree/main/evaluation/verified/20241022_tools_claude-3-5-sonnet-updated/trajs
+    instruction = (
+        f'Please address the following GitHub issue for the repository, where the source code is available in the /testbed directory, which I have access to.\n'
+        '# Title\n'
+        f'{instance.problem_statement}\n\n'
+        'The current working directory is /testbed.\n'
+    )
+    if 1:
         instruction += (
-            'IMPORTANT: You should ONLY interact with the environment provided to you AND NEVER ASK FOR HUMAN HELP.\n'
-            'You SHOULD INCLUDE PROPER INDENTATION in your edit commands.\n'
+            'Do not provide suggestions or workarounds. Directly fix the issue by modifying the source code.\n'
+            'Plan:\n'
+            # '*) Reproduce the issue in the test code before fixing it;\n'
+            "*) Don't search for the user files in the repo because the user's code is an MRE (Minimal Reproducible Example) and wouldn't be part of the repository. It is verified that there is no issue in the user's code and this issue lies in the source code only. Focus only on modifying the existing repository code relevant to the issue instead. Search for the relevant files to modify using search_class, search_function and open_file agent skills instead of modifying the test files itself;\n"
+            '*) Use search_class instead of search_in_dir when searching for classes to modify;\n'
+            '*) Generate a robust fix.\n'
+            'Ensure the solution is robust, adheres to best practices, and supports framework customizations and extensibility.\n'
+            'Always preserve context and avoid resetting to defaults unless explicitly necessary.\n'
+            'Always use a dynamic approach wherever possible to ensure flexibility, compatibility, and robustness.\n'
+            'Always include comprehensive error handling in code modifications.\n'
+            # '*) Verify the fix.\n'
+            '*) Add similar functions too for better handling of edgecases\n'
+            '*) Update complementary functions too for robust functionality.\n'
+            # '*) Final step: Parameterize the existing test cases instead of adding a new function to verify the fix\n'
+            '\n'
+            'Add your valuable thoughts to every action you take.\n'
+            'For every thought: add previous logic and the new logic.\n'
+            'Do one file operation at a time.\n'
+            'Examine the traceback and understand the values of the variables in the traceback.\n'
+            'Determine the root cause of the issue and implement a direct fix, rather than employing a workaround.\n'
+            'Think about edgecases and make sure your fix handles them as well\n'
+            # "Please don't blabber\n"
         )
+    else:
+        instruction += 'Just reproduce the issue only.'
+    if (
+        USE_HINT_TEXT
+        and instance.hints_text
+        and instance.instance_id != 'astropy__astropy-14365'
+    ):
+        instruction += f'# Hints\n{instance.hints_text}\n\n'
+    instruction += (
+        'IMPORTANT: You should ONLY interact with the environment provided to you AND NEVER ASK FOR HUMAN HELP.\n'
+        'You SHOULD INCLUDE PROPER INDENTATION in your edit commands.\n'
+    )
 
     # NOTE: You can actually set slightly different instruction for different agents
     # instruction += AGENT_CLS_TO_INST_SUFFIX[metadata.agent_class]
