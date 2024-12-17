@@ -50,6 +50,7 @@ def store_feedback(feedback: FeedbackDataModel) -> dict[str, str]:
                 'init',
                 'running',
                 'finished',
+                'stopped',
             ]:
                 # pop the item
                 feedback.trajectory.pop(idx)
