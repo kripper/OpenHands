@@ -6,7 +6,7 @@ import { IconButton } from "../shared/buttons/icon-button";
 import { NavTab } from "./nav-tab";
 
 interface ContainerProps {
-  label?: string;
+  label?: React.ReactNode;
   labels?: {
     label: string | React.ReactNode;
     to: string;
