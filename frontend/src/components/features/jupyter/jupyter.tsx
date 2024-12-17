@@ -15,9 +15,9 @@ interface JupyterEditorProps {
 }
 
 export function JupyterEditor({ maxWidth }: JupyterEditorProps) {
-  const { cells } = useSelector((state: RootState) => state.jupyter);
   const dispatch = useDispatch();
   const { send } = useWsClient();
+  const cells = useSelector((state: RootState) => state.jupyter?.cells ?? []);
   const jupyterRef = React.useRef<HTMLDivElement>(null);
 
   const { hitBottom, scrollDomToBottom, onChatBodyScroll } =
@@ -38,9 +38,10 @@ export function JupyterEditor({ maxWidth }: JupyterEditorProps) {
     }
   };
   let jupyterEditor = (
-    <div className="flex-1" style={{ maxWidth, height: "85%" }}>
+    <div className="flex-1 h-full flex flex-col" style={{ maxWidth, height: "85%" }}>
       <div
-        className="overflow-y-auto max-h-[85%]"
+        data-testid="jupyter-container"
+        className="flex-1 overflow-y-auto max-h-[85%]"
         ref={jupyterRef}
         onScroll={(e) => onChatBodyScroll(e.currentTarget)}
       >

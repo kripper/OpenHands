@@ -83,9 +83,8 @@ export function ChatInput({
   };
 
   const handleSubmitMessage = () => {
-    const trimmedValue = textareaRef.current?.value.trim();
-    const message = value || trimmedValue;
-    if (message) {
+    const message = value || textareaRef.current?.value || "";
+    if (message.trim()) {
       onSubmit(message);
       onChange?.("");
       if (textareaRef.current) {
