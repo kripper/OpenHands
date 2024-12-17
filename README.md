@@ -8,7 +8,7 @@ Gemini Models solves all 93 issues in this category. Checkout the results [here]
 ---
 
 
-The easiest way to run Kevin is to [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/SmartManoj/Kevin) 🔥🔥🔥
+The easiest way to run Kevin is to press comma (,) to [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/SmartManoj/Kevin) 🔥🔥🔥
 
 
 The vision is to leverage SLMs effectively and work towards solving most of the issues on the SWE-Bench Lite evaluation.
