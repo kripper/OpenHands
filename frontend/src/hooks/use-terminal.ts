@@ -34,6 +34,7 @@ export const useTerminal = ({
   const ref = React.useRef<HTMLDivElement>(null);
   const lastCommandIndex = React.useRef(0);
   const lastCommand = React.useRef("");
+  const keyEventDisposable = React.useRef<{ dispose: () => void } | null>(null);
 
   const commandHistory = React.useRef<string[]>([]);
   const currentCommandIndex = React.useRef<number>(-1);
@@ -159,6 +160,12 @@ export const useTerminal = ({
   
   React.useEffect(() => {
     if (terminal.current) {
+      // Dispose of existing listeners if they exist
+      if (keyEventDisposable.current) {
+        keyEventDisposable.current.dispose();
+        keyEventDisposable.current = null;
+      }
+
       let commandBuffer = "";
       const handleContextMenu = (e: MouseEvent) => {
         e.preventDefault();
@@ -206,7 +213,8 @@ export const useTerminal = ({
         terminalElement.addEventListener("contextmenu", handleContextMenu);
       }
       if (!disabled) {
-        terminal.current.onKey(({ key, domEvent }) => {
+        // Add new key event listener and store the disposable
+        keyEventDisposable.current = terminal.current.onKey(({ key, domEvent }) => {
           if (domEvent.key === "Enter") {
             lastCommand.current = commandBuffer;
             handleEnter(commandBuffer);
@@ -236,13 +244,21 @@ export const useTerminal = ({
           }),
         );
       } else {
-        terminal.current.onKey((e) => {
+        // Add a noop handler when disabled
+        keyEventDisposable.current = terminal.current.onKey((e) => {
           e.domEvent.preventDefault();
           e.domEvent.stopPropagation();
         });
       }
     }
-  }, [disabled, terminal]);
+
+    return () => {
+      if (keyEventDisposable.current) {
+        keyEventDisposable.current.dispose();
+        keyEventDisposable.current = null;
+      }
+    };
+  }, [disabled]);
 
   return { ref, clearTerminal };
 };

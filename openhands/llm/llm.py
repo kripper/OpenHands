@@ -111,7 +111,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         # if self.config.enable_cache:
         #     litellm.cache = Cache()
 
-        # litellm actually uses base Exception here for unknown model
         self.model_info: ModelInfo | None = None
 
         if self.config.log_completions:
