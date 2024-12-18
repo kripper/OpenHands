@@ -23,7 +23,7 @@ def download_arxiv_pdf(query: str):
     search = arxiv.Search(
         query=query,
         max_results= 10,  # Increase initial results for better fuzzy matching
-        sort_by=arxiv.SortCriterion.Relevance
+        sort_by=arxiv.SortCriterion.Relevance # not working as expected
     )
     results = list(client.results(search))
 
