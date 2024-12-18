@@ -1343,7 +1343,9 @@ except ImportError:
 
 if not getpass.getuser() == 'root':
     from .so import search_in_stack_overflow  # noqa
+    from .academic_utils import download_arxiv_pdf  # noqa
     __all__.append('search_in_stack_overflow')
+    __all__.append('download_arxiv_pdf')
 
 if __name__ == '__main__':
     full_content = """
