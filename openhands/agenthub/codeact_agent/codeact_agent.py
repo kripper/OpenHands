@@ -504,6 +504,9 @@ class CodeActAgent(Agent):
                     )
                 )
 
+        custom_instructions = config.custom_instructions
+        if custom_instructions:
+            messages.append(Message(role='user', content=[TextContent(text=custom_instructions)]))
         # if state.history.summary:
         #     summary_message = self.get_action_message(
         #         state.history.summary, pending_tool_call_action_messages={}

@@ -44,6 +44,7 @@ class AppConfig:
         file_uploads_max_file_size_mb: Maximum file upload size in MB. `0` means unlimited.
         file_uploads_restrict_file_types: Whether to restrict upload file types.
         file_uploads_allowed_extensions: Allowed file extensions. `['.*']` allows all.
+        custom_instructions: Custom instructions for the agent.
     """
 
     llms: dict[str, LLMConfig] = field(default_factory=dict)
@@ -75,6 +76,7 @@ class AppConfig:
     file_uploads_allowed_extensions: list[str] = field(default_factory=lambda: ['.*'])
     override_UI_settings: bool = False
     runloop_api_key: str | None = None
+    custom_instructions: str = ''
 
     defaults_dict: ClassVar[dict] = {}
 
