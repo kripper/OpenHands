@@ -1337,13 +1337,13 @@ try:
         from .cst_ops import add_param_to_init_in_subclass  # noqa
 
         __all__.append('add_param_to_init_in_subclass')
-    else:
-        from .so import search_in_stack_overflow  # noqa
-
-        __all__.append('search_in_stack_overflow')
 except ImportError:
     print('libcst not installed')
     # pip install libcst
+
+if not getpass.getuser() == 'root':
+    from .so import search_in_stack_overflow  # noqa
+    __all__.append('search_in_stack_overflow')
 
 if __name__ == '__main__':
     full_content = """
