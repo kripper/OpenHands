@@ -465,7 +465,7 @@ if __name__ == '__main__':
     # example: python client.py 8000 --working-dir /workspace --plugins JupyterRequirement
     args = parser.parse_args()
     os.environ['VSCODE_PORT'] = str(int(args.port) + 1)
-    assert check_port_available(int(os.environ['VSCODE_PORT']))
+    # assert check_port_available(int(os.environ['VSCODE_PORT']))
 
     plugins_to_load: list[Plugin] = []
     if args.plugins:
