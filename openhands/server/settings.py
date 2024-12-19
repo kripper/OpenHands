@@ -7,7 +7,7 @@ class Settings:
     Persisted settings for OpenHands sessions
     """
 
-    language: str | None = None
+    language: str = 'en'
     agent: str | None = None
     max_iterations: int | None = None
     security_analyzer: str | None = None
