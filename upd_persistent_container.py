@@ -4,6 +4,7 @@ from datetime import datetime
 import docker
 
 full_file_names = [
+    'openhands/runtime/plugins/agent_skills/agentskills.py',
     'openhands/runtime/plugins/agent_skills/file_ops/file_ops.py',
     'openhands/runtime/plugins/agent_skills/file_ops/cst_ops.py',
     'openhands/runtime/plugins/agent_skills/file_ops/ast_ops.py',
@@ -14,6 +15,8 @@ full_file_names = [
     'openhands/runtime/utils/bash.py',
     'openhands/runtime/action_execution_server.py',
     'openhands/linter/__init__.py',
+    'sel/selenium_session_details.py',
+    'sel/selenium_tester.py',
 ]
 client = docker.from_env()
 for c in client.containers.list():
