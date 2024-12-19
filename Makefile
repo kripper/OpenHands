@@ -138,6 +138,7 @@ install-python-dependencies:
 		poetry run pip install chroma-hnswlib; \
 	fi
 
+	poetry run pip install -r requirements-extra.txt
 	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
 		poetry install --without llama-index; \
 	else \

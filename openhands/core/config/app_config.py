@@ -45,6 +45,7 @@ class AppConfig:
         file_uploads_restrict_file_types: Whether to restrict upload file types.
         file_uploads_allowed_extensions: Allowed file extensions. `['.*']` allows all.
         custom_instructions: Custom instructions for the agent.
+        use_selenium: Whether to use selenium.
     """
 
     llms: dict[str, LLMConfig] = field(default_factory=dict)
@@ -80,6 +81,8 @@ class AppConfig:
     override_UI_settings: bool = False
     runloop_api_key: str | None = None
     custom_instructions: str = ''
+    use_selenium: bool = False
+
 
     defaults_dict: ClassVar[dict] = {}
 

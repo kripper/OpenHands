@@ -458,13 +458,25 @@ class CodeActAgent(Agent):
         """
         if not self.prompt_manager:
             raise Exception('Prompt Manager not instantiated.')
+        if config.use_selenium:
+            extra_message = '''
 
+You have access to a selenium browser. You can use it using the driver python variable.
+
+Example:
+<execute_ipython>
+driver.current_url
+</execute_ipython>
+
+'''
+        else:
+            extra_message = ''
         messages: list[Message] = [
             Message(
                 role=system_role,
                 content=[
                     TextContent(
-                        text=self.prompt_manager.get_system_message(),
+                        text=self.prompt_manager.get_system_message() + extra_message,
                         cache_prompt=self.llm.is_caching_prompt_active(),
                     )
                 ],

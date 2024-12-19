@@ -1,5 +1,5 @@
 from inspect import signature
-
+from sel.selenium_tester import driver
 from openhands.runtime.plugins.agent_skills import file_ops, file_reader
 from openhands.runtime.plugins.agent_skills.utils.dependency import import_functions
 
@@ -32,3 +32,4 @@ for func_name in __all__:
 from openhands.runtime.plugins.agent_skills.file_editor import file_editor  # noqa: E402
 
 __all__ += ['file_editor']
+__all__ += ['driver']

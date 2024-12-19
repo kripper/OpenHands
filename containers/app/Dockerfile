@@ -27,6 +27,7 @@ RUN apt-get update -y \
 COPY ./pyproject.toml ./poetry.lock ./
 RUN touch README.md
 RUN export POETRY_CACHE_DIR && poetry install --without evaluation,llama-index --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry run pip install -r requirements-extra.txt
 
 FROM python:3.12.3-slim AS openhands-app
 

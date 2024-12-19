@@ -2,6 +2,13 @@ import re
 from fuzzywuzzy import fuzz
 import arxiv
 import os
+import requests
+from selenium.webdriver.common.by import By
+from sel.selenium_tester import driver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from semanticscholar import SemanticScholar
+
 def clean_filename(filename: str):
     # remove special characters
     filename = re.sub(r'[^\w\s-]', '', filename)
@@ -43,8 +50,42 @@ def download_arxiv_pdf(query: str):
     else:
         print("No relevant results found")
     
+def download_pdf_from_url(url: str, name: str = None):
+    if name is None:
+        name = url.split('/')[-1]
+    with open(name, 'wb') as f:
+        f.write(requests.get(url).content)
 
+def download_semanticscholar_pdf(query: str = None, url: str = None):
+    sch = SemanticScholar()
+    if query:
+        results = sch.search_paper(query)
+        print(f'{results.total} results.', f'First occurrence: {results[0].title}.')
+
+        if results.total == 0:
+            print("No results found")
+            return
+        url = results[0].url
+    driver.get(url)
+    try:
+        s='[data-test-id="cookie-banner__dismiss-btn"]'
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, s))).click()
+    except:
+        pass
+    s='[data-test-id="icon-disclosure"]'
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, s))).click()
+    s='[data-test-id="paper-link"]'
+    link = driver.find_element(By.CSS_SELECTOR, s).get_attribute('href')
+    if 'arxiv' in link:
+        print(f"Downloading from {link}")
+        download_pdf_from_url(link)
+    else:
+        print(f"Download from {link}")
 if __name__ == "__main__":  
     query = "OpenHands: An Open Platform for AI Software Developers as Generalist Agents"
-    download_arxiv_pdf(query)
+    url = 'https://www.semanticscholar.org/paper/1d07e5b6f978cf69c0186f3d5f434fa92d471e46'
+    # download_semanticscholar_pdf(url=url)
+    url = 'https://arxiv.org/pdf/2407.16741.pdf'
+    download_pdf_from_url(url)
+
 
