@@ -25,6 +25,8 @@ Gemini Models solves all 93 issues in this category. Checkout the results [here]
 ---
 
 ### Kevin Changelogs:
+  [Integrated web browser using undetected-chromedriver ](https://github.com/SmartManoj/Kevin/commit/07a6e6e09deec59527dab824a9ad45b77cd57ced)
+
   [Added Custom Instructions](https://github.com/SmartManoj/Kevin/commit/2ae6a8ee368c9d9fa51d57d5120df0c6f50e5db3),
 
   [Added EC2 Runtime](https://github.com/SmartManoj/Kevin/commit/37d3fab5f58aa939d0689c6559325007e3f001c5),
