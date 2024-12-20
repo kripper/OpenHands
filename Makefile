@@ -113,8 +113,14 @@ check-nodejs:
 		if [ "$${NODE_VERSION_ARRAY[0]}" -gt 18 ] || ([ "$${NODE_VERSION_ARRAY[0]}" -eq 18 ] && [ "$${NODE_VERSION_ARRAY[1]}" -gt 17 ]) || ([ "$${NODE_VERSION_ARRAY[0]}" -eq 18 ] && [ "$${NODE_VERSION_ARRAY[1]}" -eq 17 ] && [ "$${NODE_VERSION_ARRAY[2]}" -ge 1 ]); then \
 			echo "$(BLUE)Node.js $$NODE_VERSION is already installed.$(RESET)"; \
 		else \
-			echo "$(RED)Node.js 18.17.1 or later is required. Please install Node.js 18.17.1 or later to continue.$(RESET)"; \
-			exit 1; \
+			@read -p "Do you want to install Node.js 18.17.1 or later? [y/n]:" consent; \
+			if [ "$$consent" = "y" ]; then \
+				curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -; \
+				sudo apt-get install -y nodejs; \
+			else \
+				echo "$(RED)Node.js 18.17.1 or later is required. Please install Node.js 18.17.1 or later to continue.$(RESET)"; \
+				exit 1; \
+			fi; \
 		fi; \
 	else \
 		echo "$(RED)Node.js is not installed. Please install Node.js to continue.$(RESET)"; \
