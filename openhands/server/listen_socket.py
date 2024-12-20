@@ -1,5 +1,6 @@
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.schema.action import ActionType
+from openhands.core.schema.agent import AgentState
 from openhands.events.action import (
     NullAction,
 )
@@ -88,11 +89,11 @@ async def init_connection(
         ):
             continue
         elif isinstance(event, AgentStateChangedObservation):
-            if event.agent_state == 'init':
+            if event.agent_state ==  AgentState.INIT:
                 await sio.emit('oh_event', event_to_dict(event), to=connection_id)
             else:
                 agent_state_changed = event
-                continue
+            continue
         await sio.emit('oh_event', event_to_dict(event), to=connection_id)
     if agent_state_changed:
         await sio.emit('oh_event', event_to_dict(agent_state_changed), to=connection_id)
