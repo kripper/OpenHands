@@ -142,10 +142,18 @@ check-poetry:
 		if [ $${POETRY_VERSION_ARRAY[0]} -ge 1 ] && [ $${POETRY_VERSION_ARRAY[1]} -ge 8 ]; then \
 			echo "$(BLUE)$(shell poetry --version) is already installed.$(RESET)"; \
 		else \
-			echo "$(RED)Poetry 1.8 or later is required. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
-			echo "$(RED) curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -$(RESET)"; \
-			echo "$(RED)More detail here: https://python-poetry.org/docs/#installing-with-the-official-installer$(RESET)"; \
-			exit 1; \
+			@read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
+			if [ "$$consent" = "y" ]; then \
+				curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -; \
+				echo "$(GREEN)Poetry installed successfully.$(RESET)"; \
+				echo "Adding Poetry to your PATH..."; \
+				export PATH="$HOME/.local/bin:$PATH"; \
+			else \
+				echo "$(RED)Poetry 1.8 or later is required. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
+				echo "$(RED) curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -$(RESET)"; \
+				echo "$(RED)More detail here: https://python-poetry.org/docs/#installing-with-the-official-installer$(RESET)"; \
+				exit 1; \
+			fi; \
 		fi; \
 	else \
 		echo "$(RED)Poetry is not installed. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
