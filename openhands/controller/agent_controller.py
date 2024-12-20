@@ -12,6 +12,7 @@ from openhands.controller.state.state import State, TrafficControlState
 from openhands.controller.stuck import StuckDetector
 from openhands.core.config import AgentConfig, LLMConfig
 from openhands.core.exceptions import (
+    AgentStuckInLoopError,
     FunctionCallNotExistsError,
     FunctionCallValidationError,
     LLMMalformedActionError,
@@ -198,7 +199,7 @@ class AgentController:
             err_id = ''
             if isinstance(e, litellm.AuthenticationError):
                 err_id = 'STATUS$ERROR_LLM_AUTHENTICATION'
-            # self.status_callback('error', err_id, err)
+            # self.status_callback('error', err_id, type(e).__name__ + ': ' + str(e))
         self.event_stream.add_event(
             ErrorObservation(err), EventSource.ENVIRONMENT
         )
@@ -540,6 +541,11 @@ class AgentController:
                 ),
                 EventSource.USER,
             )
+        # if self._is_stuck():
+        #     await self._react_to_exception(
+        #         AgentStuckInLoopError('Agent got stuck in a loop')
+        #     )
+        #     return
 
         self.update_state_before_step()
         action: Action = NullAction()
