@@ -3,3 +3,4 @@ fuzzywuzzy
 arxiv
 libcst
 undetected_chromedriver
+scholarly

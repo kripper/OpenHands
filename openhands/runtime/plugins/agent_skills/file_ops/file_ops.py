@@ -1345,11 +1345,12 @@ if not getpass.getuser() == 'root':
     from .so import search_in_stack_overflow  # noqa
     __all__.append('search_in_stack_overflow')
     try:
-        from .academic_utils import download_arxiv_pdf  # noqa
+        from .academic_utils import download_arxiv_pdf, download_semantic_scholar_pdf, download_google_scholar_paper  # noqa
         __all__.append('download_arxiv_pdf')
-    except ImportError:
-        print('arxiv not installed')
-        # pip install arxiv
+        __all__.append('download_semantic_scholar_pdf')
+        __all__.append('download_google_scholar_paper')
+    except ImportError as e:
+        print(e)
 
 if __name__ == '__main__':
     full_content = """

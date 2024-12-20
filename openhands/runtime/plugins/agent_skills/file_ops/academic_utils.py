@@ -3,6 +3,7 @@ from fuzzywuzzy import fuzz
 import arxiv
 import os
 import requests
+from scholarly import scholarly
 from selenium.webdriver.common.by import By
 from sel.selenium_tester import driver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -53,10 +54,21 @@ def download_arxiv_pdf(query: str):
 def download_pdf_from_url(url: str, name: str = None):
     if name is None:
         name = url.split('/')[-1]
-    with open(name, 'wb') as f:
-        f.write(requests.get(url).content)
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(name, "wb") as f:
+            f.write(response.content)
+        print("PDF downloaded successfully.")
+    else:
+        print(f"Failed to download PDF. Status code: {response.status_code}")
 
-def download_semanticscholar_pdf(query: str = None, url: str = None):
+def download_semantic_scholar_pdf(query: str = None, url: str = None):
+    '''
+    Download a paper from semantic scholar using the semantic scholar library
+    Args:
+        query: The search query.
+        url: The url of the paper.
+    '''
     sch = SemanticScholar()
     if query:
         results = sch.search_paper(query)
@@ -81,11 +93,44 @@ def download_semanticscholar_pdf(query: str = None, url: str = None):
         download_pdf_from_url(link)
     else:
         print(f"Download from {link}")
+
+
+
+def download_google_scholar_paper(search_query: str):
+    '''
+    Download a paper from google scholar using the scholarly library
+    Args:
+        search_query: The search query.
+    '''
+    search_results = scholarly.search_pubs(search_query)
+    try:
+        first_result = next(search_results)
+        print(f"Title: {first_result['bib']['title']}")
+        print(f"URL: {first_result['pub_url']}")
+        
+        if 'eprint' in first_result:
+            pdf_url = first_result['eprint']
+            print(f"PDF URL: {pdf_url}")
+        elif first_result['pub_url']:
+            pdf_url = first_result['pub_url'].replace('/abs/', '/pdf/') + ".pdf"
+            print(f"Trying PDF URL: {pdf_url}")
+            download_pdf_from_url(pdf_url, name=f"{clean_filename(first_result['bib']['title'])}.pdf")
+        else:
+            print("No PDF link found in the search result.")
+            exit()
+
+        
+
+    except StopIteration:
+        print("No results found for the given query.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 if __name__ == "__main__":  
     query = "OpenHands: An Open Platform for AI Software Developers as Generalist Agents"
     url = 'https://www.semanticscholar.org/paper/1d07e5b6f978cf69c0186f3d5f434fa92d471e46'
     # download_semanticscholar_pdf(url=url)
     url = 'https://arxiv.org/pdf/2407.16741.pdf'
-    download_pdf_from_url(url)
-
+    # download_pdf_from_url(url)
+    download_google_scholar_paper(query)
 
