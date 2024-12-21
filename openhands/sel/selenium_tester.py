@@ -1,3 +1,12 @@
+import os
+try:
+    import selenium
+except:
+    cmd = 'pip install selenium'
+    print(cmd)
+    os.system(cmd)
+    import selenium
+
 from selenium import webdriver
 
 from selenium.webdriver.remote import remote_connection
@@ -18,7 +27,7 @@ def create_driver(url,session_id):
     driver.session_id = session_id
     return driver
 
-from sel.selenium_session_details import url,session_id
+from openhands.sel.selenium_session_details import url,session_id
 driver = create_driver(url,session_id)  
 ## import selenium keys
 if __name__ == '__main__':

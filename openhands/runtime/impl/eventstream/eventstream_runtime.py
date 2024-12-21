@@ -179,10 +179,10 @@ class EventStreamRuntime(Runtime):
                 f'Installing extra user-provided dependencies in the runtime image: {self.config.sandbox.runtime_extra_deps}',
             )
         try:
-            path = 'sel/selenium_session_details.py'
-            self.copy_to(path, '/openhands/code/sel/')
-            path = 'sel/selenium_tester.py'
-            self.copy_to(path, '/openhands/code/sel/')
+            path = 'openhands/sel/selenium_session_details.py'
+            self.copy_to(path, '/openhands/code/openhands/sel/')
+            path = 'openhands/sel/selenium_tester.py'
+            self.copy_to(path, '/openhands/code/openhands/sel/')
             logger.info(f'Copied selenium files to runtime')
         except Exception as e:
             logger.error(f'Error copying selenium files to runtime: {e}')
