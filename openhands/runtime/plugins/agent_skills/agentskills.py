@@ -1,5 +1,5 @@
 from inspect import signature
-from sel.selenium_tester import driver
+from openhands.sel.selenium_tester import driver
 from openhands.runtime.plugins.agent_skills import file_ops, file_reader
 from openhands.runtime.plugins.agent_skills.utils.dependency import import_functions
 

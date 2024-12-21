@@ -1,0 +1,1 @@
+python3 -i sel/selenium_browser.py
