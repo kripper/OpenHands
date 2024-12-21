@@ -26,7 +26,6 @@ export function JupyterEditor({ maxWidth }: JupyterEditorProps) {
 
   const handleInputSubmit = () => {
     if (inputValue.trim()) {
-      dispatch(appendJupyterInput(inputValue));
       send(createJupyterCode(inputValue));
       setInputValue("");
     }
