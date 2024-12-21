@@ -183,6 +183,12 @@ class SessionManager:
         if session:
             logger.info(f'found_local_session:{sid}')
             return session.agent_session.event_stream
+        else:
+            try:
+                return EventStream(sid, self.file_store)
+            except Exception:
+                pass
+                
 
         # If there is a remote session running, retrieve existing events for that
         redis_client = self._get_redis_client()
