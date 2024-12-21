@@ -347,6 +347,7 @@ jobs:
                     const firstEntry = JSON.parse(jsonLines[0]);
                     successExplanation = firstEntry.success_explanation || '';
                   }
+                }
               }
             } catch (error){
               console.error('Error reading file:', error);
