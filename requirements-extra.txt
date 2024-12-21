@@ -4,3 +4,4 @@ arxiv
 libcst
 undetected_chromedriver
 scholarly
+PyPaperBot

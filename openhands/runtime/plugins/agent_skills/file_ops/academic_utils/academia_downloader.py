@@ -61,6 +61,7 @@ def download_academia_pdf(query: str):
         print(f"Error occured: {e}")
 
 
+
 if __name__ == '__main__':
     download_academia_pdf('hooke')
 

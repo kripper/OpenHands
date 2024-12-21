@@ -8,11 +8,9 @@ if __name__ == '__main__':
     # Initialize Chrome options
     options = webdriver.ChromeOptions()
     options.add_argument('--disable-popup-blocking')
-    options.headless = False  # Set to True if headless mode is required
+    options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
 
-    # Desired capabilities for logging
-    capabilities = webdriver.DesiredCapabilities().CHROME
-    capabilities["goog:loggingPrefs"] = {"performance": "ALL"}
+    options.headless = False  # Set to True if headless mode is required
 
     # Launch the browser using undetected_chromedriver
     driver = uc.Chrome(headless=False, use_subprocess=False, options=options)

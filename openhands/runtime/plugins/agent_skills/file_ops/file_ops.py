@@ -1345,15 +1345,8 @@ if not getpass.getuser() == 'root':
     from .so import search_in_stack_overflow  # noqa
     __all__.append('search_in_stack_overflow')
     if os.getenv('RESEARCH_AGENT') == '1':
-        try:
-            from .academic_utils import download_arxiv_pdf, download_semantic_scholar_pdf, download_google_scholar_paper  # noqa
-            from .academia_downloader import download_academia_pdf  # noqa
-            __all__.append('download_arxiv_pdf')
-            __all__.append('download_semantic_scholar_pdf')
-            __all__.append('download_google_scholar_paper')
-            __all__.append('download_academia_pdf')
-        except ImportError as e:
-            print(e)
+        import openhands.runtime.plugins.agent_skills.file_ops.academic_utils as academic_utils
+        __all__.extend(academic_utils.__all__)
 
 if __name__ == '__main__':
     full_content = """

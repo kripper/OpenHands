@@ -5,7 +5,7 @@ import os
 import requests
 from scholarly import scholarly
 from selenium.webdriver.common.by import By
-from sel.selenium_tester import driver
+from openhands.sel.selenium_tester import driver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from semanticscholar import SemanticScholar
@@ -125,6 +125,18 @@ def download_google_scholar_paper(search_query: str):
         print("No results found for the given query.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+def download_papers_using_pypaperbot(query: str, scholar_pages: int = 1, max_dwn_year: int = 1):
+    '''
+    Download a paper using the PyPaperBot library
+    Args:
+        query: The search query.
+        scholar_pages: The number of pages to search on scholar.
+        max_dwn_year: The maximum year to download papers from.
+    '''
+    cmd = f'python -m PyPaperBot --query={query}  --dwn-dir=/workspace/papers --scholar-pages={scholar_pages} --max-dwn-year={max_dwn_year}'
+    os.system(cmd)
+    print(f"Downloaded {query} to /workspace/papers")
 
 if __name__ == "__main__":  
     query = "OpenHands: An Open Platform for AI Software Developers as Generalist Agents"

@@ -1,2 +1,2 @@
 @echo off
-python -i sel/selenium_browser.py
+python -i openhands/sel/selenium_browser.py
