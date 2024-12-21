@@ -21,6 +21,7 @@ from openhands.events.action import (
     BrowseURLAction,
     CmdRunAction,
     FileEditAction,
+    FileReadAction,
     IPythonRunCellAction,
     MessageAction,
 )
@@ -31,6 +32,7 @@ from openhands.events.observation import (
     BrowserOutputObservation,
     CmdOutputObservation,
     FileEditObservation,
+    FileReadObservation,
     IPythonRunCellObservation,
     UserRejectObservation,
 )
@@ -147,6 +149,7 @@ class CodeActAgent(Agent):
                 - CmdRunAction: For executing bash commands
                 - IPythonRunCellAction: For running IPython code
                 - FileEditAction: For editing files
+                - FileReadAction: For reading files using openhands-aci commands
                 - BrowseInteractiveAction: For browsing the web
                 - AgentFinishAction: For ending the interaction
                 - MessageAction: For sending messages
@@ -171,6 +174,7 @@ class CodeActAgent(Agent):
                 IPythonRunCellAction,
                 AgentSummarizeAction,
                 FileEditAction,
+                FileReadAction,
                 BrowseInteractiveAction,
                 BrowseURLAction,
             ),
@@ -273,6 +277,7 @@ class CodeActAgent(Agent):
         - CmdOutputObservation: Formats command execution results with exit codes
         - IPythonRunCellObservation: Formats IPython cell execution results, replacing base64 images
         - FileEditObservation: Formats file editing results
+        - FileReadObservation: Formats file reading results from openhands-aci
         - AgentDelegateObservation: Formats results from delegated agent tasks
         - ErrorObservation: Formats error messages from failed actions
         - UserRejectObservation: Formats user rejection messages
@@ -315,7 +320,12 @@ class CodeActAgent(Agent):
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
         elif isinstance(obs, FileEditObservation):
-            text = obs_prefix + truncate_content(str(obs), max_message_chars)
+            text = truncate_content(str(obs), max_message_chars)
+            message = Message(role='user', content=[TextContent(text=text)])
+        elif isinstance(obs, FileReadObservation):
+            message = Message(
+                role='user', content=[TextContent(text=obs.content)]
+            )  # Content is already truncated by openhands-aci
         elif isinstance(obs, BrowserOutputObservation):
             text = obs_prefix + obs.get_agent_obs_text()
         elif isinstance(obs, AgentDelegateObservation):

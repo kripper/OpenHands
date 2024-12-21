@@ -61,7 +61,7 @@ def remove_all_runtime_containers():
     remove_all_containers(CONTAINER_NAME_PREFIX)
 
 
-atexit.register(remove_all_runtime_containers)
+_atexit_registered = False
 
 
 class EventStreamRuntime(Runtime):
@@ -111,6 +111,11 @@ class EventStreamRuntime(Runtime):
         attach_to_existing: bool = False,
         headless_mode: bool = True,
     ):
+        global _atexit_registered
+        if not _atexit_registered:
+            _atexit_registered = True
+            atexit.register(remove_all_runtime_containers)
+
         self.config = config
         self.persist_sandbox = self.config.sandbox.persist_sandbox
         self.fast_boot = self.config.sandbox.fast_boot

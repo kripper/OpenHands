@@ -7,7 +7,7 @@ import { createChatMessage, createRegenerateLastMessage } from "#/services/chat-
 import { InteractiveChatBox } from "./interactive-chat-box";
 import { addUserMessage, removeLastAssistantMessage } from "#/state/chat-slice";
 import { RootState } from "#/store";
-import AgentState from "#/types/agent-state";
+import { AgentState } from "#/types/agent-state";
 import { generateAgentStateChangeEvent } from "#/services/agent-state-service";
 import { FeedbackModal } from "../feedback/feedback-modal";
 import { useScrollToBottom } from "#/hooks/use-scroll-to-bottom";

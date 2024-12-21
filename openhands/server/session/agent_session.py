@@ -227,6 +227,11 @@ class AgentSession:
         except Exception as e:
             logger.error(f'Error resetting LLM logger counters: {e}', exc_info=True)
 
+        # FIXME: this sleep is a terrible hack.
+        # This is to give the websocket a second to connect, so that
+        # the status messages make it through to the frontend.
+        # We should find a better way to plumb status messages through.
+        await asyncio.sleep(1)
         try:
             await self.runtime.connect()
         except AgentRuntimeUnavailableError as e:
