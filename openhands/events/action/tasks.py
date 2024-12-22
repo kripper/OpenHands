@@ -6,8 +6,8 @@ from openhands.events.action.action import Action
 
 @dataclass
 class AddTaskAction(Action):
-    parent: str
     goal: str
+    parent: str = ''
     subtasks: list = field(default_factory=list)
     thought: str = ''
     action: str = ActionType.ADD_TASK
