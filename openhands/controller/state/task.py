@@ -42,9 +42,9 @@ class Task:
         if subtasks is None:
             subtasks = []
         if parent.id:
-            self.id = parent.id + '.' + str(len(parent.subtasks))
+            self.id = parent.id + '.' + str(len(parent.subtasks) + 1)
         else:
-            self.id = str(len(parent.subtasks))
+            self.id = str(len(parent.subtasks) + 1)
         self.parent = parent
         self.goal = goal
         logger.debug(f'Creating task {self.id} with parent={parent.id}, goal={goal}')
@@ -189,6 +189,7 @@ class RootTask(Task):
             raise LLMMalformedActionError('Invalid task id:' + id)
         task: Task = self
         for part in parts:
+            part -= 1
             if part >= len(task.subtasks):
                 raise LLMMalformedActionError('Task does not exist:' + id)
             task = task.subtasks[part]
