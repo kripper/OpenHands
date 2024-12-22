@@ -48,7 +48,17 @@ export function FileExplorer({ isOpen, onToggle }: FileExplorerProps) {
           "You opened VS Code. Please inform the agent of any changes you made to the workspace or environment. To avoid conflicts, it's best to pause the agent before making any changes.",
         ),
       );
-      window.open(vscodeUrl.vscode_url, "_blank");
+      let url = vscodeUrl.vscode_url;
+      if (window.location.hostname != "localhost") {
+        url = url.replace("localhost", window.location.hostname);
+      }
+      if (!window.location.port) {
+        const newUrl = new URL(url);
+        newUrl.hostname = newUrl.hostname.replace("3000", newUrl.port);
+        newUrl.port = "";
+        url = newUrl.toString();
+      }
+      window.open(url, "_blank");
     } else if (vscodeUrl?.error) {
       toast.error(
         `open-vscode-error-${new Date().getTime()}`,
