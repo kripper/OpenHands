@@ -217,8 +217,8 @@ class SessionManager:
 
     async def _cleanup_detached_conversations(self):
         while should_continue():
-            logger.info(f'Attached conversations: {len(self._active_conversations)}')
-            logger.info(f'Detached conversations: {len(self._detached_conversations)}')
+            # logger.info(f'Attached conversations: {len(self._active_conversations)}')
+            # logger.info(f'Detached conversations: {len(self._detached_conversations)}')
             try:
                 async with self._conversations_lock:
                     # Create a list of items to process to avoid modifying dict during iteration
