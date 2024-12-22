@@ -56,6 +56,13 @@ export function FileExplorer({ isOpen, onToggle }: FileExplorerProps) {
           error: vscodeUrl.error,
         }),
       );
+    } else {
+      toast.error(
+        `open-vscode-error-${new Date().getTime()}`,
+        t(I18nKey.EXPLORER$VSCODE_SWITCHING_ERROR_MESSAGE, {
+          error: "VS Code is not available",
+        }),
+      );
     }
   };
 
