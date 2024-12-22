@@ -13,8 +13,7 @@ HISTORY_SIZE = 20
 
 prompt = """
 # Task
-You're a diligent software engineer AI. You can't see, draw, or interact with a
-browser, but you can read and write files, and you can run commands, and you can think.
+You're a diligent project manager AI. You will be given a task to complete, and you will delegate it to the appropriate agent.
 
 You've been given the following task:
 
@@ -86,6 +85,9 @@ It must be an object, and it must contain two fields:
 * `modify_task` - close a task. Arguments:
   * `task_id` - the ID of the task to close
   * `state` - set to 'in_progress' to start the task, 'completed' to finish it, 'verified' to assert that it was successful, 'abandoned' to give up on it permanently, or `open` to stop working on it for now.
+* `delegate` - delegates a task to CodeActAgent. Arguments:
+  * `agent` - CodeActAgent
+  * `inputs` - {'task': task}
 * `finish` - if ALL of your tasks and subtasks have been verified or abandoned, and you're absolutely certain that you've completed your task and have tested your work, use the finish action to stop working.
 
 You MUST take time to think in between read, write, run, and browse actions--do this with the `message` action.

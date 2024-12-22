@@ -536,6 +536,9 @@ driver.current_url
         #     if summary_message:
         #         messages.extend(summary_message)
 
+        if task := state.inputs.get('task'):
+            messages.append(Message(role='user', content=[TextContent(text=task)]))
+
         pending_tool_call_action_messages: dict[str, Message] = {}
         tool_call_id_to_message: dict[str, Message] = {}
         events = list(state.history)
