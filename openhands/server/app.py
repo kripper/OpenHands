@@ -18,6 +18,7 @@ from openhands.server.middleware import (
     NoCacheMiddleware,
     RateLimitMiddleware,
 )
+from openhands.server.routes.conversation import app as conversation_api_router
 from openhands.server.routes.feedback import app as feedback_api_router
 from openhands.server.routes.files import app as files_api_router
 from openhands.server.routes.github import app as github_api_router
