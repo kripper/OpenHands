@@ -77,26 +77,16 @@ make build
 make run
 ```
 
-To run OpenHands using docker (Kept to avoid merge conflicts):
-
-```bash
-docker pull docker.all-hands.dev/all-hands-ai/runtime:0.16-nikolaik
-
-docker run -it --rm --pull=always \
-    -e SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.16-nikolaik \
-    -e LOG_ALL_EVENTS=true \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v ~/.openhands:/home/openhands/.openhands \
-    -p 3000:3000 \
-    --add-host host.docker.internal:host-gateway \
-    --name openhands-app \
-    docker.all-hands.dev/all-hands-ai/openhands:0.16
-```
-
 Visit [Development Guide](https://github.com/All-Hands-AI/OpenHands/blob/main/Development.md) for more information and setup instructions.
 
 For Ollama, Visit [Local LLMs](https://docs.all-hands.dev/modules/usage/llms/local-llms) for more information and setup instructions.
 
+
+FAQs:
+
+How to set config variables when using docker?
+
+It can be set using env variables in the format of `<GROUP_NAME>_<VARIABLE_NAME>` in uppercase.
 ---
 
 ### Upstream Readme:
