@@ -137,7 +137,7 @@ class Session:
         agent = Agent.get_cls(agent_cls)(llm, agent_config)
         # store agent, language, model in environmnet for feeedback
         os.environ['OPENHANDS_AGENT'] = agent_cls
-        os.environ['OPENHANDS_LANGUAGE'] = session_init_data.language.upper() + ' | ' + 'Using Kevin Fork'
+        os.environ['OPENHANDS_LANGUAGE'] = conversation_init_data.language.upper() + ' | ' + 'Using Kevin Fork'
         os.environ['OPENHANDS_MODEL'] = config2.model
 
         try:
