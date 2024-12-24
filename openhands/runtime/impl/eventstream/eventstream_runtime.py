@@ -118,6 +118,7 @@ class EventStreamRuntime(Runtime):
 
         self.config = config
         self.persist_sandbox = self.config.sandbox.persist_sandbox
+        self.persist_sandbox_for_each_conversation = self.config.sandbox.persist_sandbox_for_each_conversation
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
             # odd port number will be used for vscode
@@ -129,13 +130,24 @@ class EventStreamRuntime(Runtime):
             else:
                 user = 'root'
                 self._container_port = 63712
-            path = config.workspace_mount_path or sid
+            if self.persist_sandbox_for_each_conversation:
+                path = '_'.join([config.workspace_mount_path, sid])
+                self._container_port = find_available_tcp_port()
+            else:
+                path = config.workspace_mount_path or sid
             os.environ['selection_id'] = path
             path = ''.join(c if c.isalnum() else '_' for c in path)  # type: ignore
             self.instance_id = f'persisted-{user}-{path}'
         else:
             self.instance_id = sid
             self._container_port = find_available_tcp_port()
+        if not attach_to_existing:
+            try:
+                container = docker.DockerClient().containers.get(self.container_name)
+                self._container_port = int(container.attrs['Args'][9])
+                attach_to_existing = True
+            except docker.errors.NotFound:
+                attach_to_existing = False
         self._vscode_url: str | None = None  # initial dummy value
         self._runtime_initialized: bool = False
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
@@ -155,12 +167,6 @@ class EventStreamRuntime(Runtime):
         # Buffer for container logs
         self.log_streamer: LogStreamer | None = None
 
-        if not attach_to_existing:
-            try:
-                docker.DockerClient().containers.get(self.container_name)
-                attach_to_existing = True
-            except docker.errors.NotFound:
-                attach_to_existing = False
 
         self.init_base_runtime(
             config,
