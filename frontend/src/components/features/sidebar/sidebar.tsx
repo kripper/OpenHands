@@ -13,6 +13,10 @@ import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { AccountSettingsModal } from "#/components/shared/modals/account-settings/account-settings-modal";
 import { ExitProjectConfirmationModal } from "#/components/shared/modals/exit-project-confirmation-modal";
 import { SettingsModal } from "#/components/shared/modals/settings/settings-modal";
+import { AgentState } from "#/types/agent-state";
+import { useDispatch } from "react-redux";
+import { useEndSession } from "#/hooks/use-end-session";
+import { setCurrentAgentState } from "#/state/agent-slice";
 
 export function Sidebar() {
   const location = useLocation();
@@ -29,6 +33,13 @@ export function Sidebar() {
   const [startNewProjectModalIsOpen, setStartNewProjectModalIsOpen] =
     React.useState(false);
 
+  const dispatch = useDispatch();
+  const endSession = useEndSession();
+
+  const handleEndSession = () => {
+    dispatch(setCurrentAgentState(AgentState.LOADING));
+    endSession();
+  };
   React.useEffect(() => {
     // If the github token is invalid, open the account settings modal again
     if (user.isError) {
@@ -69,7 +80,7 @@ export function Sidebar() {
           <SettingsButton onClick={() => setSettingsModalIsOpen(true)} />
           <DocsButton />
           <ExitProjectButton
-            onClick={() => setStartNewProjectModalIsOpen(true)}
+            onClick={() => handleEndSession()}
           />
         </nav>
       </aside>
