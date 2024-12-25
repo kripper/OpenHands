@@ -141,6 +141,7 @@ class EventStreamRuntime(Runtime):
         else:
             self.instance_id = sid
             self._container_port = find_available_tcp_port()
+        self.container_name = CONTAINER_NAME_PREFIX + self.instance_id
         if not attach_to_existing:
             try:
                 container = docker.DockerClient().containers.get(self.container_name)
@@ -158,7 +159,6 @@ class EventStreamRuntime(Runtime):
         self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
         self.runtime_container_image = self.config.sandbox.runtime_container_image
-        self.container_name = CONTAINER_NAME_PREFIX + self.instance_id
         self.container = None
         self.action_semaphore = threading.Semaphore(1)  # Ensure one action at a time
 
