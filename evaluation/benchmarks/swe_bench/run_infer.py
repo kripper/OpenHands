@@ -582,7 +582,11 @@ if __name__ == '__main__':
 
     # NOTE: It is preferable to load datasets from huggingface datasets and perform post-processing
     # so we don't need to manage file uploading to OpenHands's repo
-    dataset = load_dataset(args.dataset, split=args.split)
+    if 'parquet' in args.dataset:
+        dataset = load_dataset('parquet', data_files=args.dataset, split=args.split)
+    else:
+        dataset = load_dataset(args.dataset, split=args.split)
+
     logger.info(f'Loaded dataset {args.dataset} with split {args.split}')
     swe_bench_tests = filter_dataset(dataset.to_pandas(), 'instance_id')
 
