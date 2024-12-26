@@ -54,7 +54,7 @@ export function ChatInterface() {
   const [autoMode, setAutoMode] = React.useState(false);
 
   const { selectedRepository, importedProjectZip } = useSelector(
-    (state: RootState) => state.initalQuery,
+    (state: RootState) => state.initialQuery,
   );
 
   const handleSendMessage = async (content: string, files: File[]) => {

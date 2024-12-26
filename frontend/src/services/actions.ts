@@ -40,7 +40,10 @@ const messageActions = {
       store.dispatch(
         addUserMessage({
           content: message.args.content,
-          imageUrls: [],
+          imageUrls:
+            typeof message.args.image_urls === "string"
+              ? [message.args.image_urls]
+              : message.args.image_urls,
           timestamp: message.timestamp,
           pending: false,
         }),
