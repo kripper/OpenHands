@@ -100,19 +100,6 @@ export function FileExplorer({ isOpen, onToggle }: FileExplorerProps) {
             />
           )}
         </div>
-        <input
-          data-testid="file-input"
-          type="file"
-          multiple
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={(event) => {
-            const { files: selectedFiles } = event.target;
-            if (selectedFiles && selectedFiles.length > 0) {
-              uploadFileData(selectedFiles);
-            }
-          }}
-        />
       </div>
     </div>
   );
