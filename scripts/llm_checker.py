@@ -11,7 +11,8 @@ with open('config.toml', 'rb') as f:
     group = 'gemini_exp'
     # group = 'gemini'
     # group = 'nemo'
-    group = ''
+    group = 'or'
+    # group = ''
     if group in config:
         config = config[group]
 
