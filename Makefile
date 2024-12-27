@@ -243,7 +243,7 @@ build-frontend:
 # Start backend server with auto-reload
 start-backend:
 	@echo "$(YELLOW)Starting backend...$(RESET)"
-	@poetry run uvicorn openhands.server.listen:app --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload --reload-exclude "$(shell pwd)/workspace"
+	@poetry run uvicorn openhands.server.listen:app --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload --reload-exclude "./workspace"
 
 ifeq ($(WSL_DISTRO_NAME),"")
 mode=start
