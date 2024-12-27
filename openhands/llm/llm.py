@@ -7,6 +7,7 @@ from typing import Union
 
 import requests
 
+from openhands.core import config2
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
 from openhands.llm.fn_call_converter import STOP_WORDS, convert_fncall_messages_to_non_fncall_messages, convert_non_fncall_messages_to_fncall_messages
@@ -327,7 +328,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 for _ in range(5):
                     if os.getenv('attempt_number'):
                         attempt_number = int(os.getenv('attempt_number', '-1'))
-                        if attempt_number != -1:
+                        if attempt_number != -1 and 'gemini/' in config2.model:
                             try:
                                 from api_keys import api_keys
 
