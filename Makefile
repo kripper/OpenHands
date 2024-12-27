@@ -180,8 +180,12 @@ install-python-dependencies:
 		export HNSWLIB_NO_NATIVE=1; \
 		poetry run pip install chroma-hnswlib; \
 	fi
-
+		
 	poetry run pip install -r requirements-extra.txt
+	poetry run pip install https://github.com/SmartManoj/Kevin/raw/924cad563282c3c054c2eae365c1d2091742db0f/pylcs-0.1.1-cp312-cp312-linux_x86_64.whl
+	# remove pylcs = "^0.1.1" from pyproject.toml
+	sed -i '/pylcs = "^0.1.1"/d' pyproject.toml && \
+	poetry lock --no-update && \
 	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
 		poetry install --without llama-index; \
 	else \
