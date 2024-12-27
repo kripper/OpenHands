@@ -43,5 +43,6 @@ mkdir -p /workspace
 cp -r /testbed /workspace/$WORKSPACE_NAME
 
 # Activate instance-specific environment
-. /opt/miniconda3/etc/profile.d/conda.sh
-conda activate testbed
+# SWE_TWEAK
+# . /opt/miniconda3/etc/profile.d/conda.sh
+# conda activate testbed
