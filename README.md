@@ -87,6 +87,7 @@ FAQs:
 How to set config variables when using docker?
 
 It can be set using env variables in the format of `<GROUP_NAME>_<VARIABLE_NAME>` in uppercase.
+
 ---
 
 ### Upstream Readme:
@@ -94,7 +95,6 @@ It can be set using env variables in the format of `<GROUP_NAME>_<VARIABLE_NAME>
 <a name="readme-top"></a>
 
 <div align="center">
-  <img src="./docs/static/img/logo.png" alt="Logo" width="200">
   <h1 align="center">OpenHands: Code Less, Make More</h1>
 </div>
 
