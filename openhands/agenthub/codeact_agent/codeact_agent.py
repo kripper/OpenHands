@@ -542,9 +542,16 @@ driver.current_url
         pending_tool_call_action_messages: dict[str, Message] = {}
         tool_call_id_to_message: dict[str, Message] = {}
         events = list(state.history)
-        for event in events:
+        for k,event in enumerate(events):
             # create a regular message from an event
             if isinstance(event, Action):
+                # SLM_Tweak
+                # if ipython action, check next observation and modify the code
+                if isinstance(event, IPythonRunCellAction):
+                    if k+1 < len(events):
+                        next_obs = events[k+1]
+                        if isinstance(next_obs, IPythonRunCellObservation):
+                            event.code = next_obs.code
                 messages_to_add = self.get_action_message(
                     action=event,
                     pending_tool_call_action_messages=pending_tool_call_action_messages,
