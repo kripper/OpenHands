@@ -34,7 +34,7 @@ def execute_action(data):
     for timeout in range(1, 2):
         try:
             response = requests.post(
-                'http://localhost:63711/execute_action', data=data, timeout=timeout
+                'http://localhost:63712/execute_action', data=data, timeout=timeout
             )
             print(response.json()['content'].replace('\r', ''))
             break
