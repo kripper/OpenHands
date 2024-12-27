@@ -56,7 +56,7 @@ config = {
     'args': {
         'LLM_MODEL': model,
         'AGENT': agent,
-        'LANGUAGE': 'en',
+        'LANGUAGE': 'EN | Using Kevin Fork',
         'CONFIRMATION_MODE': 'false',
         'SECURITY_ANALYZER': '',
     },
