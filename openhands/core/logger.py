@@ -197,8 +197,8 @@ class SensitiveDataFilter(logging.Filter):
         record.args = ()
 
         for attr in sensitive_patterns:
-            pattern = rf"{attr}='?([\w-]+)'?"
-            msg = re.sub(pattern, f"{attr}='******'", msg)
+            pattern = rf"({attr}='.)([\w_-]+?)([^']')"
+            msg = re.sub(pattern, rf"\1******\3", msg)
 
         # passed with msg
         record.msg = msg
