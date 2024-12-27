@@ -215,7 +215,7 @@ def finalize_config(cfg: AppConfig):
     if default_llm_config.use_group is not None:
         default_llm_config.use_group = default_llm_config.use_group.lower()
         logger.openhands_logger.info(f'Using group {default_llm_config.use_group} for LLM')
-        for k, v in get_llm_config_arg(default_llm_config.use_group).to_safe_dict().items():
+        for k, v in get_llm_config_arg(default_llm_config.use_group).__dict__.items():
             setattr(default_llm_config, k, v)
     if cfg.workspace_base is not None:
         cfg.workspace_base = os.path.abspath(cfg.workspace_base)
