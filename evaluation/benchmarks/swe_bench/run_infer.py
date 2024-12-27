@@ -172,6 +172,7 @@ def get_config(
         # do not mount workspace
         workspace_base=None,
         workspace_mount_path=None,
+        dont_restore_state=True,
     )
     config.set_llm_config(
         update_llm_config_for_completions_logging(

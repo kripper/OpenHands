@@ -46,6 +46,7 @@ class AppConfig:
         file_uploads_allowed_extensions: Allowed file extensions. `['.*']` allows all.
         custom_instructions: Custom instructions for the agent.
         use_selenium: Whether to use selenium.
+        dont_restore_state: Whether to not restore state from cli session.
     """
 
     llms: dict[str, LLMConfig] = field(default_factory=dict)
@@ -79,6 +80,7 @@ class AppConfig:
     runloop_api_key: str | None = None
     custom_instructions: str = ''
     use_selenium: bool = False
+    dont_restore_state: bool = False
 
 
     defaults_dict: ClassVar[dict] = {}

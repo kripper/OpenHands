@@ -434,3 +434,9 @@ def load_app_config(
         logger.DEBUG = config.debug
         logger.DISABLE_COLOR_PRINTING = config.disable_color
     return config
+
+
+if __name__ == '__main__':
+    config = load_app_config(set_logging_levels=False)
+    finalize_config(config)
+    print(config.dont_restore_state)
