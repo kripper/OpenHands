@@ -2015,7 +2015,7 @@
     "en": "Running a bash command"
   },
   "ACTION_MESSAGE$RUN_IPYTHON": {
-    "en": "Running a Jupyter command"
+    "en": "Running a Python command"
   },
   "ACTION_MESSAGE$READ": {
     "en": "Reading the contents of a file"
@@ -2033,7 +2033,7 @@
     "en": "Ran a bash command"
   },
   "OBSERVATION_MESSAGE$RUN_IPYTHON": {
-    "en": "Ran a Jupyter command"
+    "en": "Ran a Python command"
   },
   "OBSERVATION_MESSAGE$READ": {
     "en": "Read the contents of a file"
