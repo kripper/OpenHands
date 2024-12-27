@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from inspect import signature
 from typing import Any, Awaitable, Callable, TextIO
 
+import numpy as np
 import pandas as pd
 from pydantic import BaseModel
 from tqdm import tqdm
@@ -294,7 +295,13 @@ def update_progress(
     logger.info(
         f'Finished evaluation for instance {result.instance_id}: {str(result.test_result)[:300]}...\n'
     )
-    output_fp.write(json.dumps(result.model_dump()) + '\n')
+    # Custom JSON encoder
+    class NumpyEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()  # Convert ndarray to list
+            return super().default(obj)
+    output_fp.write(json.dumps(result.model_dump(), cls=NumpyEncoder) + '\n')
     output_fp.flush()
 
 
@@ -312,7 +319,7 @@ def _process_instance_wrapper(
     instance: pd.Series,
     metadata: EvalMetadata,
     use_mp: bool,
-    max_retries: int = 5,
+    max_retries: int = 1,
     timeout_seconds: int | None = None,
 ) -> EvalOutput:
     """Wrap the process_instance_func to handle retries and errors."""

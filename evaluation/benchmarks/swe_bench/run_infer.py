@@ -54,7 +54,7 @@ AGENT_CLS_TO_FAKE_USER_RESPONSE_FN = {
 
 
 def _get_swebench_workspace_dir_name(instance: pd.Series) -> str:
-    return f'{instance.repo}__{instance.version}'.replace('/', '__')
+    return f'{instance.repo}__{instance.get("version", "unknown")}'.replace('/', '__')
 
 
 def get_instruction(instance: pd.Series, metadata: EvalMetadata):
@@ -241,7 +241,9 @@ def initialize_runtime(
             temp_file_path = os.path.join(temp_dir, swe_instance_json_name)
             # Write to the file with the desired name within the temporary directory
             with open(temp_file_path, 'w') as f:
-                if not isinstance(instance, dict):
+                if isinstance(instance, pd.Series):
+                    json.dump([json.loads(instance.to_json())], f)
+                elif not isinstance(instance, dict):
                     json.dump([instance.to_dict()], f)
                 else:
                     json.dump([instance], f)
