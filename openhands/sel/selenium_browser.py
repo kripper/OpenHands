@@ -16,7 +16,7 @@ if __name__ == '__main__':
     driver = uc.Chrome(headless=False, use_subprocess=False, options=options)
 
     # Save session details for reuse
-    command_url = driver.command_executor._url
+    command_url = driver.command_executor._client_config._remote_server_addr
     session_id = driver.session_id
 
     session_script = f"""
