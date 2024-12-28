@@ -190,10 +190,15 @@ install-python-dependencies:
 	fi
 		
 	poetry run pip install -r requirements-extra.txt
-	poetry run pip install https://github.com/SmartManoj/Kevin/raw/924cad563282c3c054c2eae365c1d2091742db0f/pylcs-0.1.1-cp312-cp312-linux_x86_64.whl
-	# remove pylcs = "^0.1.1" from pyproject.toml
-	sed -i '/pylcs = "^0.1.1"/d' pyproject.toml && \
-	poetry lock --no-update
+	@if command -v apt > /dev/null; then \
+		read -p "Do you want to install python$(PYTHON_VERSION)-dev? [y/n]:" consent; \
+		if [ "$$consent" = "y" ]; then \
+			sudo apt-get install -y python$(PYTHON_VERSION)-dev; \
+		else \
+			echo "$(RED)python$(PYTHON_VERSION)-dev is required. Please install python$(PYTHON_VERSION)-dev to continue.$(RESET)"; \
+			exit 1; \
+		fi; \
+	fi
 	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
 		poetry install --without llama-index; \
 	else \
