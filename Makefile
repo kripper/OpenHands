@@ -66,7 +66,7 @@ check-python:
 	else \
 		if command -v apt > /dev/null; then \
 			echo "$(GREEN)Python $(PYTHON_VERSION) is not installed.$(RESET)"; \
-			@read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
+			read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
 				sudo add-apt-repository ppa:deadsnakes/ppa; \
 				sudo apt update; \
@@ -86,7 +86,7 @@ check-netcat:
 	else \
 		if command -v apt > /dev/null; then \
 			echo "$(GREEN)netcat is not installed.$(RESET)"; \
-			@read -p "Do you want to install netcat $(PYTHON_VERSION)? [y/n]:" consent; \
+			read -p "Do you want to install netcat $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
 				sudo apt install -y netcat; \
 			fi; \
@@ -113,7 +113,7 @@ check-nodejs:
 		if [ "$${NODE_VERSION_ARRAY[0]}" -gt 18 ] || ([ "$${NODE_VERSION_ARRAY[0]}" -eq 18 ] && [ "$${NODE_VERSION_ARRAY[1]}" -gt 17 ]) || ([ "$${NODE_VERSION_ARRAY[0]}" -eq 18 ] && [ "$${NODE_VERSION_ARRAY[1]}" -eq 17 ] && [ "$${NODE_VERSION_ARRAY[2]}" -ge 1 ]); then \
 			echo "$(BLUE)Node.js $$NODE_VERSION is already installed.$(RESET)"; \
 		else \
-			@read -p "Do you want to install Node.js 22.x? [y/n]:" consent; \
+			read -p "Do you want to install Node.js 22.x? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
 				curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -; \
 				sudo apt-get install -y nodejs; \
@@ -123,7 +123,7 @@ check-nodejs:
 			fi; \
 		fi; \
 	else \
-		@read -p "Do you want to install Node.js 22.x? [y/n]:" consent; \
+		read -p "Do you want to install Node.js 22.x? [y/n]:" consent; \
 		if [ "$$consent" = "y" ]; then \
 			curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -; \
 			sudo apt-get install -y nodejs; \
@@ -154,7 +154,7 @@ check-poetry:
 		if [ $${POETRY_VERSION_ARRAY[0]} -ge 1 ] && [ $${POETRY_VERSION_ARRAY[1]} -ge 8 ]; then \
 			echo "$(BLUE)$(shell poetry --version) is already installed.$(RESET)"; \
 		else \
-			@read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
+			read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
 				curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -; \
 				echo "$(GREEN)Poetry installed successfully.$(RESET)"; \
