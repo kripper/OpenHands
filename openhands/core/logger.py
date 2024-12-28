@@ -204,6 +204,11 @@ class SensitiveDataFilter(logging.Filter):
         record.msg = msg
         return True
 
+class RedactDataUriFilter(logging.Filter):
+    def filter(self, record):
+        regex = r'data:(?P<mime>[\w/\-\.]+);(?P<encoding>\w+),(?P<data>.*)'
+        record.msg = re.sub(regex, r'data:\g<mime>;base64,******', record.msg)
+        return True
 
 def get_console_handler(log_level: int = logging.INFO, extra_info: str | None = None):
     """Returns a console handler for logging."""
@@ -266,6 +271,7 @@ if current_log_level == logging.DEBUG:
 
 openhands_logger.addHandler(get_console_handler(current_log_level))
 openhands_logger.addFilter(SensitiveDataFilter(openhands_logger.name))
+openhands_logger.addFilter(RedactDataUriFilter())
 openhands_logger.propagate = False
 openhands_logger.debug('Logging initialized')
 
