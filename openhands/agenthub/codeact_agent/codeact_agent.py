@@ -409,7 +409,7 @@ class CodeActAgent(Agent):
             print(e)
 
         params: dict = {
-            'messages': [message.model_dump() for message in messages],
+            'messages': messages,
             'condense': True,
             'origin': 'Agent',
         }

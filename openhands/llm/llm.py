@@ -637,8 +637,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         Returns:
             int: The number of tokens.
         """
-        if messages and isinstance(messages[0], Message):
-            messages = [m.model_dump() for m in messages]
         # attempt to convert Message objects to dicts, litellm expects dicts
         if (
             isinstance(messages, list)
