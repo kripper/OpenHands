@@ -300,6 +300,7 @@ class CodeActAgent(Agent):
         # max_message_chars = self.llm.config.max_message_chars
         max_message_chars = 10_000
         obs_prefix = 'OBSERVATION:\n'
+        image_urls = []
         if isinstance(obs, CmdOutputObservation):
             ansi_color_escape = re.compile(r'\x1b\[[0-9;]*m')
             obs.content = ansi_color_escape.sub('', obs.content)
@@ -314,9 +315,8 @@ class CodeActAgent(Agent):
             splitted = text.split('\n')
             for i, line in enumerate(splitted):
                 if '![image](data:image/png;base64,' in line:
-                    splitted[i] = (
-                        '![image](data:image/png;base64, ...) already displayed to user'
-                    )
+                    splitted[i] = ''
+                    image_urls.append(line[8:-1])
             text = '\n'.join(splitted)
             text = truncate_content(text, max_message_chars)
         elif isinstance(obs, FileEditObservation):
@@ -361,10 +361,13 @@ class CodeActAgent(Agent):
                 # tool calls in the SAME request are processed
                 return []
 
+        content = [TextContent(text=text)]
+        if image_urls:
+            content.append(ImageContent(image_urls=image_urls))
         return [
             Message(
                 role='user',
-                content=[TextContent(text=text)],
+                content=content,
                 event_id=obs.id,
             )
         ]
