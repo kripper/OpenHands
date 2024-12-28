@@ -156,10 +156,7 @@ check-poetry:
 		else \
 			read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
-				curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -; \
-				echo "$(GREEN)Poetry installed successfully.$(RESET)"; \
-				echo "Adding Poetry to your PATH..."; \
-				export PATH="$HOME/.local/bin:$PATH"; \
+				sudo apt install -y python3-poetry
 			else \
 				echo "$(RED)Poetry 1.8 or later is required. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
 				echo "$(RED) curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -$(RESET)"; \
@@ -170,10 +167,7 @@ check-poetry:
 	else \
 		read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 		if [ "$$consent" = "y" ]; then \
-			curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -; \
-			echo "$(GREEN)Poetry installed successfully.$(RESET)"; \
-			echo "Adding Poetry to your PATH..."; \
-			export PATH="$HOME/.local/bin:$PATH"; \
+			sudo apt install -y python3-poetry; \
 		else \
 			echo "$(RED)Poetry is not installed. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
 			echo "$(RED) curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -$(RESET)"; \
