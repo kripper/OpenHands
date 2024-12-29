@@ -15,6 +15,7 @@ if __name__ == '__main__':
         session_script = f"""
 url = '{command_url}'
 session_id = "{session_id}"
+# driver = create_driver(url,session_id)  
     """
 
         # Print session details
