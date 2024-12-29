@@ -32,12 +32,5 @@ driver = create_driver(url,session_id)
 ## import selenium keys
 if __name__ == '__main__':
     print(driver.current_url)
-    s = '[data-test-id="icon-disclosure"]'
-    # click on the element
-    from selenium.webdriver.common.by import By
-    # driver.find_element(By.CSS_SELECTOR, s).click()
-    s='[data-test-id="paper-link"]'
-    link = driver.find_element(By.CSS_SELECTOR, s).get_attribute('href')
-    print(link)
-
+    
 

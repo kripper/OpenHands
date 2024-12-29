@@ -2,6 +2,6 @@ python-Levenshtein
 fuzzywuzzy
 arxiv
 libcst
-undetected_chromedriver
+seleniumbase
 scholarly
 PyPaperBot
