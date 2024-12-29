@@ -157,7 +157,7 @@ class CodeActActionParserCmdRun(ActionParser):
         self.bash_command = re.search(
             r'<execute_bash>(.*\S.*)</execute_bash>', action_str, re.DOTALL
         )
-        if self.bash_command is None:
+        if self.bash_command is None and not '<execute_' in action_str:
             # Gemini flash not providing the tag and returns as code wrap in backticks
             self.bash_command = re.search(r'^```bash(.*)```', action_str, re.DOTALL)
         return self.bash_command is not None
@@ -188,7 +188,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         self.python_code = re.search(
             r'<execute_ipython>(.*\S.*)</execute_ipython>', action_str, re.DOTALL
         )
-        if self.python_code is None:
+        if self.python_code is None and not '<execute_' in action_str:
             # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
             self.python_code = re.search(
                 r'^```(?:python|tool_code)(.*)```', action_str, re.DOTALL
