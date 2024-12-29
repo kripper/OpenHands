@@ -244,3 +244,5 @@ llm_debugger.py
 evaluation/benchmarks/swe_bench/*.json
 evaluation/benchmarks/swe_bench/swe_verified_lite.py
 evaluation/benchmarks/swe_bench/results.py
+openhands/sel/downloaded_files/driver_fixing.lock
+openhands/sel/downloaded_files/pyautogui.lock

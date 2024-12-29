@@ -176,6 +176,10 @@ check-poetry:
 		fi; \
 	fi
 
+sel:
+	@echo "$(YELLOW)Starting Selenium...$(RESET)"
+	@python -i openhands/sel/selenium_browser.py
+
 install-python-dependencies:
 	@echo "$(GREEN)Installing Python dependencies...$(RESET)"
 	@if [ -z "${TZ}" ]; then \
@@ -414,4 +418,4 @@ help:
 
 # Phony targets
 .PHONY: build check-dependencies check-python check-netcat check-npm check-docker check-poetry install-python-dependencies install-frontend-dependencies install-pre-commit-hooks lint start-backend start-frontend start run setup-config setup-config-prompts kill help
-.PHONY: docker-dev docker-run
+.PHONY: docker-dev docker-run sel
