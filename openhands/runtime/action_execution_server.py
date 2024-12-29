@@ -422,6 +422,16 @@ class ActionExecutor:
                     encoded_video = f'data:{mime_type};base64,{encoded_video}'
 
                 return FileReadObservation(path=filepath, content=encoded_video)
+            elif filepath.lower().endswith(('.mp3', '.wav')):
+                with open(filepath, 'rb') as file:
+                    audio_data = file.read()
+                    encoded_audio = base64.b64encode(audio_data).decode('utf-8')
+                    mime_type, _ = mimetypes.guess_type(filepath)
+                    if mime_type is None:
+                        mime_type = 'audio/mpeg'  # default to MP3 if MIME type cannot be determined
+                    encoded_audio = f'data:{mime_type};base64,{encoded_audio}'
+
+                return FileReadObservation(path=filepath, content=encoded_audio)
 
             with open(filepath, 'r', encoding='utf-8') as file:
                 lines = read_lines(file.readlines(), action.start, action.end)

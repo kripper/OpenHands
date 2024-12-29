@@ -74,6 +74,26 @@ function FileViewer() {
     setFileExplorerIsOpen((prev) => !prev);
   };
 
+  let new_content: React.ReactNode;
+  if (selectedPath) {
+    const fileContent: string = files[selectedPath];
+    const isBase64Image = (content: string) => content.startsWith("data:image/");
+    const isPDF = (content: string) => content.startsWith("data:application/pdf");
+    const isVideo = (content: string) => content.startsWith("data:video/");
+    const isAudio = (content: string) => content.startsWith("data:audio/");
+    if (fileContent) {
+      if (isBase64Image(fileContent)) {
+        new_content = <img src={fileContent} className="w-full h-full" alt="File" />;
+      } else if (isPDF(fileContent)) {
+        new_content = <embed src={fileContent} className="w-full h-full" type="application/pdf" />;
+      } else if (isVideo(fileContent)) {
+        new_content = <video src={fileContent} controls className="w-full h-full" ><track kind="captions" src={fileContent} /></video>;
+      } else if (isAudio(fileContent)) {
+        new_content = <audio src={fileContent} controls />;
+      }
+    }
+  }
+
   return (
     <div className="flex h-full bg-neutral-900 relative">
       <FileExplorer isOpen={fileExplorerIsOpen} onToggle={toggleFileExplorer} />
@@ -83,7 +103,8 @@ function FileViewer() {
             <span className="text-sm text-neutral-500">{selectedPath}</span>
           </div>
         )}
-        {selectedPath && files[selectedPath] && (
+        { new_content }
+        {!new_content && selectedPath && files[selectedPath] && (
           <div className="p-4 flex-1 overflow-auto">
             <SyntaxHighlighter
               language={getLanguageFromPath(selectedPath)}
