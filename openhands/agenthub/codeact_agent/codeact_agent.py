@@ -90,6 +90,7 @@ class CodeActAgent(Agent):
         - llm (LLM): The llm to be used by this agent
         """
         super().__init__(llm, config)
+        self.pending_actions: deque[Action] = deque()
         self.reset()
 
         self.mock_function_calling = False
@@ -128,8 +129,6 @@ class CodeActAgent(Agent):
                 agent_skills_docs=AgentSkillsRequirement.documentation,
                 disabled_microagents=self.config.disabled_microagents,
             )
-
-        self.pending_actions: deque[Action] = deque()
 
     def get_action_message(
         self,
@@ -375,6 +374,7 @@ class CodeActAgent(Agent):
     def reset(self) -> None:
         """Resets the CodeAct Agent."""
         super().reset()
+        self.pending_actions.clear()
 
     def step(self, state: State) -> Action:
         """Performs one step using the CodeAct Agent.
