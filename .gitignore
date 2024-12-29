@@ -243,3 +243,4 @@ llm_debugger.py
 **/node_modules/
 evaluation/benchmarks/swe_bench/*.json
 evaluation/benchmarks/swe_bench/swe_verified_lite.py
+evaluation/benchmarks/swe_bench/results.py
