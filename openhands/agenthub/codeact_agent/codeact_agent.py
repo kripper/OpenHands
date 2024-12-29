@@ -483,7 +483,7 @@ driver.current_url
 
 To get a screenshot of the current page, use the following function:
 <execute_ipython>
-display.Image(dss())
+print(display.Image(dss()))
 </execute_ipython>
 
 '''
