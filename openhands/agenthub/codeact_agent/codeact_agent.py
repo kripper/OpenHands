@@ -481,6 +481,11 @@ Example:
 driver.current_url
 </execute_ipython>
 
+To get a screenshot of the current page, use the following function:
+<execute_ipython>
+display.Image(dss())
+</execute_ipython>
+
 '''
         else:
             extra_message = ''
