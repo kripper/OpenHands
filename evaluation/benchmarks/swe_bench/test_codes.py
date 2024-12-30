@@ -322,6 +322,15 @@ assert sqf_list(p) == expected, f'Got {sqf_list(p)}, expected {expected}'
         'sphinx-doc__sphinx-11445': custom_pytest_code.format(
             file_name='tests/test_util_rst.py'
         ),
+        'astropy__astropy-16898': '''
+import numpy as np
+from astropy.io import fits
+from astropy.table import QTable, Table
+data = np.array([("", 12)], dtype=[("a", "S"), ("b", "i4")])
+fits.BinTableHDU(data).writeto("zerodtable.fits", overwrite=True)
+t = Table.read("zerodtable.fits")
+t
+'''
     }
     return test_codes.get(instance_id, '')
 
