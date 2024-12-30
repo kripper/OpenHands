@@ -1,5 +1,6 @@
 from inspect import signature
 from openhands.sel.selenium_tester import driver, create_driver
+from IPython.display import Image
 from openhands.runtime.plugins.agent_skills import file_ops, file_reader
 from openhands.runtime.plugins.agent_skills.utils.dependency import import_functions
 
