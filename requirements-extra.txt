@@ -2,6 +2,8 @@ python-Levenshtein
 fuzzywuzzy
 arxiv
 libcst
-seleniumbase
-scholarly
-PyPaperBot
+seleniumbase>=4.33.12
+scholarly>=1.7.11
+# PyPaperBot>=1.4.1
+# seleniumbase 4.33.12 depends on beautifulsoup4==4.12.3
+# pypaperbot 1.0 depends on beautifulsoup4==4.9.1
