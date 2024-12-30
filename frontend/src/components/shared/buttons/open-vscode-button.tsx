@@ -19,7 +19,7 @@ export function OpenVSCodeButton({
         "mt-auto mb-2 w-full h-10 text-white rounded flex items-center justify-center gap-2 transition-colors",
         isDisabled
           ? "bg-neutral-600 cursor-not-allowed"
-          : "bg-[#4465DB] hover:bg-[#3451C7]",
+          : "hover:bg-[#3451C7]",
       )}
       aria-label="Open in VS Code"
     >
