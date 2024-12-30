@@ -196,23 +196,23 @@ def _cur_file_header(current_file, total_lines) -> str:
 
 
 def open_file(
-    path: str, line_number: int | None = 1, context_lines: int | None = WINDOW
+    file_path: str, line_number: int | None = 1, context_lines: int | None = WINDOW
 ) -> None:
     """Opens the file at the given path in the editor. IF the file is to be edited, first use `scroll_down` repeatedly to read the full file!
     If line_number is provided, the window will be moved to include that line.
     It only shows the first 100 lines by default! `context_lines` is the max number of lines to be displayed, up to 100. Use `scroll_up` and `scroll_down` to view more content up or down.
 
     Args:
-        path: str: The path to the file to open, preferred absolute path.
+        file_path: str: The path to the file to open, preferred absolute path.
         line_number: int | None = 1: The line number to move to. Defaults to 1.
         context_lines: int | None = 100: Only shows this number of lines in the context window (usually from line 1), with line_number as the center (if possible).
     """
     global CURRENT_FILE, CURRENT_LINE, WINDOW
 
-    if not check_file_exists(path):
+    if not check_file_exists(file_path):
         return
 
-    CURRENT_FILE = os.path.abspath(path)
+    CURRENT_FILE = os.path.abspath(file_path)
     with open(CURRENT_FILE) as file:
         total_lines = max(1, sum(1 for _ in file))
 
