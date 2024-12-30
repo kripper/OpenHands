@@ -193,7 +193,7 @@ class BashSession:
         interrupt_timeout: int | None = None,
         max_retries: int = 2,
     ) -> tuple[str, int]:
-        interrupt_timeout = interrupt_timeout or 1  # default timeout for SIGINT
+        interrupt_timeout = interrupt_timeout or 5  # default timeout for SIGINT
         # try to interrupt the bash shell use SIGINT
         while max_retries > 0:
             self.shell.sendintr()  # send SIGINT to the shell
@@ -281,7 +281,7 @@ class BashSession:
         while True:
             try:
                 # Wait for one of the prompts
-                index = self.shell.expect(prompts, timeout=1)
+                index = self.shell.expect(prompts, timeout=5)
                 output = self.shell.before
                 if output:
                     logger.info(output)
