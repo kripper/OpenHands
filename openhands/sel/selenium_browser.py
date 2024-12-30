@@ -29,3 +29,7 @@ session_id = "{session_id}"
 
         print(f"Session details saved to: {session_file}")
         breakpoint()
+
+# Run this command to remove the stack trace from the selenium exceptions
+# sed -i '43d' /openhands/poetry/openhands-ai-5O4_aCHf-py3.12/lib/python3.12/site-packages/selenium/common/exceptions.py
+# https://github.com/SeleniumHQ/selenium/pull/14975
