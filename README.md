@@ -30,6 +30,7 @@ Gemini Models solves all 93 issues in this category. Checkout the results [here]
   [Added Custom Instructions](https://github.com/SmartManoj/Kevin/commit/2ae6a8ee368c9d9fa51d57d5120df0c6f50e5db3),
 
   [Added EC2 Runtime](https://github.com/SmartManoj/Kevin/commit/37d3fab5f58aa939d0689c6559325007e3f001c5),
+  [Added Local Runtime](https://github.com/SmartManoj/Kevin/commit/07c7d10299313085c3f724494c05d252d2218326),
 
   [Added Auto Mode](https://github.com/All-Hands-AI/OpenHands/pull/2782),
 
