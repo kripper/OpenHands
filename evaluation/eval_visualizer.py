@@ -1,5 +1,6 @@
 #!python
 import json
+import os
 import re
 import subprocess
 import sys
@@ -66,7 +67,7 @@ json_data.update(
         'version': git_hash,
         'feedback': 'negative',
         'email': 'eval@anon.com',
-        'permissions': 'public',
+        'permissions': 'private' if os.environ.get('PRIVATE_EVAL_HISTORY') else 'public',
         'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiJiNWIwNjRmYi1mMTFlLTQxMTQtOWYxYy1hOTQ3MmZmYjY1ZGUifQ.MjMpKSWLYI4Cg85Uq8HnjY3MY9iBj8yeNawOwgjX5MU',
     }
 )
