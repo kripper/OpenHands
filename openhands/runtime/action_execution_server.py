@@ -135,6 +135,11 @@ class ActionExecutor:
             timeout=30,
         )
 
+        code = 'from IPython.display import Image'
+        obs = await self.run_ipython(
+            IPythonRunCellAction(code=code)
+        )
+        logger.debug(f'Image import initialized: {obs}')
         # This is a temporary workaround
         # TODO: refactor AgentSkills to be part of JupyterPlugin
         # AFTER ServerRuntime is deprecated
