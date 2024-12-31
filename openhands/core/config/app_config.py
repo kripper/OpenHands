@@ -54,7 +54,7 @@ class AppConfig:
     default_agent: str = OH_DEFAULT_AGENT
     sandbox: SandboxConfig = field(default_factory=SandboxConfig)
     security: SecurityConfig = field(default_factory=SecurityConfig)
-    runtime: str = 'eventstream'
+    runtime: str = 'docker'
     file_store: str = 'local'
     file_store_path: str = 'cache/file_store'
     trajectories_path: str | None = None

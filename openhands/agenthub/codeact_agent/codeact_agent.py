@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from collections import deque
@@ -101,23 +102,7 @@ class CodeActAgent(Agent):
             )
             self.mock_function_calling = True
 
-        if self.config.function_calling:
-            self.tools = codeact_function_calling.get_tools(
-                codeact_enable_browsing=self.config.codeact_enable_browsing,
-                codeact_enable_jupyter=self.config.codeact_enable_jupyter,
-                codeact_enable_llm_editor=self.config.codeact_enable_llm_editor,
-            )
-            # logger.debug(
-            #     f'TOOLS loaded for CodeActAgent: {json.dumps(self.tools, indent=2)}'
-            # )
-            self.prompt_manager = PromptManager(
-                microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
-                if self.config.use_microagents
-                else None,
-                prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts'),
-                disabled_microagents=self.config.disabled_microagents,
-            )
-        else:
+        if not self.config.function_calling:
             self.action_parser = CodeActResponseParser()
             self.prompt_manager = PromptManager(
                 microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
@@ -129,6 +114,23 @@ class CodeActAgent(Agent):
                 agent_skills_docs=AgentSkillsRequirement.documentation,
                 disabled_microagents=self.config.disabled_microagents,
             )
+            return
+        # Function calling mode
+        self.tools = codeact_function_calling.get_tools(
+            codeact_enable_browsing=self.config.codeact_enable_browsing,
+            codeact_enable_jupyter=self.config.codeact_enable_jupyter,
+            codeact_enable_llm_editor=self.config.codeact_enable_llm_editor,
+        )
+        logger.debug(
+            f'TOOLS loaded for CodeActAgent: {json.dumps(self.tools, indent=2, ensure_ascii=False).replace("\\n", "\n")}'
+        )
+        self.prompt_manager = PromptManager(
+            microagent_dir=os.path.join(os.path.dirname(__file__), 'micro')
+            if self.config.use_microagents
+            else None,
+            prompt_dir=os.path.join(os.path.dirname(__file__), 'prompts'),
+            disabled_microagents=self.config.disabled_microagents,
+        )
 
     def get_action_message(
         self,
