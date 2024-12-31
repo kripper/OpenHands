@@ -27,7 +27,7 @@ def execute():
         command = data.get('command')
         for editor in ['nano', 'vi', 'vim', 'pico', 'joe', 'emacs']:
             if f'{editor} ' in command:
-                output = f'Use non interactive command to edit files with {editor}'
+                output = f'Use non interactive command to edit files'
                 break
         else:
             proc = subprocess.Popen(
