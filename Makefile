@@ -66,6 +66,7 @@ check-python:
 	else \
 		if command -v apt > /dev/null; then \
 			echo "$(GREEN)Python $(PYTHON_VERSION) is not installed.$(RESET)"; \
+			# https://github.com/kuangkzh/pylcs/issues/3
 			read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
 				sudo add-apt-repository ppa:deadsnakes/ppa; \
