@@ -410,6 +410,10 @@ class CodeActAgent(Agent):
                 last_message_content = last_message_content[-3]
                 if last_message_content.endswith('<end></end>'):
                     return AgentFinishAction(thought=os.getenv('finish_thought', ''))
+            # if no current directory is in output, check the last line
+            last_message_content = last_message_content[-1]
+            if last_message_content.endswith('<end></end>'):
+                return AgentFinishAction(thought=os.getenv('finish_thought', ''))
         except Exception as e:
             print(e)
 
