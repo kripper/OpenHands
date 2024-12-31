@@ -100,6 +100,7 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
         with open(toml_file, 'r', encoding='utf-8') as toml_contents:
             toml_config = toml.load(toml_contents)
     except FileNotFoundError:
+        logger.openhands_logger.debug(f'Config file not found: {toml_file}')
         return
     except toml.TomlDecodeError as e:
         logger.openhands_logger.warning(
