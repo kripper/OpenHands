@@ -162,8 +162,13 @@ class LocalRuntime(Runtime):
         return obs
 
     def run_ipython(self, action: IPythonRunCellAction) -> Observation:
+        code = action.code
+        imports = 'from openhands.runtime.plugins.agent_skills.agentskills import *'
+        with open('/tmp/code.py', 'w') as f:
+            f.write(imports + '\n' + code)
+        content = os.popen('poetry run python /tmp/code.py').read()
         return IPythonRunCellObservation(
-            'Not implemented. Please use <execute_bash> only to run code for now.',
+            content,
             action.code,
         )
 
