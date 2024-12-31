@@ -155,7 +155,12 @@ class LocalRuntime(Runtime):
 
     def run(self, action: CmdRunAction) -> Observation:
         command = action.command
-        content = os.popen(command).read()
+        for editor in ['nano', 'vi', 'vim', 'pico', 'joe', 'emacs']:
+            if f'{editor} ' in command:
+                content = f'Use non interactive command to edit files'
+                break
+        else:
+            content = os.popen(command).read()
         obs = CmdOutputObservation(
             command_id=action.id, command=command, content=content
         )
