@@ -27,18 +27,7 @@ from openhands.events.observation.commands import (
 from openhands.runtime.base import (
     Runtime,
 )
-from openhands.runtime.impl.eventstream.containers import remove_all_containers
 from openhands.runtime.plugins import PluginRequirement
-
-CONTAINER_NAME_PREFIX = 'kevin-runtime-'
-
-
-def remove_all_runtime_containers():
-    remove_all_containers(CONTAINER_NAME_PREFIX)
-
-
-atexit.register(remove_all_runtime_containers)
-
 
 class LogBuffer:
     """Synchronous buffer for Docker container logs.
