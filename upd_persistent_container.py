@@ -32,9 +32,9 @@ for c in client.containers.list():
         for full_file_name in full_file_names:
             cmd = f'docker cp {full_file_name} {container_id}:/openhands/code/{full_file_name}'
             os.system(cmd)
-
-        if 'root' in c.name:
-            break
+        if 1:
+            if 'root' in c.name:
+                break
         # restart the container
 print('Restarting the container')
 c.restart()
