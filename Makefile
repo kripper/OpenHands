@@ -88,7 +88,7 @@ check-netcat:
 			echo "$(GREEN)netcat is not installed.$(RESET)"; \
 			read -p "Do you want to install netcat $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
-				sudo apt install -y netcat; \
+				pip install poetry -U \
 			fi; \
 		else \
 			echo "$(RED)netcat is not installed. Please install it to continue.$(RESET)"; \
