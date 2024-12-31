@@ -609,8 +609,8 @@ class AgentController:
 
         await self.update_state_after_step()
 
-        log_level = 'info'
-        self.log(log_level, str(action), extra={'msg_type': 'ACTION'})
+        # log_level = 'info'
+        # self.log(log_level, str(action), extra={'msg_type': 'ACTION'})
 
     async def _delegate_step(self) -> None:
         """Executes a single step of the delegate agent."""
