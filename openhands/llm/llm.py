@@ -34,6 +34,7 @@ from litellm.exceptions import (
     ServiceUnavailableError,
     Timeout,
 )
+from litellm.llms.openai_like.common_utils import OpenAILikeError
 from litellm.types.utils import CostPerToken, ModelResponse, Usage
 from litellm.utils import create_pretrained_tokenizer
 
@@ -56,6 +57,7 @@ LLM_RETRY_EXCEPTIONS: tuple[type[Exception], ...] = (
     RateLimitError,
     ServiceUnavailableError,
     Timeout,
+    OpenAILikeError,
 )
 
 # cache prompt supporting models

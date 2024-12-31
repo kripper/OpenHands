@@ -1,9 +1,12 @@
+import json
+from time import sleep
 from tenacity import (
     retry,
     retry_if_exception_type,
     stop_after_attempt,
     wait_exponential,
 )
+from litellm.llms.openai_like.common_utils import OpenAILikeError
 
 from openhands.core.logger import openhands_logger as logger
 from openhands.utils.tenacity_stop import stop_if_should_exit
@@ -44,6 +47,19 @@ class RetryMixin:
     def log_retry_attempt(self, retry_state):
         """Log retry attempts."""
         exception = retry_state.outcome.exception()
+        try:
+            err = json.loads(exception.message.split(' - ')[1]).get('error', {})
+            err_code = err.get('code')
+            if err_code == 'rate_limit_exceeded':   
+                err_msg = err.get('message')
+                wait_seconds = err_msg.split('Please try again in ')[1].split('s')[0]
+                logger.error(f'429 | Attempt #{retry_state.attempt_number} | Waiting {wait_seconds} seconds...')
+                sleep(float(wait_seconds))
+                return
+        except Exception as e:
+            print(exception.message)
+            logger.error(f'Error: {e}')
+
         if 'RESOURCE_EXHAUSTED' in str(exception):
             logger.error(f'429 | Attempt #{retry_state.attempt_number}')
         else:
