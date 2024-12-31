@@ -109,13 +109,8 @@ def load_from_toml(cfg: AppConfig, toml_file: str = 'config.toml'):
         )
         return
 
-    # if there was an exception or core is not in the toml, try to use the old-style toml
-    if 'core' not in toml_config:
-        # re-use the env loader to set the config from env-style vars
-        load_from_env(cfg, toml_config)
-        return
 
-    core_config = toml_config['core']
+    core_config = toml_config.get('core', {})
 
     # load llm configs and agent configs
     for key, value in toml_config.items():
