@@ -1,5 +1,6 @@
 import atexit
 import os
+import subprocess
 import threading
 from pathlib import Path
 from typing import Callable
@@ -161,6 +162,8 @@ class LocalRuntime(Runtime):
                 break
         else:
             content = os.popen(command).read()
+            if not content.strip():
+                content = '[Command executed successfully with no output]'
         obs = CmdOutputObservation(
             command_id=action.id, command=command, content=content
         )
@@ -169,9 +172,26 @@ class LocalRuntime(Runtime):
     def run_ipython(self, action: IPythonRunCellAction) -> Observation:
         code = action.code
         imports = 'from openhands.runtime.plugins.agent_skills.agentskills import *'
+        cwd_code = 'import os; os.chdir("/testbed")'
         with open('/tmp/code.py', 'w') as f:
-            f.write(imports + '\n' + code)
-        content = os.popen('poetry run python /tmp/code.py').read()
+            codes = code.strip().splitlines()
+            # wrap the code with print() if it doesn't end with print()
+            last_line = codes[-1]
+            # have only ) bracket
+            l_count = last_line.count('(')
+            r_count = last_line.count(')')
+            if not last_line.startswith('print') and l_count == r_count:
+                codes[-1] = 'print(' + codes[-1] + ')'
+            f.write(imports + '\n' + cwd_code + '\n' + '\n'.join(codes))
+        proc = subprocess.run(
+            ['poetry', 'run', 'python', '/tmp/code.py'],
+            capture_output=True,
+            text=True,
+        )
+        content = '\n'.join([proc.stdout, proc.stderr])
+        if not content.strip():
+            content = '[Code executed successfully with no output]'
+
         return IPythonRunCellObservation(
             content,
             action.code,
