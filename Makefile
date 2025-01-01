@@ -89,7 +89,7 @@ check-netcat:
 			echo "$(GREEN)netcat is not installed.$(RESET)"; \
 			read -p "Do you want to install netcat $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
-				pip install poetry -U \
+				sudo apt install -y netcat; \
 			fi; \
 		else \
 			echo "$(RED)netcat is not installed. Please install it to continue.$(RESET)"; \
@@ -157,7 +157,7 @@ check-poetry:
 		else \
 			read -p "Do you want to install Python $(PYTHON_VERSION)? [y/n]:" consent; \
 			if [ "$$consent" = "y" ]; then \
-				sudo apt install -y python3-poetry \
+				pip install poetry -U; \
 			else \
 				echo "$(RED)Poetry 1.8 or later is required. You can install poetry by running the following command, then adding Poetry to your PATH:"; \
 				echo "$(RED) curl -sSL https://install.python-poetry.org | python$(PYTHON_VERSION) -$(RESET)"; \
