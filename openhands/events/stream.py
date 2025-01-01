@@ -247,10 +247,24 @@ class EventStream:
                 for callback_id in callbacks:
                     callback = callbacks[callback_id]
                     pool = self._thread_pools[key][callback_id]
-                    pool.submit(callback, event)
+                    future = pool.submit(callback, event)
+                    future.add_done_callback(self._make_error_handler(callback_id, key))
 
-    def _callback(self, callback: Callable, event: Event):
-        asyncio.run(callback(event))
+    def _make_error_handler(self, callback_id: str, subscriber_id: str):
+        def _handle_callback_error(fut):
+            try:
+                # This will raise any exception that occurred during callback execution
+                fut.result()
+            except Exception as e:
+                logger.error(
+                    f'Error in event callback {callback_id} for subscriber {subscriber_id}: {str(e)}',
+                    exc_info=True,
+                    stack_info=True,
+                )
+                # Re-raise in the main thread so the error is not swallowed
+                raise e
+
+        return _handle_callback_error
 
     def remove_latest_event(self):
         # Remove NullObservation, RegenerateAction, AgentStateChangedObservation, NullObservation and the previous Action

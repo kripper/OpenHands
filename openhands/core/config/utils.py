@@ -388,7 +388,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '-n',
         '--name',
-        default='default',
+        default='',
         type=str,
         help='Name for the session',
     )
