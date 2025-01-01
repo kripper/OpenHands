@@ -2,7 +2,6 @@ import React from "react";
 import { useLocation } from "react-router";
 import FolderIcon from "#/icons/docs.svg?react";
 import { useAuth } from "#/context/auth-context";
-import { useSettings } from "#/context/settings-context";
 import { useGitHubUser } from "#/hooks/query/use-github-user";
 import { useIsAuthed } from "#/hooks/query/use-is-authed";
 import { UserActions } from "./user-actions";
@@ -18,18 +17,19 @@ import { AgentState } from "#/types/agent-state";
 import { useDispatch } from "react-redux";
 import { useEndSession } from "#/hooks/use-end-session";
 import { setCurrentAgentState } from "#/state/agent-slice";
+import { useSettingsUpToDate } from "#/context/settings-up-to-date-context";
+import { useSettings } from "#/hooks/query/use-settings";
 import { ConversationPanel } from "../conversation-panel/conversation-panel";
 import { cn } from "#/utils/utils";
 import { MULTI_CONVO_UI_IS_ENABLED } from "#/utils/constants";
 
 export function Sidebar() {
   const location = useLocation();
-
   const user = useGitHubUser();
   const { data: isAuthed } = useIsAuthed();
-
   const { logout } = useAuth();
-  const { settingsAreUpToDate } = useSettings();
+  const { data: settings, isError: settingsIsError } = useSettings();
+  const { isUpToDate: settingsAreUpToDate } = useSettingsUpToDate();
 
   const [accountSettingsModalOpen, setAccountSettingsModalOpen] =
     React.useState(false);
@@ -120,9 +120,13 @@ export function Sidebar() {
       {accountSettingsModalOpen && (
         <AccountSettingsModal onClose={handleAccountSettingsModalClose} />
       )}
-      {showSettingsModal && (
-        <SettingsModal onClose={() => setSettingsModalIsOpen(false)} />
-      )}
+      {settingsIsError ||
+        (showSettingsModal && (
+          <SettingsModal
+            settings={settings}
+            onClose={() => setSettingsModalIsOpen(false)}
+          />
+        ))}
       {startNewProjectModalIsOpen && (
         <ExitProjectConfirmationModal
           onClose={() => setStartNewProjectModalIsOpen(false)}

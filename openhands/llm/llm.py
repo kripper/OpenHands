@@ -20,7 +20,8 @@ with warnings.catch_warnings():
         os.environ['LITELLM_LOG'] = 'DEBUG'
     else:
         litellm.suppress_debug_info = True
-from litellm import ModelInfo, PromptTokensDetails
+from litellm import ChatCompletionMessageToolCall, ModelInfo, PromptTokensDetails
+from litellm import Message as LiteLLMMessage
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
 from litellm import Message as LiteLLMMessage
@@ -334,7 +335,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         if attempt_number != -1 and 'gemini/' in config2.model:
                             try:
                                 from api_keys import api_keys
-
                                 self.api_idx = (self.api_idx + 1) % len(api_keys)
                                 print('Using API key', self.api_idx)
                                 kwargs['api_key'] = api_keys[self.api_idx]
@@ -409,7 +409,10 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
 
-                tool_calls = resp['choices'][0]['message'].get('tool_calls', [])  # type: ignore
+                message_back: str = resp['choices'][0]['message']['content'] or ''
+                tool_calls: list[ChatCompletionMessageToolCall] = resp['choices'][0][
+                    'message'
+                ].get('tool_calls', [])
                 if tool_calls:
                     for tool_call in tool_calls:
                         fn_name: str = tool_call.function.name  # type: ignore
