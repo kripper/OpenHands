@@ -158,7 +158,7 @@ function AppContent() {
             }
             secondChild={
               <Container
-                className="h-1/3 overflow-auto"
+                className="h-full overflow-auto"
                 label={<TerminalStatusLabel />}
               >
                 {/* Terminal uses some API that is not compatible in a server-environment. For this reason, we lazy load it to ensure
