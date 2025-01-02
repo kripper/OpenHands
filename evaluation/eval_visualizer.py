@@ -113,9 +113,11 @@ response = requests.post(
 rj = response.json()
 try:
     f_id = rj['body']['feedback_id']
-    print(f'Feedback ID: {f_id}')
+    url = f'https://www.all-hands.dev/share?share_id={f_id}'
+    print(f'Feedback URL: {url}')
+
 except Exception:
     print(rj)
     exit()
 
-webbrowser.open(f'https://www.all-hands.dev/share?share_id={f_id}')
+webbrowser.open(url)
