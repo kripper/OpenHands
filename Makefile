@@ -192,8 +192,11 @@ install-python-dependencies:
 		export HNSWLIB_NO_NATIVE=1; \
 		poetry run pip install chroma-hnswlib; \
 	fi
-		
-	poetry run pip install -r requirements-extra.txt
+	@if [ -z "${QUIET_INSTALL}" ]; then \
+		poetry run pip install -r requirements-extra.txt; \
+	else \
+		poetry run pip install -r requirements-extra.txt --quiet; \
+	fi
 	@if command -v apt > /dev/null; then \
 		read -p "Do you want to install python$(PYTHON_VERSION)-dev? [y/n]:" consent; \
 	if [ "$$consent" = "y" ]; then \
@@ -204,7 +207,7 @@ install-python-dependencies:
 			exit 1; \
 		fi; \
 	fi
-	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
+	@if [ -z "${QUIET_INSTALL}" ]; then \
 		poetry install --without llama-index; \
 	else \
 		poetry install --without llama-index --quiet; \
