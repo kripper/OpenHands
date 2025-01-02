@@ -326,6 +326,7 @@ def initialize_runtime(
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         if not command.startswith('rm -r'):
             assert obs.exit_code == 0, f'Failed to {command}: {str(obs)}'
+            assert 'fatal:' not in obs.content
 
     action = CmdRunAction(
         command='for remote_name in $(git remote); do git remote remove "${remote_name}"; done'
