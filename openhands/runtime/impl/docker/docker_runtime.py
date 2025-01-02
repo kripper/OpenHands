@@ -216,7 +216,7 @@ class DockerRuntime(ActionExecutionClient):
             logger.error(
                 f'Launch docker client failed. Please make sure you have installed docker and started docker desktop/daemon.| {e}',
             )
-            exit(0)
+            os._exit(0)
 
     def _init_container(self):
         self.log('debug', 'Preparing to start container...')
