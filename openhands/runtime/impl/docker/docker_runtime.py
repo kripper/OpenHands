@@ -214,7 +214,7 @@ class DockerRuntime(ActionExecutionClient):
             return docker.from_env()
         except Exception as e:
             logger.error(
-                f'Launch docker client failed. Please make sure you have installed docker and started docker desktop/daemon.| {e}',
+                f'Is Docker Desktop running?\n{e}',
             )
             os._exit(0)
 
