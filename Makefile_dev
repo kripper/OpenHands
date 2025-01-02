@@ -1,0 +1,11 @@
+# @if command -v apt > /dev/null; then \
+# 	read -p "Do you want to install python3.12-dev? [y/n]:" consent; \
+# 	if [ "$consent" = "y" ]; then \
+#		https://github.com/kuangkzh/pylcs/issues/3 \
+# 		sudo apt-get install -y python3.12-dev; \
+# 	else \
+# 		echo "python3.12-dev is required. Please install python3.12-dev to continue.(B"; \
+# 		exit 1; \
+# 	fi; \
+# fi
+make: *** [Makefile:191: install-python-dependencies] Error 1
