@@ -194,16 +194,16 @@ install-python-dependencies:
 	fi
 		
 	poetry run pip install -r requirements-extra.txt
-	# @if command -v apt > /dev/null; then \
-	# 	read -p "Do you want to install python$(PYTHON_VERSION)-dev? [y/n]:" consent; \
-	# 	if [ "$$consent" = "y" ]; then \
-	#		https://github.com/kuangkzh/pylcs/issues/3 \
-	# 		sudo apt-get install -y python$(PYTHON_VERSION)-dev; \
-	# 	else \
-	# 		echo "$(RED)python$(PYTHON_VERSION)-dev is required. Please install python$(PYTHON_VERSION)-dev to continue.$(RESET)"; \
-	# 		exit 1; \
-	# 	fi; \
-	# fi
+	@if command -v apt > /dev/null; then \
+		read -p "Do you want to install python$(PYTHON_VERSION)-dev? [y/n]:" consent; \
+	if [ "$$consent" = "y" ]; then \
+			# https://github.com/kuangkzh/pylcs/issues/3 \
+			sudo apt-get install -y python$(PYTHON_VERSION)-dev; \
+		else \
+			echo "$(RED)python$(PYTHON_VERSION)-dev is required. Please install python$(PYTHON_VERSION)-dev to continue.$(RESET)"; \
+			exit 1; \
+		fi; \
+	fi
 	@if [ -z "${RUN_WITHOUT_DOCKER}" ]; then \
 		poetry install --without llama-index; \
 	else \
