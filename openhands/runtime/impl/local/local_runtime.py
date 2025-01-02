@@ -25,6 +25,7 @@ from openhands.events.observation.commands import (
     CmdOutputObservation,
     IPythonRunCellObservation,
 )
+from openhands.events.observation.empty import NullObservation
 from openhands.runtime.base import (
     Runtime,
 )
@@ -161,7 +162,21 @@ class LocalRuntime(Runtime):
                 content = f'Use non interactive command to edit files'
                 break
         else:
-            content = os.popen(command).read()
+            content = subprocess.run(command,).read()
+            if 1:
+                os.chdir('/testbed')
+                content = os.popen(command).read()
+            else:
+                proc = subprocess.Popen(
+                    command,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    cwd='/testbed'
+                )
+                output, error = proc.communicate(timeout=10)
+                content = '\n'.join([output, error])
             if not content.strip():
                 content = '[Command executed successfully with no output]'
         obs = CmdOutputObservation(
@@ -206,16 +221,16 @@ class LocalRuntime(Runtime):
             return super().run_action(action)
 
     def read(self, action: FileReadAction) -> Observation:
-        return self.run_action(action)
+        return NullObservation('')
 
     def write(self, action: FileWriteAction) -> Observation:
-        return self.run_action(action)
+        return NullObservation('')
 
     def browse(self, action: BrowseURLAction) -> Observation:
-        return self.run_action(action)
+        return NullObservation('')
 
     def browse_interactive(self, action: BrowseInteractiveAction) -> Observation:
-        return self.run_action(action)
+        return NullObservation('')
 
     # ====================================================================
     # Implement these methods (for file operations) in the subclass
