@@ -40,7 +40,7 @@ export const organizeModelsAndProviders = (models: string[]) => {
       return;
     }
 
-    const key = provider || "other";
+    const key = provider || "openai";
     if (!object[key]) {
       object[key] = { separator, models: [] };
     }
