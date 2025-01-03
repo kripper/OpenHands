@@ -25,6 +25,7 @@ from openhands.events import EventSource, EventStream, EventStreamSubscriber
 from openhands.events.action import (
     Action,
     ActionConfirmationStatus,
+    AddTaskAction,
     AgentDelegateAction,
     AgentFinishAction,
     AgentRejectAction,
@@ -33,6 +34,7 @@ from openhands.events.action import (
     CmdRunAction,
     IPythonRunCellAction,
     MessageAction,
+    ModifyTaskAction,
     NullAction,
     RegenerateAction,
 )
@@ -278,7 +280,12 @@ class AgentController:
             await self._handle_message_action(action)
         elif isinstance(action, AgentDelegateAction):
             await self.start_delegate(action)
-
+        elif isinstance(action, AddTaskAction):
+            self.state.root_task.add_subtask(
+                action.parent, action.goal, action.subtasks
+            )
+        elif isinstance(action, ModifyTaskAction):
+            self.state.root_task.set_subtask_state(action.task_id, action.state)
         elif isinstance(action, AgentFinishAction):
             self.state.outputs = action.outputs
             self.state.metrics.merge(self.state.local_metrics)

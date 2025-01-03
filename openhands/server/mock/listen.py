@@ -49,6 +49,7 @@ def read_llm_models():
 def read_llm_agents():
     return [
         'CodeActAgent',
+        'PlannerAgent',
     ]
 
 

@@ -30,6 +30,8 @@ __all__ = [
     'AgentRejectAction',
     'AgentDelegateAction',
     'AgentSummarizeAction',
+    'AddTaskAction',
+    'ModifyTaskAction',
     'ChangeAgentStateAction',
     'IPythonRunCellAction',
     'MessageAction',

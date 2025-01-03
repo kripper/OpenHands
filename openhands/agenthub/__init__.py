@@ -12,10 +12,12 @@ from openhands.agenthub import (  # noqa: E402
     codeact_agent,
     delegator_agent,
     dummy_agent,
+    planner_agent,
 )
 
 __all__ = [
     'codeact_agent',
+    'planner_agent',
     'delegator_agent',
     'dummy_agent',
     'browsing_agent',

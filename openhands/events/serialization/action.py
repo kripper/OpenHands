@@ -33,6 +33,8 @@ actions = (
     AgentFinishAction,
     AgentRejectAction,
     AgentDelegateAction,
+    AddTaskAction,
+    ModifyTaskAction,
     ChangeAgentStateAction,
     MessageAction,
     RegenerateAction,
