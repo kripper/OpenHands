@@ -384,7 +384,14 @@ class DockerRuntime(ActionExecutionClient):
         # if not self.log_streamer:
         #     raise AgentRuntimeNotReadyError('Runtime client is not ready.')
 
-        self.check_if_alive()
+        try:
+            self.check_if_alive()
+        except Exception as e:
+            self.log('error', f'Error checking if alive: {e}')
+            extra_msg = ''
+            if self.config.sandbox.use_host_network:
+                extra_msg = 'Make sure you have enabled host networking in the docker desktop settings. Steps: https://docs.docker.com/network/drivers/host/#docker-desktop'
+            raise Exception(f'Unable to connect to the runtime docker container. Please check if the container is running and there is no error in the container logs. {extra_msg}')
 
     def start_docker_container(self):
         try:
