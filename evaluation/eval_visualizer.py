@@ -57,7 +57,7 @@ config = {
     'args': {
         'LLM_MODEL': model,
         'AGENT': agent,
-        'LANGUAGE': 'EN | Using Kevin Fork',
+        'LANGUAGE': f'EN | Using Kevin Fork on {git_hash[:7]}',
         'CONFIRMATION_MODE': 'false',
         'SECURITY_ANALYZER': '',
     },
