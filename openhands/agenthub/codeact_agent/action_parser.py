@@ -210,7 +210,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
                 code = code.replace(three_backticks, '').strip()
 
         thought = action_str.replace(self.python_code.group(0), '').strip()
-        thought = re.sub(r'```(python|tool_code)\s*```', '', thought)
+        thought = re.sub(r'```(python|tool_code)\s*(```)?', '', thought)
 
         # escape "\n"
         triple_single_quotes = "'''"
