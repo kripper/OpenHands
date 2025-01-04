@@ -186,7 +186,7 @@ Done! Now you can start OpenHands by: `make run` without Docker. You now should 
 
 For WSL, run the following commands in cmd to set up the networking mode to mirrored:
 
-```
+```batch
 python -c  "print('[wsl2]\nnetworkingMode=mirrored',file=open(r'%UserProfile%\.wslconfig','w'))"
 wsl --shutdown
 ```
