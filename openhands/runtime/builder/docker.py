@@ -19,7 +19,8 @@ class DockerRuntimeBuilder(RuntimeBuilder):
 
         version_info = self.docker_client.version()
         server_version = version_info.get('Version', '').replace('-', '.')
-        if tuple(map(int, server_version.split('.')[:2])) < (18, 9):
+        self.is_podman = version_info.get('Components')[0].get('Name').startswith('Podman')
+        if tuple(map(int, server_version.split('.')[:2])) < (18, 9) and not self.is_podman:
             raise AgentRuntimeBuildError(
                 'Docker server version must be >= 18.09 to use BuildKit'
             )
@@ -59,7 +60,7 @@ class DockerRuntimeBuilder(RuntimeBuilder):
         target_image_tag = tags[1].split(':')[1] if len(tags) > 1 else None
 
         buildx_cmd = [
-            'docker',
+            'docker' if not self.is_podman else 'podman',
             'buildx',
             'build',
             '--progress=plain',
@@ -88,7 +89,7 @@ class DockerRuntimeBuilder(RuntimeBuilder):
         buildx_cmd.append(path)  # must be last!
 
         self.rolling_logger.start(
-            '================ DOCKER BUILD STARTED ================'
+            f'================ {buildx_cmd[0].upper()} BUILD STARTED ================'
         )
 
         try:
