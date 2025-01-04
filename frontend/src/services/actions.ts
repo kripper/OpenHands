@@ -8,7 +8,6 @@ import {
 import { appendSecurityAnalyzerInput } from "#/state/security-analyzer-slice";
 import { setCode, setActiveFilepath } from "#/state/code-slice";
 import { appendJupyterInput } from "#/state/jupyter-slice";
-import { appendInput } from "#/state/command-slice";
 import { setCurStatusMessage } from "#/state/status-slice";
 import store from "#/store";
 import ActionType from "#/types/action-type";
