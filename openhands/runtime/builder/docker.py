@@ -218,6 +218,9 @@ class DockerRuntimeBuilder(RuntimeBuilder):
                 ):
                     self._output_build_progress(line, layers, previous_layer_count)
                     previous_layer_count = len(layers)
+                    if line['error']:
+                        logger.error(line['error'])
+                        return False
                 logger.debug('Image pulled')
                 return True
             except docker.errors.ImageNotFound:
