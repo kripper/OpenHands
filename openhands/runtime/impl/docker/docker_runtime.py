@@ -74,7 +74,7 @@ class DockerRuntime(ActionExecutionClient):
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
             # odd port number will be used for vscode
-            if 'resolve_issue' in sys.argv[1]:
+            if sys.argv[1:] and 'resolve_issue' in sys.argv[1]:
                 self._container_port = 63708
             elif self.config.run_as_openhands:
                 user = 'oh'
