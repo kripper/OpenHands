@@ -464,7 +464,7 @@ class BashSession:
             output = "[Why are you executing the same command twice? What's wrong with you? Please focus 🙏]"
         elif command.startswith('cd'):
             path = command[3:].strip()
-            if self.pwd == path:
+            if self.cwd == path:
                 output = '[You are already in this directory.]'
         elif self.username == 'root':
             if command.startswith('git blame'):
@@ -484,10 +484,10 @@ class BashSession:
             elif command.startswith('pytest') and '.py' not in command:
                 output = '[Please run specific test cases instead of running all test cases.]'
         if output:
-            return ErrorObservation(
+            return CmdOutputObservation(
                 content=output,
                 command='',
-                metadata=CmdOutputMetadata(),
+                metadata=CmdOutputMetadata(exit_code=0),
             )
         if command == '' and self.prev_status not in {
             BashCommandStatus.CONTINUE,
@@ -619,5 +619,4 @@ class BashSession:
                 plural = 's' if len(package_names) > 1 else ''
                 parsed_output = f'[Package{plural} already installed]'
 
-        prompt_output = self._get_bash_prompt_and_update_pwd()
-        return parsed_output + '\r\n' + prompt_output
+        return parsed_output 
