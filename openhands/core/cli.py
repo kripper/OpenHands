@@ -110,7 +110,6 @@ async def main(loop):
         print(f'OpenHands version: {__version__}')
         return
 
-    logger.setLevel(logging.WARNING)
     config = load_app_config(config_file=args.config_file)
     sid = str(uuid4())
 
@@ -170,6 +169,9 @@ async def main(loop):
     event_stream.subscribe(EventStreamSubscriber.MAIN, on_event, str(uuid4()))
 
     await runtime.connect()
+    
+    logger.setLevel(logging.WARNING)
+
     if args.task:
         action = MessageAction(content=args.task)
         event_stream.add_event(action, EventSource.USER)
