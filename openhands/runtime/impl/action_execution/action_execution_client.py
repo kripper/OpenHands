@@ -96,10 +96,11 @@ class ActionExecutionClient(Runtime):
         return send_request(self.session, method, url, **kwargs)
 
     def check_if_alive(self) -> None:
+        self.log('info', f'Checking if runtime is alive')
         with self._send_action_server_request(
             'GET',
             f'{self._get_action_execution_server_host()}/alive',
-            timeout=5,
+            timeout=60,
         ):
             pass
 
