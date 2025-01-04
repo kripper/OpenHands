@@ -94,9 +94,10 @@ class DockerRuntime(ActionExecutionClient):
             self.instance_id = sid
             self._container_port = find_available_tcp_port()
         self.container_name = CONTAINER_NAME_PREFIX + self.instance_id
+        self.docker_client: docker.DockerClient = self._init_docker_client()
         if not attach_to_existing:
             try:
-                container = docker.DockerClient().containers.get(self.container_name)
+                container = self.docker_client.containers.get(self.container_name)
                 self._container_port = int(container.attrs['Args'][9])
                 attach_to_existing = True
             except docker.errors.NotFound:
@@ -107,7 +108,6 @@ class DockerRuntime(ActionExecutionClient):
         self.status_callback = status_callback
         self._host_port = self._container_port
 
-        self.docker_client: docker.DockerClient = self._init_docker_client()
         self.base_container_image = self.config.sandbox.base_container_image
         self.runtime_container_image = self.config.sandbox.runtime_container_image
         self.container = None
@@ -134,14 +134,6 @@ class DockerRuntime(ActionExecutionClient):
                 'debug',
                 f'Installing extra user-provided dependencies in the runtime image: {self.config.sandbox.runtime_extra_deps}',
             )
-        try:
-            path = 'openhands/sel/selenium_session_details.py'
-            self.copy_to(path, '/openhands/code/openhands/sel/')
-            path = 'openhands/sel/selenium_tester.py'
-            self.copy_to(path, '/openhands/code/openhands/sel/')
-            logger.info(f'Copied selenium files to runtime')
-        except Exception as e:
-            logger.error(f'Error copying selenium files to runtime: {e}')
 
     def _get_action_execution_server_host(self):
         return self.api_url
@@ -206,6 +198,15 @@ class DockerRuntime(ActionExecutionClient):
         if not self.attach_to_existing:
             self.send_status_message(' ')
         self._runtime_initialized = True
+
+        try:
+            path = 'openhands/sel/selenium_session_details.py'
+            self.copy_to(path, '/openhands/code/openhands/sel/')
+            path = 'openhands/sel/selenium_tester.py'
+            self.copy_to(path, '/openhands/code/openhands/sel/')
+            logger.info(f'Copied selenium files to runtime')
+        except Exception as e:
+            logger.error(f'Error copying selenium files to runtime: {e}')
 
     @staticmethod
     @lru_cache(maxsize=1)
