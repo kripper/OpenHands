@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import sys
+import traceback
 from uuid import uuid4
 
 from termcolor import colored
@@ -191,6 +192,7 @@ if __name__ == '__main__':
         print(f'Connection refused: {e}')
         sys.exit(1)
     except Exception as e:
+        traceback.print_exc()
         print(f'An error occurred: {e}')
         sys.exit(1)
     finally:
