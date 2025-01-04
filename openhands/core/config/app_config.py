@@ -56,7 +56,7 @@ class AppConfig:
     security: SecurityConfig = field(default_factory=SecurityConfig)
     runtime: str = 'docker'
     file_store: str = 'local'
-    file_store_path: str = 'cache/file_store'
+    file_store_path: str = '/tmp/openhands_file_store'
     trajectories_path: str | None = None
     workspace_base: str | None = None
     workspace_mount_path: str | None = None

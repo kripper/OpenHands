@@ -436,7 +436,6 @@ def complete_runtime(
         action = CmdRunAction(
             command=f"""git diff --cached {instance["base_commit"]} '*.py' ':(exclude)setup.py' ':(exclude)*/tests/*' ':(exclude)tests/*' ':(exclude)*/testing/*' ':(exclude)testing/*' ':(exclude)testproject/*' ':(exclude)testapp/*' """,
             # command=f'git diff --no-color --cached {instance["base_commit"]}',
-            keep_prompt=False,
         )
         action.timeout = 10 * n_retries
         logger.info(action, extra={'msg_type': 'ACTION'})
@@ -486,7 +485,7 @@ def process_instance(
     if runtime_failure_count > 0:
         config.sandbox.remote_runtime_resource_factor = min(
             config.sandbox.remote_runtime_resource_factor * (2**runtime_failure_count),
-            2,  # hardcode maximum resource factor to 2
+            8,
         )
         logger.warning(
             f'This is the second attempt for instance {instance.instance_id}, setting resource factor to {config.sandbox.remote_runtime_resource_factor}'
@@ -642,5 +641,6 @@ if __name__ == '__main__':
         output_file,
         args.eval_num_workers,
         process_instance,
-        # timeout_seconds=120 * 60,  # 2 hour PER instance should be more than enough
+        timeout_seconds=120 * 60,  # 2 hour PER instance should be more than enough
+        max_retries=5,
     )

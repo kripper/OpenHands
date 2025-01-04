@@ -7,6 +7,7 @@ from litellm.types.utils import ModelResponse
 from openhands.core.exceptions import LLMResponseError
 from openhands.core.metrics import Metrics
 from openhands.events.event import Event
+from openhands.events.observation import CmdOutputMetadata
 from openhands.events.serialization import event_to_dict
 
 
@@ -19,6 +20,8 @@ def my_default_encoder(obj):
     if isinstance(obj, Metrics):
         return obj.get()
     if isinstance(obj, ModelResponse):
+        return obj.model_dump()
+    if isinstance(obj, CmdOutputMetadata):
         return obj.model_dump()
     return json.JSONEncoder().default(obj)
 
