@@ -108,11 +108,14 @@ class DockerRuntimeBuilder(RuntimeBuilder):
                 bufsize=1,
             )
 
+            lines = []
             if process.stdout:
                 for line in iter(process.stdout.readline, ''):
                     line = line.strip()
+                    lines.append(line)
                     if line:
                         self._output_logs(line)
+            full_output = '\n'.join(lines)
 
             return_code = process.wait()
 
@@ -120,8 +123,7 @@ class DockerRuntimeBuilder(RuntimeBuilder):
                 raise subprocess.CalledProcessError(
                     return_code,
                     process.args,
-                    output=process.stdout.read() if process.stdout else None,
-                    stderr=process.stderr.read() if process.stderr else None,
+                    output=full_output,
                 )
 
         except subprocess.CalledProcessError as e:
