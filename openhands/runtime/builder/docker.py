@@ -54,14 +54,6 @@ class DockerRuntimeBuilder(RuntimeBuilder):
             If `use_local_cache` is True, it will attempt to use and update the build cache in a local directory.
             The `extra_build_args` parameter allows for passing additional Docker build arguments as needed.
         """
-        self.docker_client = docker.from_env()
-        version_info = self.docker_client.version()
-        server_version = version_info.get('Version', '').replace('-', '.')
-        if tuple(map(int, server_version.split('.'))) < (18, 9):
-            raise AgentRuntimeBuildError(
-                'Docker server version must be >= 18.09 to use BuildKit'
-            )
-
         target_image_hash_name = tags[0]
         target_image_repo, target_image_source_tag = target_image_hash_name.split(':')
         target_image_tag = tags[1].split(':')[1] if len(tags) > 1 else None
