@@ -94,10 +94,10 @@ def init_user_and_working_directory(
         f'-g root -G sudo -o -u {user_id} {username}'
     )
 
-    if not os.path.exists(initial_pwd):
-        command += f' && mkdir -p {initial_pwd}'
-        command += f' && chown -R {username}:root {initial_pwd}'
-        command += f' && chmod g+s {initial_pwd}'
+    if not os.path.exists(initial_cwd):
+        command += f' && mkdir -p {initial_cwd}'
+        command += f' && chown -R {username}:root {initial_cwd}'
+        command += f' && chmod g+s {initial_cwd}'
 
     output = subprocess.run(
         command,
