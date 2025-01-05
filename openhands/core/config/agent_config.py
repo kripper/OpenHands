@@ -18,6 +18,8 @@ class AgentConfig:
         llm_config: The name of the llm config to use. If specified, this will override global llm config.
         use_microagents: Whether to use microagents at all. Default is True.
         disabled_microagents: A list of microagents to disable. Default is None.
+        mind_voice: Voice for the mind.
+        mind_voice_language: Language for the mind voice.
     """
 
     function_calling: bool = False
@@ -30,6 +32,8 @@ class AgentConfig:
     llm_config: str | None = None
     use_microagents: bool = True
     disabled_microagents: list[str] | None = None
+    mind_voice: str | None = None
+    mind_voice_language: str = 'English'
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""

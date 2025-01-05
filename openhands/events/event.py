@@ -98,3 +98,7 @@ class Event:
 @dataclass
 class LogEvent(Event):
     log: str
+
+@dataclass
+class AudioEvent(Event):
+    text_for_audio: str

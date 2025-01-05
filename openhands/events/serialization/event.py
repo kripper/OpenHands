@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from openhands.events import Event, EventSource
-from openhands.events.event import LogEvent
+from openhands.events.event import AudioEvent, LogEvent
 from openhands.events.observation.observation import Observation
 from openhands.events.serialization.action import action_from_dict
 from openhands.events.serialization.observation import observation_from_dict
@@ -22,6 +22,7 @@ TOP_KEYS = [
     'observation',
     'log',
     'tool_call_metadata',
+    'text_for_audio',
 ]
 UNDERSCORE_KEYS = ['id', 'timestamp', 'source', 'cause', 'tool_call_metadata']
 
@@ -48,6 +49,8 @@ def event_from_dict(data) -> 'Event':
         evt = observation_from_dict(data)
     elif 'log' in data:
         evt = LogEvent(log=data['log'])
+    elif 'text_for_audio' in data:
+        evt = AudioEvent(text_for_audio=data['text_for_audio'])
     else:
         raise ValueError(f'Unknown event: {data}')
     for key in UNDERSCORE_KEYS:
@@ -104,6 +107,8 @@ def event_to_dict(event: 'Event') -> dict:
         if hasattr(event, 'success'):
             d['success'] = event.success
     elif 'log' in d:
+        pass
+    elif 'text_for_audio' in d:
         pass
     else:
         raise ValueError(f'Event must be either action or observation. Got {event}')

@@ -2,6 +2,7 @@ import asyncio
 import copy
 import os
 import traceback
+from types import GeneratorType
 from typing import Callable, ClassVar, Type
 
 import litellm
@@ -42,7 +43,7 @@ from openhands.events.action import (
     NullAction,
     RegenerateAction,
 )
-from openhands.events.event import Event, LogEvent
+from openhands.events.event import AudioEvent, Event, LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
     AgentStateChangedObservation,
@@ -593,7 +594,13 @@ class AgentController:
         self.update_state_before_step()
         action: Action = NullAction()
         try:
-            action = self.agent.step(self.state)
+            _iter = self.agent.step(self.state)
+            if isinstance(_iter, GeneratorType):    
+                for action in _iter:
+                    if type(action) == str  :
+                        self.event_stream.add_event(AudioEvent(text_for_audio=action), EventSource.AGENT)
+            else:
+                action = _iter
             if isinstance(action, AgentSummarizeAction):
                 # self.state.history.add_summary(action)
                 return

@@ -18,6 +18,7 @@ import {
 } from "#/types/message";
 import { handleObservationMessage } from "./observations";
 import { appendInput } from "#/state/command-slice";
+import { generateAudio } from "#/utils/playAudio";
 
 const messageActions = {
   [ActionType.BROWSE]: (message: ActionMessage) => {
@@ -115,6 +116,8 @@ export function handleAssistantMessage(message: Record<string, unknown>) {
     handleStatusMessage(message as unknown as StatusMessage);
   } else if (message.log) {
     store.dispatch(setCurrentStep(message.log));
+  } else if (message.text_for_audio) {
+    generateAudio(message.text_for_audio as string);
   } else {
     store.dispatch(
       addErrorMessage({

@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections import deque
+from typing import Generator
 
 from litellm import ModelResponse
 
@@ -28,7 +29,7 @@ from openhands.events.action import (
     MessageAction,
 )
 from openhands.events.action.browse import BrowseURLAction
-from openhands.events.event import LogEvent
+from openhands.events.event import AudioEvent, LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
     BrowserOutputObservation,
@@ -389,7 +390,7 @@ class CodeActAgent(Agent):
         super().reset()
         self.pending_actions.clear()
 
-    def step(self, state: State) -> Action:
+    def step(self, state: State) -> Action | Generator:
         """Performs one step using the CodeAct Agent.
         This includes gathering info on previous steps and prompting the model to make a command to execute.
 
@@ -444,14 +445,32 @@ class CodeActAgent(Agent):
                 '</execute_browse>',
                 '</file_edit>',
             ]
+        if self.config.mind_voice:
+            new_messages = messages.copy()
+            # change the system message
+            new_messages[0].content[0].text = f'Tell your frustration/comments about the code in {self.config.mind_voice}\'s native voice in a single line in colloquial {self.config.mind_voice_language} langauge.'
+            # ask the LLM to generate the mind voice
+            new_messages.append(Message(role='user', content=[TextContent(text=f'Now generate the mind voice for the above observation in a single line in colloquial {self.config.mind_voice_language} langauge. Wrap it in <mind_voice></mind_voice> tags.')]))
+            params['messages'] = new_messages
+            response = self.llm.completion(**params)
+            if self.config.mind_voice_language.lower() == 'tamil':
+                voice = 'Ramaa - Expert Tamil Book Narrator'
+            else:
+                voice = 'Bella - Expert English Book Narrator'
+            # extract the mind voice from the response
+            mind_voice = response.choices[0].message.content.split('<mind_voice>')[1].split('</mind_voice>')[0]
+            logger.info(f'Mind voice: {mind_voice}')
+            # reset the params
+            params['messages'] = messages
+            yield mind_voice
         response = self.llm.completion(**params)
         if self.config.function_calling:
             actions = codeact_function_calling.response_to_actions(response)
             for action in actions:
                 self.pending_actions.append(action)
-            return self.pending_actions.popleft()
+            yield self.pending_actions.popleft()
         else:
-            return self.action_parser.parse(response)
+            yield self.action_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
         system_role = 'user' if config2.model.startswith('o1-') else 'system'
@@ -587,7 +606,7 @@ display.Image(dss())
                     obs=event,
                     tool_call_id_to_message=tool_call_id_to_message,
                 )
-            elif isinstance(event, LogEvent):
+            elif isinstance(event, (LogEvent, AudioEvent)):
                 continue
             else:
                 raise ValueError(f'Unknown event type: {type(event)}')
