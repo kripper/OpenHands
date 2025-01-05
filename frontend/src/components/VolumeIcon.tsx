@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdVolumeHigh, IoMdVolumeOff } from "react-icons/io";
-import beep from "#/utils/beep";
+import { playAudio } from "#/utils/playAudio";
 
 export function VolumeIcon() {
   const [isMuted, setIsMuted] = React.useState(
@@ -12,7 +12,7 @@ export function VolumeIcon() {
     setIsMuted(newIsMuted);
     localStorage["is_muted"] = newIsMuted ? "true" : "false";
     if (!newIsMuted) {
-      beep();
+      playAudio("beep.wav");
     }
   };
 

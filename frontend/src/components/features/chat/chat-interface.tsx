@@ -19,7 +19,7 @@ import { ActionSuggestions } from "./action-suggestions";
 import { ContinueButton } from "#/components/shared/buttons/continue-button";
 import { ScrollToBottomButton } from "#/components/shared/buttons/scroll-to-bottom-button";
 import { IoMdChatbubbles } from "react-icons/io";
-import beep from "#/utils/beep";
+import { playAudio } from "#/utils/playAudio";
 import { I18nKey } from "#/i18n/declaration";
 import { useTranslation } from "react-i18next";
 import { VolumeIcon } from "#/components/VolumeIcon";
@@ -125,7 +125,7 @@ export function ChatInterface() {
       curAgentState === AgentState.ERROR ||
       curAgentState === AgentState.FINISHED
     ) {
-      if (localStorage["is_muted"] !== "true") beep();
+      if (localStorage["is_muted"] !== "true") playAudio("beep.wav");
     }
   }, [curAgentState]);
 
