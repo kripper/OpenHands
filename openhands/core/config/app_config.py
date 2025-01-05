@@ -47,6 +47,8 @@ class AppConfig:
         custom_instructions: Custom instructions for the agent.
         use_selenium: Whether to use selenium.
         dont_restore_state: Whether to not restore state from cli session.
+        cli_multiline_input: Whether to enable multiline input in CLI. When disabled,
+            input is read line by line. When enabled, input continues until /exit command.
     """
 
     llms: dict[str, LLMConfig] = field(default_factory=dict)
@@ -82,6 +84,7 @@ class AppConfig:
     use_selenium: bool = False
     dont_restore_state: bool = False
 
+    cli_multiline_input: bool = False
 
     defaults_dict: ClassVar[dict] = {}
 
