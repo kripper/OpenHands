@@ -40,11 +40,6 @@ export interface ObservationMessage {
   timestamp: string;
 }
 
-export interface LogMessage {
-  // The log message
-  log: string;
-}
-
 export interface StatusMessage {
   status_update: true;
   type: string;
