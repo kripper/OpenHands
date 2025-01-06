@@ -97,8 +97,7 @@ class DockerRuntime(ActionExecutionClient):
         self.docker_client: docker.DockerClient = self._init_docker_client()
         if not attach_to_existing:
             try:
-                container = self.docker_client.containers.get(self.container_name)
-                self._container_port = int(container.attrs['Args'][9])
+                self.docker_client.containers.get(self.container_name)
                 attach_to_existing = True
             except docker.errors.NotFound:
                 attach_to_existing = False
@@ -355,6 +354,9 @@ class DockerRuntime(ActionExecutionClient):
         for port in self.container.attrs['NetworkSettings']['Ports']:  # type: ignore
             self._container_port = int(port.split('/')[0])
             break
+        else:
+            # fallback if host network is used
+            self._container_port = int(self.container.attrs['Args'][9])
         self._host_port = self._container_port
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
         self.log(
