@@ -257,7 +257,7 @@ def finalize_config(cfg: AppConfig):
 # Utility function for command line --group argument
 def get_llm_config_arg(
     llm_config_arg: str, toml_file: str = 'config.toml'
-) -> LLMConfig | None:
+) -> LLMConfig:
     """Get a group of llm settings from the config file.
 
     A group in config.toml can look like this:
@@ -293,24 +293,14 @@ def get_llm_config_arg(
     logger.openhands_logger.debug(f'Loading llm config from {llm_config_arg}')
 
     # load the toml file
-    try:
-        with open(toml_file, 'r', encoding='utf-8') as toml_contents:
-            toml_config = toml.load(toml_contents)
-    except FileNotFoundError as e:
-        logger.openhands_logger.error(f'Config file not found: {e}')
-        return None
-    except toml.TomlDecodeError as e:
-        logger.openhands_logger.error(
-            f'Cannot parse llm group from {llm_config_arg}. Exception: {e}'
-        )
-        return None
+    with open(toml_file, 'r', encoding='utf-8') as toml_contents:
+        toml_config = toml.load(toml_contents)
     if llm_config_arg in toml_config:
         return LLMConfig(**toml_config[llm_config_arg])
     # update the llm config with the specified section
     if 'llm' in toml_config and llm_config_arg in toml_config['llm']:
         return LLMConfig.from_dict(toml_config['llm'][llm_config_arg])
-    logger.openhands_logger.info(f'Loading from toml failed for {llm_config_arg}')
-    return None
+    raise ValueError(f'Loading from toml failed for {llm_config_arg}')
 
 
 # Command line arguments
