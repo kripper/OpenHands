@@ -159,7 +159,7 @@ class CodeActActionParserCmdRun(ActionParser):
         )
         if self.bash_command is None and not '<execute_' in action_str:
             # Gemini flash not providing the tag and returns as code wrap in backticks
-            self.bash_command = re.search(r'^```bash(.*)```', action_str, re.DOTALL)
+            self.bash_command = re.search(r'^```bash(.*)```', action_str, re.DOTALL | re.MULTILINE)
         return self.bash_command is not None
 
     def parse(self, action_str: str) -> Action:
@@ -191,7 +191,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         if self.python_code is None and not '<execute_' in action_str:
             # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
             self.python_code = re.search(
-                r'^```(?:python|tool_code)(.*)```', action_str, re.DOTALL
+                r'^```(?:python|tool_code)(.*)```', action_str, re.DOTALL | re.MULTILINE
             )
         return self.python_code is not None
 
@@ -371,3 +371,21 @@ class CodeActActionParserFileEdit(ActionParser):
         if end_line is not None:
             action.end = end_line
         return action
+
+
+if __name__ == '__main__':
+    log = 'logs/llm/default/006_response.log'
+    with open(log, 'r') as f:
+        response = f.read()
+    response = {
+        'choices': [
+            {
+                'message': {
+                    'content': response
+                }
+            }
+        ]
+    }
+    action_parser = CodeActResponseParser()
+    action = action_parser.parse(response)
+    print(action)
