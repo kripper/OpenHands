@@ -162,7 +162,6 @@ class LocalRuntime(Runtime):
                 content = f'Use non interactive command to edit files'
                 break
         else:
-            content = subprocess.run(command,).read()
             if 1:
                 os.chdir('/testbed')
                 content = os.popen(command).read()
