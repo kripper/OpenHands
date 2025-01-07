@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+sudo apt update
 sudo apt install -y netcat
 curl -sSL https://install.python-poetry.org | python3.12 -
 cat << EOF > config.toml
