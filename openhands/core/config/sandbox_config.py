@@ -66,7 +66,7 @@ class SandboxConfig:
     fast_boot: bool = True
     port: int = 63710
     platform: str | None = None
-    close_delay: int = 15
+    close_delay: int = 900
     remote_runtime_resource_factor: int = 1
     enable_gpu: bool = False
 

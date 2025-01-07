@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import traceback
 import uuid
 from enum import Enum
 
@@ -23,11 +24,11 @@ def split_bash_commands(commands):
         return ['']
     try:
         parsed = bashlex.parse(commands)
-    except bashlex.errors.ParsingError as e:
+    except (bashlex.errors.ParsingError, NotImplementedError):
         logger.debug(
             f'Failed to parse bash commands\n'
             f'[input]: {commands}\n'
-            f'[warning]: {e}\n'
+            f'[warning]: {traceback.format_exc()}\n'
             f'The original command will be returned as is.'
         )
         # If parsing fails, return the original commands
@@ -143,9 +144,13 @@ def escape_bash_special_chars(command: str) -> str:
         remaining = command[last_pos:]
         parts.append(remaining)
         return ''.join(parts)
-    except bashlex.errors.ParsingError:
-        # Fallback if parsing fails
-        logger.warning(f'Failed to parse command: {command}')
+    except (bashlex.errors.ParsingError, NotImplementedError):
+        logger.debug(
+            f'Failed to parse bash commands for special characters escape\n'
+            f'[input]: {command}\n'
+            f'[warning]: {traceback.format_exc()}\n'
+            f'The original command will be returned as is.'
+        )
         return command
 
 
@@ -468,9 +473,7 @@ class BashSession:
                 output = '[You are already in this directory.]'
         elif self.username == 'root':
             if command.startswith('git blame'):
-                output = (
-                    "[Don't use git commands. Just directly give the solution.]"
-                )
+                output = "[Don't use git commands. Just directly give the solution.]"
             elif 'pip install' in command and os.getenv('NO_PIP_INSTALL') == '1':
                 output = '[Use the current packages only.]'
 
@@ -619,4 +622,4 @@ class BashSession:
                 plural = 's' if len(package_names) > 1 else ''
                 parsed_output = f'[Package{plural} already installed]'
 
-        return parsed_output 
+        return parsed_output

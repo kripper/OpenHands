@@ -5,8 +5,8 @@ from openhands.controller import AgentController
 from openhands.controller.agent import Agent
 from openhands.controller.state.state import State
 from openhands.core.config import AgentConfig, AppConfig, LLMConfig
-from openhands.core.logger import llm_prompt_logger, llm_response_logger
 from openhands.core.exceptions import AgentRuntimeUnavailableError
+from openhands.core.logger import llm_prompt_logger, llm_response_logger
 from openhands.core.logger import openhands_logger as logger
 from openhands.core.schema.agent import AgentState
 from openhands.events.action import ChangeAgentStateAction
@@ -132,6 +132,8 @@ class AgentSession:
                     f'Waited too long for initialization to finish before closing session {self.sid}'
                 )
                 break
+        if self.event_stream is not None:
+            self.event_stream.close()
         if self.controller is not None:
             end_state = self.controller.get_state()
             end_state.save_to_session(self.sid, self.file_store)
