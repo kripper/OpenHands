@@ -214,10 +214,14 @@ class SessionManager:
         logger.info(f'join_conversation:{sid}:{connection_id}')
         await self.sio.enter_room(connection_id, ROOM_KEY.format(sid=sid))
         self.local_connection_id_to_session_id[connection_id] = sid
-        event_stream = await self._get_event_stream(sid)
-        if not event_stream:
+        if True:
+            # Start the sandbox and set _local_agent_loops_by_sid[sid]. Required for sandbox.persist_sandbox_for_each_conversation.
             return await self.maybe_start_agent_loop(sid, settings)
-        return event_stream
+        else:
+            event_stream = await self._get_event_stream(sid)
+            if not event_stream:
+                return await self.maybe_start_agent_loop(sid, settings)
+            return event_stream
 
     async def detach_from_conversation(self, conversation: Conversation):
         sid = conversation.sid
