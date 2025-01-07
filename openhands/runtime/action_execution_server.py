@@ -207,6 +207,7 @@ class ActionExecutor:
         return obs
 
     async def chdir(self):
+        assert self.bash_session is not None
         if 'jupyter' not in self.plugins:
             return
         _jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore

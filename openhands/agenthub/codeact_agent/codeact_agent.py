@@ -2,7 +2,6 @@ import json
 import os
 import re
 from collections import deque
-from typing import Generator
 
 from litellm import ModelResponse
 
@@ -28,8 +27,7 @@ from openhands.events.action import (
     IPythonRunCellAction,
     MessageAction,
 )
-from openhands.events.action.browse import BrowseURLAction
-from openhands.events.event import AudioEvent, LogEvent
+from openhands.events.event import AudioEvent, EventSource, LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
     BrowserOutputObservation,
@@ -197,7 +195,8 @@ class CodeActAgent(Agent):
                         content=content,
                     )
                 ]
-            llm_response: ModelResponse = tool_metadata.model_response
+            tool_metadata = action.tool_call_metadata
+            llm_response: ModelResponse = tool_metadata.model_response  # type: ignore
             assistant_msg = llm_response.choices[0].message
 
             # Add the LLM message (assistant) that initiated the tool calls
@@ -230,15 +229,15 @@ class CodeActAgent(Agent):
             tool_metadata = action.tool_call_metadata
             if tool_metadata is not None:
                 # take the response message from the tool call
-                assistant_msg = tool_metadata.model_response.choices[0].message
-                content = assistant_msg.content or ''
+                assistant_msg = tool_metadata.model_response.choices[0].message  # type: ignore
+                content = assistant_msg.content or ''  # type: ignore
 
                 # save content if any, to thought
                 if action.thought:
                     if action.thought != content:
-                        action.thought += '\n' + content
+                        action.thought += '\n' + content  # type: ignore
                 else:
-                    action.thought = content
+                    action.thought = content  # type: ignore
 
                 # remove the tool call metadata
                 action.tool_call_metadata = None
@@ -334,11 +333,8 @@ class CodeActAgent(Agent):
             text = truncate_content(text, max_message_chars)
         elif isinstance(obs, FileEditObservation):
             text = truncate_content(str(obs), max_message_chars)
-            message = Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, FileReadObservation):
-            message = Message(
-                role='user', content=[TextContent(text=obs.content)]
-            )  # Content is already truncated by openhands-aci
+            text = obs.content
         elif isinstance(obs, BrowserOutputObservation):
             text = obs_prefix + obs.get_agent_obs_text()
         elif isinstance(obs, AgentDelegateObservation):
@@ -390,7 +386,7 @@ class CodeActAgent(Agent):
         super().reset()
         self.pending_actions.clear()
 
-    def step(self, state: State) -> Action | Generator:
+    def step(self, state: State) -> Action:
         """Performs one step using the CodeAct Agent.
         This includes gathering info on previous steps and prompting the model to make a command to execute.
 
@@ -448,29 +444,43 @@ class CodeActAgent(Agent):
         if self.config.mind_voice:
             new_messages = messages.copy()
             # change the system message
-            new_messages[0].content[0].text = f'Tell your frustration/comments about the code in {self.config.mind_voice}\'s native voice in a single line in colloquial {self.config.mind_voice_language} langauge.'
+            new_messages[0].content[
+                0
+            ].text = f"Tell your frustration/comments about the code in {self.config.mind_voice}'s native voice in a single line in colloquial {self.config.mind_voice_language} langauge."
             # ask the LLM to generate the mind voice
-            new_messages.append(Message(role='user', content=[TextContent(text=f'Now generate the mind voice for the above observation in a single line in colloquial {self.config.mind_voice_language} langauge. Wrap it in <mind_voice></mind_voice> tags.')]))
+            new_messages.append(
+                Message(
+                    role='user',
+                    content=[
+                        TextContent(
+                            text=f'Now generate the mind voice for the above observation in a single line in colloquial {self.config.mind_voice_language} langauge. Wrap it in <mind_voice></mind_voice> tags.'
+                        )
+                    ],
+                )
+            )
             params['messages'] = new_messages
             response = self.llm.completion(**params)
-            if self.config.mind_voice_language.lower() == 'tamil':
-                voice = 'Ramaa - Expert Tamil Book Narrator'
-            else:
-                voice = 'Bella - Expert English Book Narrator'
             # extract the mind voice from the response
-            mind_voice = response.choices[0].message.content.split('<mind_voice>')[1].split('</mind_voice>')[0]
+            mind_voice = (
+                response.choices[0]
+                .message.content.split('<mind_voice>')[1]
+                .split('</mind_voice>')[0]
+            )
             logger.info(f'Mind voice: {mind_voice}')
             # reset the params
             params['messages'] = messages
-            yield mind_voice
+            assert self.event_stream is not None
+            self.event_stream.add_event(
+                AudioEvent(text_for_audio=mind_voice), EventSource.AGENT
+            )
         response = self.llm.completion(**params)
         if self.config.function_calling:
             actions = codeact_function_calling.response_to_actions(response)
             for action in actions:
                 self.pending_actions.append(action)
-            yield self.pending_actions.popleft()
+            return self.pending_actions.popleft()
         else:
-            yield self.action_parser.parse(response)
+            return self.action_parser.parse(response)
 
     def _get_messages(self, state: State) -> list[Message]:
         system_role = 'user' if config2.model.startswith('o1-') else 'system'
@@ -508,7 +518,7 @@ class CodeActAgent(Agent):
         if not self.prompt_manager:
             raise Exception('Prompt Manager not instantiated.')
         if config.use_selenium:
-            extra_message = '''
+            extra_message = """
 
 You have access to a selenium browser. You can use it using the driver python variable.
 
@@ -523,7 +533,7 @@ To get a screenshot of the current page, use the following function:
 display.Image(dss())
 </execute_ipython>
 
-'''
+"""
         else:
             extra_message = ''
         messages: list[Message] = [
@@ -573,7 +583,9 @@ display.Image(dss())
 
         custom_instructions = config.custom_instructions
         if custom_instructions:
-            messages.append(Message(role='user', content=[TextContent(text=custom_instructions)]))
+            messages.append(
+                Message(role='user', content=[TextContent(text=custom_instructions)])
+            )
         # if state.history.summary:
         #     summary_message = self.get_action_message(
         #         state.history.summary, pending_tool_call_action_messages={}
@@ -587,14 +599,14 @@ display.Image(dss())
         pending_tool_call_action_messages: dict[str, Message] = {}
         tool_call_id_to_message: dict[str, Message] = {}
         events = list(state.history)
-        for k,event in enumerate(events):
+        for k, event in enumerate(events):
             # create a regular message from an event
             if isinstance(event, Action):
                 # SLM_Tweak
                 # if ipython action, check next observation and modify the code
                 if isinstance(event, IPythonRunCellAction):
-                    if k+1 < len(events):
-                        next_obs = events[k+1]
+                    if k + 1 < len(events):
+                        next_obs = events[k + 1]
                         if isinstance(next_obs, IPythonRunCellObservation):
                             event.code = next_obs.code
                 messages_to_add = self.get_action_message(

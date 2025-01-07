@@ -84,7 +84,7 @@ class DockerRuntime(ActionExecutionClient):
                 user = 'root'
                 self._container_port = 63712
             if self.persist_sandbox_for_each_conversation:
-                path = '_'.join([config.workspace_mount_path, sid])
+                path = '_'.join([config.workspace_mount_path or '', sid])
                 self._container_port = find_available_tcp_port()
             else:
                 path = config.workspace_mount_path or sid
@@ -363,7 +363,7 @@ class DockerRuntime(ActionExecutionClient):
             break
         else:
             # fallback if host network is used
-            self._container_port = int(self.container.attrs['Args'][9])
+            self._container_port = int(self.container.attrs['Args'][9])  # type: ignore
         self._host_port = self._container_port
         self.api_url = f'{self.config.sandbox.local_runtime_url}:{self._container_port}'
         self.log(

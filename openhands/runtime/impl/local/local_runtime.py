@@ -1,4 +1,3 @@
-import atexit
 import os
 import subprocess
 import threading
@@ -30,6 +29,7 @@ from openhands.runtime.base import (
     Runtime,
 )
 from openhands.runtime.plugins import PluginRequirement
+
 
 class LogBuffer:
     """Synchronous buffer for Docker container logs.
@@ -159,10 +159,10 @@ class LocalRuntime(Runtime):
         command = action.command
         for editor in ['nano', 'vi', 'vim', 'pico', 'joe', 'emacs']:
             if f'{editor} ' in command:
-                content = f'Use non interactive command to edit files'
+                content = 'Use non interactive command to edit files'
                 break
         else:
-            if 1:
+            if os.getenv('ENABLE_THIS', '1'):
                 os.chdir('/testbed')
                 content = os.popen(command).read()
             else:
@@ -172,7 +172,7 @@ class LocalRuntime(Runtime):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     universal_newlines=True,
-                    cwd='/testbed'
+                    cwd='/testbed',
                 )
                 output, error = proc.communicate(timeout=10)
                 content = '\n'.join([output, error])

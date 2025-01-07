@@ -56,7 +56,7 @@ class CodeActResponseParser(ResponseParser):
 
         action = action.replace(r'\_', '_')  # Mistral Large gives \_ instead of _
         three_backticks = '```'
-        if action.count(three_backticks) % 2 == 1 and not '<execute_' in action:
+        if action.count(three_backticks) % 2 == 1 and '<execute_' not in action:
             action += three_backticks
         for lang in ['bash', 'ipython', 'browse']:
             # special handling for DeepSeek: it has stop-word bug and returns </execute_ipython instead of </execute_ipython>
@@ -157,9 +157,11 @@ class CodeActActionParserCmdRun(ActionParser):
         self.bash_command = re.search(
             r'<execute_bash>(.*\S.*)</execute_bash>', action_str, re.DOTALL
         )
-        if self.bash_command is None and not '<execute_' in action_str:
+        if self.bash_command is None and '<execute_' not in action_str:
             # Gemini flash not providing the tag and returns as code wrap in backticks
-            self.bash_command = re.search(r'^```bash(.*)```', action_str, re.DOTALL | re.MULTILINE)
+            self.bash_command = re.search(
+                r'^```bash(.*)```', action_str, re.DOTALL | re.MULTILINE
+            )
         return self.bash_command is not None
 
     def parse(self, action_str: str) -> Action:
@@ -188,7 +190,7 @@ class CodeActActionParserIPythonRunCell(ActionParser):
         self.python_code = re.search(
             r'<execute_ipython>(.*\S.*)</execute_ipython>', action_str, re.DOTALL
         )
-        if self.python_code is None and not '<execute_' in action_str:
+        if self.python_code is None and '<execute_' not in action_str:
             # For Gemini: tool_code is not a valid tag and returns as code wrap in backticks
             self.python_code = re.search(
                 r'^```(?:python|tool_code)(.*)```', action_str, re.DOTALL | re.MULTILINE
@@ -377,15 +379,7 @@ if __name__ == '__main__':
     log = 'logs/llm/default/006_response.log'
     with open(log, 'r') as f:
         response = f.read()
-    response = {
-        'choices': [
-            {
-                'message': {
-                    'content': response
-                }
-            }
-        ]
-    }
+    response = {'choices': [{'message': {'content': response}}]}  # type: ignore
     action_parser = CodeActResponseParser()
     action = action_parser.parse(response)
     print(action)

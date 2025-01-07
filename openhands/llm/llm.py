@@ -10,7 +10,11 @@ import requests
 from openhands.core import config2
 from openhands.core.config import LLMConfig
 from openhands.core.message import Message
-from openhands.llm.fn_call_converter import STOP_WORDS, convert_fncall_messages_to_non_fncall_messages, convert_non_fncall_messages_to_fncall_messages
+from openhands.llm.fn_call_converter import (
+    STOP_WORDS,
+    convert_fncall_messages_to_non_fncall_messages,
+    convert_non_fncall_messages_to_fncall_messages,
+)
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -24,7 +28,7 @@ from litellm import ChatCompletionMessageToolCall, ModelInfo, PromptTokensDetail
 from litellm import Message as LiteLLMMessage
 from litellm import completion as litellm_completion
 from litellm import completion_cost as litellm_completion_cost
-from litellm import Message as LiteLLMMessage
+
 # from litellm.caching import Cache
 from litellm.exceptions import (
     APIConnectionError,
@@ -149,7 +153,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
         logger.info(f'{self.config.model=}')
         logger.info(f'{self.config.max_input_tokens=}')
         logger.info(f'{self.config.max_output_tokens=}')
-        logger.debug(f'{self.config.api_key=}') # no problem as it will be masked anyway
+        logger.debug(
+            f'{self.config.api_key=}'
+        )  # no problem as it will be masked anyway
         if self.config.drop_params:
             litellm.drop_params = self.config.drop_params
 
@@ -248,8 +254,9 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     'tools' in kwargs
                 ), "'tools' must be in kwargs when mock_function_calling is True"
                 messages = convert_fncall_messages_to_non_fncall_messages(
-                    messages, kwargs['tools']
-                )  # type: ignore
+                    messages,  # type: ignore
+                    kwargs['tools'],  # type: ignore
+                )
                 kwargs['messages'] = messages
                 kwargs['stop'] = STOP_WORDS
                 mock_fncall_tools = kwargs.pop('tools')
@@ -259,15 +266,14 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 messages[0].role = 'user'
 
             if self.is_over_token_limit(messages):
-                if kwargs['condense'] and 0:
-                    summary_action = self.condense(messages=messages)
-                    return summary_action
-                else:
-                    raise ContextWindowExceededError(
-                        message='Context window exceeded',
-                        model=self.config.model.split('/',1)[1],
-                        llm_provider=self.config.model.split('/',1)[0],
-                    )
+                # if kwargs['condense'] and 0:
+                #     summary_action = self.condense(messages=messages)
+                #     return summary_action
+                raise ContextWindowExceededError(
+                    message='Context window exceeded',
+                    model=self.config.model.split('/', 1)[1],
+                    llm_provider=self.config.model.split('/', 1)[0],
+                )
 
             kwargs.pop('condense', None)
             if isinstance(messages[0], Message):
@@ -335,6 +341,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         if attempt_number != -1 and 'gemini/' in config2.model:
                             try:
                                 from api_keys import api_keys
+
                                 self.api_idx = (self.api_idx + 1) % len(api_keys)
                                 print('Using API key', self.api_idx)
                                 kwargs['api_key'] = api_keys[self.api_idx]
@@ -347,7 +354,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                     if mock_function_calling:
                         # assert len(resp.choices) == 1
                         assert mock_fncall_tools is not None
-                        non_fncall_response_message = resp.choices[0].message
+                        non_fncall_response_message = resp.choices[0].message  # type: ignore
                         fn_call_messages_with_response = (
                             convert_non_fncall_messages_to_fncall_messages(
                                 messages + [non_fncall_response_message],
@@ -359,7 +366,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                             fn_call_response_message = LiteLLMMessage(
                                 **fn_call_response_message
                             )
-                        resp.choices[0].message = fn_call_response_message
+                        resp.choices[0].message = fn_call_response_message  # type: ignore
                     message_back = resp['choices'][0]['message']['content'] or ''
                     self_analyse = int(os.environ.get('SELF_ANALYSE', '0'))
                     if self_analyse:
@@ -409,10 +416,10 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                         kwargs['messages'].append({'role': 'user', 'content': msg})
                         logger.warning('No completion messages!')
 
-                message_back: str = resp['choices'][0]['message']['content'] or ''
+                message_back = resp['choices'][0]['message']['content'] or ''
                 tool_calls: list[ChatCompletionMessageToolCall] = resp['choices'][0][
                     'message'
-                ].get('tool_calls', [])
+                ].get('tool_calls', [])  # type: ignore
                 if tool_calls:
                     for tool_call in tool_calls:
                         fn_name: str = tool_call.function.name  # type: ignore
@@ -487,7 +494,6 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
             # noinspection PyBroadException
             except Exception:
                 pass
-        from openhands.core.utils import json
 
         # logger.debug(f'Model info: {json.dumps(self.model_info, indent=2)}')
 
@@ -675,7 +681,7 @@ class LLM(RetryMixin, DebugMixin, CondenserMixin):
                 model=self.config.model,
                 messages=messages,
                 custom_tokenizer=self.tokenizer,
-                text=text
+                text=text,
             )
         except Exception as e:
             # limit logspam in case token count is not supported

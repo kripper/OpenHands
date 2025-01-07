@@ -9,6 +9,7 @@ from openhands.core.exceptions import (
     AgentAlreadyRegisteredError,
     AgentNotRegisteredError,
 )
+from openhands.events.stream import EventStream
 from openhands.llm.llm import LLM
 from openhands.runtime.plugins import PluginRequirement
 
@@ -37,6 +38,7 @@ class Agent(ABC):
         self.config = config
         self._complete = False
         self.prompt_manager: 'PromptManager' | None = None
+        self.event_stream: 'EventStream' | None = None
 
     @property
     def complete(self) -> bool:
@@ -48,7 +50,7 @@ class Agent(ABC):
         return self._complete
 
     @abstractmethod
-    def step(self, state: 'State') -> 'Action':
+    def step(self, state: 'State') -> Action:
         """Starts the execution of the assigned instruction. This method should
         be implemented by subclasses to define the specific execution logic.
         """

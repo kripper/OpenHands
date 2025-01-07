@@ -2,7 +2,6 @@ import asyncio
 import copy
 import os
 import traceback
-from types import GeneratorType
 from typing import Callable, ClassVar, Type
 
 import litellm
@@ -17,7 +16,6 @@ from openhands.controller.state.state import State, TrafficControlState
 from openhands.controller.stuck import StuckDetector
 from openhands.core.config import AgentConfig, LLMConfig
 from openhands.core.exceptions import (
-    AgentStuckInLoopError,
     FunctionCallNotExistsError,
     FunctionCallValidationError,
     LLMMalformedActionError,
@@ -43,7 +41,7 @@ from openhands.events.action import (
     NullAction,
     RegenerateAction,
 )
-from openhands.events.event import AudioEvent, Event, LogEvent
+from openhands.events.event import Event, LogEvent
 from openhands.events.observation import (
     AgentDelegateObservation,
     AgentStateChangedObservation,
@@ -119,10 +117,10 @@ class AgentController:
 
         # subscribe to the event stream
         self.event_stream = event_stream
+        self.agent.event_stream = event_stream
         self.event_stream.subscribe(
             EventStreamSubscriber.AGENT_CONTROLLER, self.on_event, self.id
         )
-
         # state from the previous session, state from a parent agent, or a fresh state
         self.set_initial_state(
             state=initial_state,
@@ -199,16 +197,14 @@ class AgentController:
         await self.set_agent_state_to(AgentState.ERROR)
         err = f'{e.__class__.__name__}: {e}'
         if self.status_callback is not None:
-            err_id = ''
-            if isinstance(e, litellm.AuthenticationError):
-                err_id = 'STATUS$ERROR_LLM_AUTHENTICATION'
-            elif isinstance(e, RateLimitError):
+            # err_id = ''
+            # if isinstance(e, litellm.AuthenticationError):
+            #     err_id = 'STATUS$ERROR_LLM_AUTHENTICATION'
+            if isinstance(e, RateLimitError):
                 await self.set_agent_state_to(AgentState.RATE_LIMITED)
                 return
             # self.status_callback('error', err_id, type(e).__name__ + ': ' + str(e))
-        self.event_stream.add_event(
-            ErrorObservation(err), EventSource.ENVIRONMENT
-        )
+        self.event_stream.add_event(ErrorObservation(err), EventSource.ENVIRONMENT)
 
     def step(self):
         asyncio.create_task(self._step_with_exception_handling())
@@ -581,7 +577,7 @@ class AgentController:
             logger.warning('Stopping agent due to traffic control')
             return
 
-         # check if agent got stuck before taking any action
+        # check if agent got stuck before taking any action
         is_stuck, resolution = self._is_stuck()
         if is_stuck:
             self.event_stream.add_event(
@@ -599,13 +595,7 @@ class AgentController:
         self.update_state_before_step()
         action: Action = NullAction()
         try:
-            _iter = self.agent.step(self.state)
-            if isinstance(_iter, GeneratorType):    
-                for action in _iter:
-                    if type(action) == str  :
-                        self.event_stream.add_event(AudioEvent(text_for_audio=action), EventSource.AGENT)
-            else:
-                action = _iter
+            action = self.agent.step(self.state)
             if isinstance(action, AgentSummarizeAction):
                 # self.state.history.add_summary(action)
                 return
