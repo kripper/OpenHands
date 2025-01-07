@@ -58,7 +58,6 @@ from openhands.runtime.plugins import ALL_PLUGINS, JupyterPlugin, Plugin, VSCode
 from openhands.runtime.utils.bash import BashSession
 from openhands.runtime.utils.files import insert_lines, read_lines
 from openhands.runtime.utils.runtime_init import init_user_and_working_directory
-from openhands.runtime.utils.system import check_port_available
 from openhands.runtime.utils.system_stats import get_system_stats
 from openhands.utils.async_utils import call_sync_from_async, wait_all
 
@@ -139,9 +138,7 @@ class ActionExecutor:
         )
 
         code = 'from IPython.display import Image'
-        obs = await self.run_ipython(
-            IPythonRunCellAction(code=code)
-        )
+        obs = await self.run_ipython(IPythonRunCellAction(code=code))
         logger.debug(f'Image import initialized: {obs}')
         # This is a temporary workaround
         # TODO: refactor AgentSkills to be part of JupyterPlugin
@@ -213,8 +210,6 @@ class ActionExecutor:
         if 'jupyter' not in self.plugins:
             return
         _jupyter_plugin: JupyterPlugin = self.plugins['jupyter']  # type: ignore
-        jupyter_cwd = getattr(self, '_jupyter_cwd', None)
-        logger.debug(f'{self.bash_session.cwd} != {jupyter_cwd} -> reset Jupyter PWD')
         reset_jupyter_cwd_code = f'import os; os.chdir("{self.bash_session.cwd}")'
         _aux_action = IPythonRunCellAction(code=reset_jupyter_cwd_code)
         _reset_obs: IPythonRunCellObservation = await _jupyter_plugin.run(_aux_action)
@@ -302,7 +297,7 @@ class ActionExecutor:
                 obs = ErrorObservation(
                     '[You are trying to run the same code twice. Please focus and run the correct code.]'
                 )
-            
+
             if obs:
                 return obs
             action.code = action.code.replace('!pip', '%pip')
@@ -370,16 +365,12 @@ class ActionExecutor:
                 # Combine the results (e.g., join them) or handle them as required
                 obs.content = '\n'.join(str(result) for result in results)
             self.last_code = action.code
-            self.is_last_code_error = (
-                'Traceback (most recent call last)' in obs.content
-            )
+            self.is_last_code_error = 'Traceback (most recent call last)' in obs.content
             # SLM_Tweak
             if 'NameError:' in obs.content:
                 last_line = obs.content.split('\n')[-1]
                 variable_name = last_line.split("'")[1]
-                action.code = action.code.replace(
-                    variable_name, f"'{variable_name}'"
-                )
+                action.code = action.code.replace(variable_name, f"'{variable_name}'")
                 return await self.run_ipython(action)
             if self.username != 'root':
                 if 'Traceback (most recent call last)' in obs.content:

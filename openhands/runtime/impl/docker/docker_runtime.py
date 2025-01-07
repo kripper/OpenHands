@@ -1,8 +1,8 @@
 import atexit
 import os
 import sys
-from functools import lru_cache
 import time
+from functools import lru_cache
 from typing import Callable
 
 import docker
@@ -13,7 +13,6 @@ from openhands.core.config import AppConfig
 from openhands.core.exceptions import (
     AgentRuntimeDisconnectedError,
     AgentRuntimeNotFoundError,
-    AgentRuntimeNotReadyError,
 )
 from openhands.core.logger import DEBUG
 from openhands.core.logger import openhands_logger as logger
@@ -70,7 +69,9 @@ class DockerRuntime(ActionExecutionClient):
 
         self.config = config
         self.persist_sandbox = self.config.sandbox.persist_sandbox
-        self.persist_sandbox_for_each_conversation = self.config.sandbox.persist_sandbox_for_each_conversation
+        self.persist_sandbox_for_each_conversation = (
+            self.config.sandbox.persist_sandbox_for_each_conversation
+        )
         self.fast_boot = self.config.sandbox.fast_boot
         if self.persist_sandbox:
             # odd port number will be used for vscode
@@ -182,7 +183,16 @@ class DockerRuntime(ActionExecutionClient):
             self.log('info', f'Waiting for client to become ready at {self.api_url}...')
             self.send_status_message('STATUS$WAITING_FOR_CLIENT')
 
-        await call_sync_from_async(self._wait_until_alive)
+        try:
+            await call_sync_from_async(self._wait_until_alive)
+        except Exception as e:
+            self.log('error', f'Error waiting for client to become ready: {e}')
+            extra_msg = ''
+            if self.config.sandbox.use_host_network:
+                extra_msg = 'Make sure you have enabled host networking in the docker desktop settings. Steps: https://docs.docker.com/network/drivers/host/#docker-desktop'
+            raise Exception(
+                f'Unable to connect to the runtime docker container. Please check if the container is running and there is no error in the container logs. {extra_msg}'
+            )
 
         if not self.attach_to_existing:
             self.log('info', 'Runtime is ready.')
@@ -203,7 +213,7 @@ class DockerRuntime(ActionExecutionClient):
             self.copy_to(path, '/openhands/code/openhands/sel/')
             path = 'openhands/sel/selenium_tester.py'
             self.copy_to(path, '/openhands/code/openhands/sel/')
-            logger.info(f'Copied selenium files to runtime')
+            logger.info('Copied selenium files to runtime')
         except Exception as e:
             logger.error(f'Error copying selenium files to runtime: {e}')
 
@@ -316,10 +326,7 @@ class DockerRuntime(ActionExecutionClient):
                 environment=environment,
                 volumes=volumes,
                 device_requests=(
-                    [docker.types.DeviceRequest(
-                        capabilities=[['gpu']],
-                        count=-1
-                    )]
+                    [docker.types.DeviceRequest(capabilities=[['gpu']], count=-1)]
                     if self.config.sandbox.enable_gpu
                     else None
                 ),
@@ -387,14 +394,7 @@ class DockerRuntime(ActionExecutionClient):
         # if not self.log_streamer:
         #     raise AgentRuntimeNotReadyError('Runtime client is not ready.')
 
-        try:
-            self.check_if_alive()
-        except Exception as e:
-            self.log('error', f'Error checking if alive: {e}')
-            extra_msg = ''
-            if self.config.sandbox.use_host_network:
-                extra_msg = 'Make sure you have enabled host networking in the docker desktop settings. Steps: https://docs.docker.com/network/drivers/host/#docker-desktop'
-            raise Exception(f'Unable to connect to the runtime docker container. Please check if the container is running and there is no error in the container logs. {extra_msg}')
+        self.check_if_alive()
 
     def start_docker_container(self):
         try:
