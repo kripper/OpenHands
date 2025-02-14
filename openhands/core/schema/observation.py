@@ -4,33 +4,30 @@ __all__ = ['ObservationType']
 
 
 class ObservationTypeSchema(BaseModel):
+    GENERIC: str = Field(default='generic')
+    """A generic observation"""
+
     READ: str = Field(default='read')
-    """The content of a file
-    """
+    """The content of a file"""
 
     WRITE: str = Field(default='write')
 
     EDIT: str = Field(default='edit')
 
     BROWSE: str = Field(default='browse')
-    """The HTML content of a URL
-    """
+    """The HTML content of a URL"""
 
     RUN: str = Field(default='run')
-    """The output of a command
-    """
+    """The output of a command"""
 
     RUN_IPYTHON: str = Field(default='run_ipython')
-    """Runs a IPython cell.
-    """
+    """Runs a IPython cell"""
 
     CHAT: str = Field(default='chat')
-    """A message from the user
-    """
+    """A message from the user"""
 
     DELEGATE: str = Field(default='delegate')
-    """The result of a task delegated to another agent
-    """
+    """The result of a task delegated to another agent"""
 
     MESSAGE: str = Field(default='message')
 
@@ -45,7 +42,7 @@ class ObservationTypeSchema(BaseModel):
     USER_REJECTED: str = Field(default='user_rejected')
 
     CONDENSE: str = Field(default='condense')
-    """Result of a condensation operation."""
+    """Result of a condensation operation"""
 
 
 ObservationType = ObservationTypeSchema()

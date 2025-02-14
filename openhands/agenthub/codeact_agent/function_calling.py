@@ -321,7 +321,7 @@ click('48', button='middle', modifiers=['Shift'])
 """
 
 _BROWSER_TOOL_DESCRIPTION = """
-The following 15 functions are available. Nothing else is supported.
+The following 16 functions are available. Nothing else is supported.
 
 goto(url: str)
     Description: Navigate to a url.
@@ -422,6 +422,11 @@ upload_file(bid: str, file: str | list[str])
         upload_file('572', '/home/user/my_receipt.pdf')
 
         upload_file('63', ['/home/bob/Documents/image.jpg', '/home/bob/Documents/file.zip'])
+
+get_element_html(bid: str)
+    Description: Returns the HTML of an element identified by its bid.
+    Examples:
+        get_element_html('123')
 """
 
 

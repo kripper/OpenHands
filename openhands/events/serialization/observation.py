@@ -1,5 +1,6 @@
 import copy
 
+from openhands.events.observation.generic import GenericObservation
 from openhands.events.observation.agent import (
     AgentCondensationObservation,
     AgentStateChangedObservation,
@@ -23,6 +24,7 @@ from openhands.events.observation.reject import UserRejectObservation
 from openhands.events.observation.success import SuccessObservation
 
 observations = (
+    GenericObservation,
     NullObservation,
     CmdOutputObservation,
     IPythonRunCellObservation,

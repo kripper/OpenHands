@@ -157,25 +157,27 @@ class BrowserEnv:
                     action = action_data['action']
                     obs, reward, terminated, truncated, info = env.step(action)
 
-                    # EVAL ONLY: Save the rewards into file for evaluation
-                    if self.eval_mode:
-                        self.eval_rewards.append(reward)
+                    if obs.get("dom_object"):
+                        # EVAL ONLY: Save the rewards into file for evaluation
+                        if self.eval_mode:
+                            self.eval_rewards.append(reward)
 
-                    # add text content of the page
-                    html_str = flatten_dom_to_str(obs['dom_object'])
-                    obs['text_content'] = self.html_text_converter.handle(html_str)
-                    # make observation serializable
-                    obs['set_of_marks'] = self.image_to_png_base64_url(
-                        overlay_som(
-                            obs['screenshot'], obs.get('extra_element_properties', {})
-                        ),
-                        add_data_prefix=True,
-                    )
-                    obs['screenshot'] = self.image_to_png_base64_url(
-                        obs['screenshot'], add_data_prefix=True
-                    )
-                    obs['active_page_index'] = obs['active_page_index'].item()
-                    obs['elapsed_time'] = obs['elapsed_time'].item()
+                        # add text content of the page
+                        html_str = flatten_dom_to_str(obs['dom_object'])
+                        obs['text_content'] = self.html_text_converter.handle(html_str)
+                        # make observation serializable
+                        obs['set_of_marks'] = self.image_to_png_base64_url(
+                            overlay_som(
+                                obs['screenshot'], obs.get('extra_element_properties', {})
+                            ),
+                            add_data_prefix=True,
+                        )
+                        obs['screenshot'] = self.image_to_png_base64_url(
+                            obs['screenshot'], add_data_prefix=True
+                        )
+                        obs['active_page_index'] = obs['active_page_index'].item()
+                        obs['elapsed_time'] = obs['elapsed_time'].item()
+
                     self.browser_side.send((unique_request_id, obs))
             except KeyboardInterrupt:
                 logger.debug('Browser env process interrupted by user.')
