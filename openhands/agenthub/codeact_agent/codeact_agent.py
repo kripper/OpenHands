@@ -35,6 +35,7 @@ from openhands.events.observation import (
     UserRejectObservation,
 )
 from openhands.events.observation.error import ErrorObservation
+from openhands.events.observation.generic import GenericObservation
 from openhands.events.observation.observation import Observation
 from openhands.events.serialization.event import truncate_content
 from openhands.llm.llm import LLM
@@ -317,6 +318,10 @@ class CodeActAgent(Agent):
                     role='user',
                     content=[TextContent(text=text)],
                 )
+        elif isinstance(obs, GenericObservation):
+            text = obs.message
+            text = truncate_content(text, max_message_chars)
+            message = Message(role='user', content=[TextContent(text=text)])
         elif isinstance(obs, AgentDelegateObservation):
             text = truncate_content(
                 obs.outputs['content'] if 'content' in obs.outputs else '',

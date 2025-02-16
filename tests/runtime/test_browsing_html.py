@@ -39,7 +39,7 @@ def test_simple_browse(temp_dir, runtime_cls, run_as_openhands):
         logger.info(obs, extra={'msg_type': 'OBSERVATION'})
         assert obs.exit_code == 0
 
-    action_browse = BrowseURLAction(url='https://autofacturacion.com')
+    action_browse = BrowseURLAction(url='https://www.w3.org')
     logger.info(action_browse, extra={'msg_type': 'ACTION'})
     obs = runtime.run_action(action_browse)
     logger.info(obs, extra={'msg_type': 'OBSERVATION'})

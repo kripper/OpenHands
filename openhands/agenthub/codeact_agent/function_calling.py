@@ -314,6 +314,7 @@ _BROWSER_DESCRIPTION = """Interact with the browser using Python code. Use it ON
 See the description of "code" parameter for more details.
 
 Multiple actions can be provided at once, but will be executed sequentially without any feedback from the page.
+Never run an action immediately after "goto" (wait for an observation first).
 More than 2-3 actions usually leads to failure or unexpected behavior. Example:
 fill('a12', 'example with "quotes"')
 click('a51')
@@ -325,6 +326,7 @@ The following 16 functions are available. Nothing else is supported.
 
 goto(url: str)
     Description: Navigate to a url.
+    This action returns an observation with a list of elements and their "bid" (browser element ID).
     Examples:
         goto('http://www.example.com')
 
